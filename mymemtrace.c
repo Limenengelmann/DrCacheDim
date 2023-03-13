@@ -76,24 +76,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-/* Each mem_ref_t includes the type of reference (read or write),
- * the address referenced, and the size of the reference.
- */
-typedef struct _mem_ref_t {
-    bool write;
-    void *addr;
-    size_t size;
-    //app_pc pc;
-} mem_ref_t;
+#include "mem_ref.h"
 
-/* Max number of mem_ref a buffer can have */
-#define MAX_NUM_MEM_REFS 8192
-/* The size of memory buffer for holding mem_refs. When it fills up,
- * we dump data from the buffer to the file.
- */
-#define MEM_BUF_SIZE (sizeof(mem_ref_t) * MAX_NUM_MEM_REFS)
-
-#define PIPE_NAME "/tmp/my_drio_pipe"
+typedef struct _mem_ref_t mem_ref_t;
 
 /* thread private log file and counter */
 typedef struct {
@@ -152,11 +137,6 @@ instrument_mem(void *drcontext, instrlist_t *ilist, instr_t *where, app_pc pc,
 DR_EXPORT void
 dr_client_main(client_id_t id, int argc, const char *argv[])
 {
-    //if (fork() == 0) {
-    //    execl("./build/process_memrefs", "process_memrefs", PIPE_NAME, (char *) NULL);
-    //    perror("exec failed."); exit(1);
-    //}
-
     /* We need 2 reg slots beyond drreg's eflags slots => 3 slots */
     drreg_options_t ops = { sizeof(ops), 3, false };
     /* Specify priority relative to other instrumentation operations: */
@@ -165,10 +145,11 @@ dr_client_main(client_id_t id, int argc, const char *argv[])
                                   NULL, /* optional name of operation we should precede */
                                   NULL, /* optional name of operation we should follow */
                                   0 };  /* numeric priority */
-    dr_set_client_name("DynamoRIO Sample Client 'memtrace'",
-                       "http://dynamorio.org/issues");
+    dr_set_client_name("mymemtrace",
+                       "issues? What issues?");
     page_size = dr_page_size();
     drmgr_init();
+
     drutil_init();
     client_id = id;
     mutex = dr_mutex_create();
@@ -247,18 +228,16 @@ event_thread_init(void *drcontext)
      * in a path as a client argument.
      */
     dr_printf("Hello world\n");
+
+    if (access(PIPE_NAME, F_OK))
+        dr_sleep(500);  // sleep 500ms
+    // if pipe is still not accessible abort
+    if (access(PIPE_NAME, F_OK))
+        DR_ASSERT_MSG(false, "Cannot access '" PIPE_NAME "'. Aborting.\n");
     
+    // TODO pass file as option
     data->ofile = dr_open_file(PIPE_NAME, DR_FILE_WRITE_ONLY);
     DR_ASSERT(data->ofile != INVALID_FILE);
-
-//    data->log =
-//        log_file_open(client_id, drcontext, NULL /* using client lib path */, "memtrace",
-//                          DR_FILE_ALLOW_LARGE);
-//#if OUTPUT_TEXT
-//    data->logf = log_stream_from_file(data->log);
-//    fprintf(data->logf,
-//            "Format: <instr address>,<(r)ead/(w)rite>,<data size>,<data address>\n");
-//#endif
 }
 
 static void
@@ -377,7 +356,14 @@ memtrace(void *drcontext)
         ++mem_ref;
     }
 #else
-    dr_write_file(data->ofile, data->buf_base, (size_t)(data->buf_ptr - data->buf_base));
+    ssize_t written = 0;
+    size_t to_write = (size_t)(data->buf_ptr - data->buf_base);
+    char* buf_ptr = data->buf_base;
+    do {
+        written = dr_write_file(data->ofile, buf_ptr, to_write);
+        buf_ptr += written;
+        to_write -= written;
+    } while(written > 0 && to_write > 0);
     //ushort bla = 69;
     //dr_write_file(data->ofile, &bla, sizeof(ushort));
 #endif
