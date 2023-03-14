@@ -5,6 +5,7 @@ my $specdir="/opt/spec-cpu2017";
 my $drdir="/opt/DynamoRIO";
 my $memtrdir="/home/elimtob/Workspace/mymemtrace";
 my $dbdir="/mnt/extSSD/traces";
+$dbdir="/home/elimtob/Workspace/mymemtrace/data";
 
 #speccpu params
 my $tuning="base";

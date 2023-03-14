@@ -59,6 +59,8 @@
  * than creating a binary file; thus, the default is binary.
  */
 
+#define SHOW_RESULTS
+
 #include <stdio.h>
 #include <string.h> /* for memset */
 #include <stddef.h> /* for offsetof */
@@ -192,8 +194,8 @@ event_exit()
                       "  saw %llu memory references\n",
                       global_num_refs);
     DR_ASSERT(len > 0);
-    NULL_TERMINATE_BUFFER(msg);
-    DISPLAY_STRING(msg);
+    msg[len+1] = 0;
+    dr_printf("%s\n", msg);
 #endif /* SHOW_RESULTS */
     code_cache_exit();
 
@@ -208,6 +210,7 @@ event_exit()
     drutil_exit();
     drmgr_exit();
     drx_exit();
+    dr_printf("Client exiting\n");
     //if (unlink(PIPE_NAME))
     //    perror("Can't unlink '" PIPE_NAME "'.");
 }
@@ -231,7 +234,7 @@ event_thread_init(void *drcontext)
      * the same directory as our library. We could also pass
      * in a path as a client argument.
      */
-    dr_printf("Hello world\n");
+    dr_printf("CLIENT: Hello world\n");
 
     bool ret = false;
     if (access(PIPE_NAME, F_OK))
@@ -245,7 +248,7 @@ event_thread_init(void *drcontext)
     data->ofile = dr_open_file(PIPE_NAME, DR_FILE_WRITE_ONLY);
     if(data->ofile == INVALID_FILE)
         DR_ASSERT_MSG(false, "Error opening " PIPE_NAME ": Invalid file handle. Aborting.\n");
-    dr_printf("Init done\n");
+    dr_printf("CLIENT: Init done\n");
 }
 
 static void
@@ -367,11 +370,13 @@ memtrace(void *drcontext)
     ssize_t written = 0;
     size_t to_write = (size_t)(data->buf_ptr - data->buf_base);
     char* buf_ptr = data->buf_base;
+    //dr_printf("CLIENT: Writing %zu refs to pipe!\n", num_refs);
     do {
         written = dr_write_file(data->ofile, buf_ptr, to_write);
         buf_ptr += written;
         to_write -= written;
     } while(written > 0 && to_write > 0);
+    //dr_printf("CLIENT: wrote to pipe\n");
     //ushort bla = 69;
     //dr_write_file(data->ofile, &bla, sizeof(ushort));
 #endif

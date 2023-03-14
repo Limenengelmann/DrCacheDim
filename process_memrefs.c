@@ -31,6 +31,7 @@ int main(int argc, char** argv) {
     int ifile = open(fname, O_RDONLY);
     if (ifile < 0) 
         die("Could not open file");
+    printf("Opened '%s'\n", fname);
 
     sqlite3* DB;
     char* messageError;
@@ -91,6 +92,7 @@ int main(int argc, char** argv) {
     char* rbuf = (char*) malloc(unreadb);
     mem_ref_t* mem_refs = (mem_ref_t*) rbuf;
 
+    //FIXME the loop closes too early and dynamorio tries to write 50 refs but the buffer is already closed and causes a sigpipe
     do {
         do {
             r = read(ifile, rbuf + readb, unreadb);
@@ -101,10 +103,10 @@ int main(int argc, char** argv) {
             printf("Read failed! Stopping..");
             break;
         }
-
         read_refs = readb / sizeof(mem_ref_t);
+        //if (read_refs > 0)
+        //    printf("[%d] Read %zu: %p\n", pid, read_refs, mem_refs[0].addr);
         for (int i=0; i<read_refs; i++) {
-            //printf("[%d] Read %zu: %p\n", pid, r, mem_refs[0].addr);
             //XXX sqlite3 has no uint64 type, so some refs might appear negative
             sqlite3_bind_int64(stmt, 1, (sqlite3_int64) mem_refs[i].addr);
             sqlite3_bind_int(stmt, 2, mem_refs[i].write);
@@ -113,6 +115,9 @@ int main(int argc, char** argv) {
             sqlite3_reset(stmt);
         }
         count_refs += read_refs;
+        read_refs = 0;
+        readb = 0;
+        unreadb = MEM_BUF_SIZE;
     } while (r > 0);
 
     printf("\nLoop done. Read %zu memrefs.\nEnding transaction\n", count_refs);
