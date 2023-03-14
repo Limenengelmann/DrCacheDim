@@ -30,6 +30,23 @@ exes=(
     "xz_r"
 )
 
+build=(
+    #"perlbench_r"
+    "specmake -j"
+    #"mcf_r"
+    "specmake -j"
+    #"omnetpp_r"
+    "specmake -j"
+    #"xalancbmk_r"
+    "specmake -j"
+    #"x264_r"
+    "specmake -j TARGET=x264_r"
+    #"imagick_r"
+    "specmake -j TARGET=imagick_r"
+    #"xz_r"
+    "specmake -j"
+)
+
 #runcpu --fake --loose --size test --tune base --config linux-amd64 $c
 #
 cd $specdir; source "$specdir/shrc"
@@ -39,14 +56,13 @@ for ii in "${!progs[@]}"; do
     x="${exes[$ii]}_${tuning}.$cfg"
     go $c run $rundir
     #ls -l "$x"
+    #XXX link binaries with their specinvoke name in the run directory
     #ln -s "../../build/$builddir/${exes[$ii]}" "$x"
     #rm "$x"
     #specinvoke -n | grep "$x"
     #ls "../../build/$builddir/${exe[$i]}"
     # specinvoke exe name: cpuxalan_r_base.linux-amd64-m64
     #echo "../../build/$builddir/${exes[$ii]}" "$x"
-    #FIXME xalanc doesnt follow the convention of dirname = binname 
-    #TODO link binaries with their specinvoke name in the run directory
     #ls build/$builddir/$c
     #echo $c
     #go $c run $rundir

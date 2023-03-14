@@ -68,6 +68,7 @@
 #include "drutil.h"
 #include "drx.h"
 #include "dr_tools.h"
+//#include "dr_frontend.h"
 
 //#include "utils.h"
 
@@ -133,6 +134,9 @@ code_cache_exit(void);
 static void
 instrument_mem(void *drcontext, instrlist_t *ilist, instr_t *where, app_pc pc,
                instr_t *memref_instr, int pos, bool write);
+
+//TODO switch to configure/inject model so exit value can accurately be reported
+//See launcher.cpp for an example
 
 DR_EXPORT void
 dr_client_main(client_id_t id, int argc, const char *argv[])
@@ -229,15 +233,19 @@ event_thread_init(void *drcontext)
      */
     dr_printf("Hello world\n");
 
+    bool ret = false;
     if (access(PIPE_NAME, F_OK))
+    //if (! (drfront_access(PIPE_NAME, DRFRONT_WRITE, &ret) == DRFRONT_SUCCESS && ret))
         dr_sleep(500);  // sleep 500ms
     // if pipe is still not accessible abort
     if (access(PIPE_NAME, F_OK))
+    //if (! (drfront_access(PIPE_NAME, DRFRONT_WRITE, &ret) == DRFRONT_SUCCESS && ret))
         DR_ASSERT_MSG(false, "Cannot access '" PIPE_NAME "'. Aborting.\n");
     
-    // TODO pass file as option
     data->ofile = dr_open_file(PIPE_NAME, DR_FILE_WRITE_ONLY);
-    DR_ASSERT(data->ofile != INVALID_FILE);
+    if(data->ofile == INVALID_FILE)
+        DR_ASSERT_MSG(false, "Error opening " PIPE_NAME ": Invalid file handle. Aborting.\n");
+    dr_printf("Init done\n");
 }
 
 static void

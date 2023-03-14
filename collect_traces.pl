@@ -1,11 +1,12 @@
 use strict; 
 use warnings;
-use Cwd qw(getcwd);
 
 my $specdir="/opt/spec-cpu2017";
 my $drdir="/opt/DynamoRIO";
-my $outdir="~/Workspace/mymemtrace/data";
+my $memtrdir="/home/elimtob/Workspace/mymemtrace";
+my $dbdir="/mnt/extSSD/traces";
 
+#speccpu params
 my $tuning="base";
 my $size="test";
 
@@ -34,7 +35,7 @@ my $run={
     ],
 
     "x264_r" => [
-        "../run_base_test_linux-amd64-m64.0000/x264_r_base.linux-amd64-m64 --dumpyuv 50 --frames 156 -o BuckBunny_New.264 BuckBunny.yuv 1280x720 "
+        "../run_base_test_linux-amd64-m64.0000/x264_r_base.linux-amd64-m64 --dumpyuv 50 --frames 156 -o BuckBunny_New.264 BuckBunny.264 1280x720 "
     ],
 
     "imagick_r" => [
@@ -57,31 +58,59 @@ my $run={
     ],
 };
 
+sub process_and_instrument {
+    my $r = shift;
+    my $db = shift;
+
+    my $pid = fork();
+    if ($pid == 0) {
+        exec("$memtrdir/build/process_memrefs $db");
+    }
+
+    #drrun does not forward the apps exit code :(
+    my $ret = system(qq# drrun -root "$drdir" -c "$memtrdir/build/libmymemtrace_x86.so" -- $r #);
+
+    #drrun does not forward the apps exit code, so we assume it works
+    # but we make sure the app ran successfully in advance.
+    waitpid $pid, 0;
+    
+    #if ($ret == 0) {
+    #    waitpid $pid, 0;
+    #} else {
+    #    print "Ret $ret. Command failed: $!.\n";
+    #    kill "SIGINT", $pid;
+    #}
+    return $ret;
+}
+
 # create traces!
 print("-----------------------------------------------------------------------------------------------------------------\n");
 print("-----------------------------------------------------------------------------------------------------------------\n");
 
-my $cwd = `pwd`; chomp $cwd;
+die "$dbdir does not exist! Aborting.\n" unless (-d "$dbdir");
+
+my @failed=();
+my $succ=0;
 while (my ($k, $v) = each(%$run)) {
     #print("k=$k, v=$v, rundir=$rundir\n");
     my $process="./build/process_memrefs";
     chdir("$specdir/");
     my $rdir=`source shrc; go $k run $rundir`; chomp $rdir;
     chdir($rdir) or print "Didn't work mate: $!\n";
+    print "\nExecuting benchmark cmds for $k\n";
+    #system("pwd; ls -l");
+    foreach my $r (@$v) {
+        #$r = "echo 'blabla'";  # for testing
+        if (system($r) == 0) {
+            $succ++;
+            process_and_instrument($r, "$dbdir/$k-$size.db");
+        } else {
+            push @failed, ($r, $!);
+        }
+        last;
+    }
+    last;
 }
 
-chdir($cwd);    # change back to original dir
-
-my $pid = fork();
-if ($pid == 0) {
-    exec("./build/process_memrefs ./data/bla.db");
-}
-
-my $ret = system("drrun -root $drdir -c build/libmymemtrace_x86.so -- echo 'blablabla'");
-
-if ($ret == 0) {
-    print "Command failed: $!.\n"; 
-    kill "SIGINT", $pid;
-} else {
-    waitpid $pid, 0;
-}
+print "Successfull cmds: $succ. Failed cmds: " . scalar(@failed). ".\n@failed\n";
+exit 0;

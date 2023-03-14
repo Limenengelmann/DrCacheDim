@@ -54,6 +54,14 @@ int main(int argc, char** argv) {
         //die(messageError);    // dont die if the table exsists already! Just append
         fprintf(stderr, messageError);
 
+    status = sqlite3_exec(DB, "CREATE TABLE ROW_COUNT "
+                              "(ID INTEGER PRIMARY KEY, "
+                              "REFS INTEGER DEFAULT 0, "
+                              "TIMESTAMP DATETIME DEFAULT CURRENT_TIMESTAMP);"
+                              , NULL, 0, &messageError);
+    if (status != SQLITE_OK)
+        fprintf(stderr, messageError);
+
     const char sql2[] = "INSERT INTO MEMREFS (ADDR, IS_WRITE, SIZE) VALUES (?1, ?2, ?3);";
     sqlite3_stmt *stmt;
     status = sqlite3_prepare_v2(
@@ -65,10 +73,6 @@ int main(int argc, char** argv) {
     );
     if (status != SQLITE_OK)
         die(sqlite3_errmsg(DB));
-
-    status = sqlite3_exec(DB, "CREATE TABLE ROW_COUNT(TOTAL INTEGER PRIMARY KEY DEFAULT 0);", NULL, 0, &messageError);
-    if (status != SQLITE_OK)
-        fprintf(stderr, messageError);
 
     printf("Im running 'eeere\n");
     pid_t pid = getpid();
@@ -116,11 +120,12 @@ int main(int argc, char** argv) {
 
     char sql4[128];
     // TODO this doesnt insert total properly
-    sprintf(sql4, "UPDATE OR REPLACE ROW_COUNT SET TOTAL = TOTAL + %zu;", count_refs);
+    sprintf(sql4, "INSERT INTO ROW_COUNT (REFS) VALUES (%zu);", count_refs);
     status = sqlite3_exec(DB, sql4, NULL, 0, &messageError);
     if (status != SQLITE_OK)
         die(messageError);
 
+    free(rbuf);
     sqlite3_close(DB);
     close(ifile);
 
