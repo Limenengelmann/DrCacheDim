@@ -10,5 +10,3 @@ for fname in os.listdir(tracedir):
         cur = con.cursor()
         res = cur.execute("SELECT * FROM ROW_COUNT")
         print(fname, res.fetchall())
-
-
