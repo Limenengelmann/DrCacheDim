@@ -1,6 +1,7 @@
 use strict; 
 use warnings;
 
+
 my $specdir="/opt/spec-cpu2017";
 my $drdir="/opt/DynamoRIO";
 my $memtrdir="/home/elimtob/Workspace/mymemtrace";
