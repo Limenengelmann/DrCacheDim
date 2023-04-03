@@ -2,11 +2,11 @@ use strict;
 use warnings;
 
 
-my $specdir="/opt/spec-cpu2017";
-my $drdir="/opt/DynamoRIO";
+my $specdir="/home/elimtob/.local/opt/spec-cpu2017";
+my $drdir="/home/elimtob/.local/opt/DynamoRIO";
 my $memtrdir="/home/elimtob/Workspace/mymemtrace";
-my $dbdir="/mnt/extSSD/traces";
-#$dbdir="/home/elimtob/Workspace/mymemtrace/data";
+#my $dbdir="/mnt/extSSD/traces";
+my $dbdir="/home/elimtob/Workspace/mymemtrace/traces";
 
 #speccpu params
 my $tuning="base";
@@ -60,7 +60,7 @@ my $run={
     ],
 };
 
-sub process_and_instrument {
+sub collect_memrefs {
     my $r = shift;
     my $db = shift;
 
@@ -69,11 +69,8 @@ sub process_and_instrument {
         exec("$memtrdir/build/process_memrefs $db");
     }
 
-    #drrun does not forward the apps exit code :(
     my $ret = system(qq# drrun -root "$drdir" -c "$memtrdir/build/libmymemtrace_x86.so" -- $r #);
 
-    #drrun does not forward the apps exit code, so we assume it works
-    # but we make sure the app ran successfully in advance.
     waitpid $pid, 0;
     
     #if ($ret == 0) {
@@ -85,32 +82,66 @@ sub process_and_instrument {
     return $ret;
 }
 
-# create traces!
-print("-----------------------------------------------------------------------------------------------------------------\n");
-print("-----------------------------------------------------------------------------------------------------------------\n");
-
-die "$dbdir does not exist! Aborting.\n" unless (-d "$dbdir");
-
-my @failed=();
-my $succ=0;
-while (my ($k, $v) = each(%$run)) {
-    #print("k=$k, v=$v, rundir=$rundir\n");
-    my $process="./build/process_memrefs";
-    chdir("$specdir/");
-    my $rdir=`source shrc; go $k run $rundir`; chomp $rdir;
+sub ch_specdir {
+    # NOTE: needs /usr/bin/sh to point to bash or zsh, dash does not work with "source"
+    my $x = shift;
+    chdir("$specdir");
+    my $rdir=`source shrc; go $x run $rundir`; chomp $rdir;
     chdir($rdir) or print "Didn't work mate: $!\n";
-    print "\nExecuting benchmark cmds for $k\n";
-    #system("pwd; ls -l");
-    foreach my $r (@$v) {
-        #$r = "echo 'blabla'";  # for testing
-        if (system($r) == 0) {
-            $succ++;
-            process_and_instrument($r, "$dbdir/$k-$size.db");
-        } else {
-            push @failed, ($r, $!);
-        }
-    }
 }
 
-print "Successfull cmds: $succ. Failed cmds: " . scalar(@failed). ".\n@failed\n";
+sub run_all {
+    # create traces!
+    print("-----------------------------------------------------------------------------------------------------------------\n");
+    print("-----------------------------------------------------------------------------------------------------------------\n");
+
+    die "$dbdir does not exist! Aborting.\n" unless (-d "$dbdir");
+
+    my @failed=();
+    my $succ=0;
+    while (my ($k, $v) = each(%$run)) {
+        #print("k=$k, v=$v, rundir=$rundir\n");
+        ch_specdir $k;
+        print "\nExecuting benchmark cmds for $k\n";
+        foreach my $r (@$v) {
+            #$r = "echo 'blabla'";  # for testing
+            #TODO don't run twice just to get the exit value
+            if (system($r) == 0) {
+                $succ++;
+                collect_memrefs($r, "$dbdir/$k-$size.db");
+            } else {
+                push @failed, ($r, $!);
+            }
+        }
+    }
+
+    print "Successfull cmds: $succ. Failed cmds: " . scalar(@failed). ".\n@failed\n";
+}
+
+sub spec_instrumentation {
+    my $k = shift;
+    my $client = shift;
+    my $exe = %$run{$k}->[0];
+
+    ch_specdir $k;
+    print "Executing: $exe\n";
+    my $ret = system(qq# drrun -root "$drdir" -c "$client" -- $exe #);
+    die "Ret $ret. Command failed: $!.\n" unless $ret == 0;
+}
+
+sub spec_cachesim {
+    my $k = shift;
+    my $exe = %$run{$k}->[0];
+    ch_specdir $k;
+    print "Executing: $exe\n";
+    my $simcfg = "-config_file /home/elimtob/Workspace/mymemtrace/config/cachesim_single.dr";
+    #my $simt = "-simulator_type basic_counts";
+    my $simt = "";
+    my $ret = system(qq# drrun -root "$drdir" -t drcachesim $simcfg $simt-- $exe #);
+    die "Ret $ret. Command failed: $!.\n" unless $ret == 0;
+}
+
+#spec_instrumentation "imagick_r", "$memtrdir/lib/libbbsize.so";
+#run_all();
+spec_cachesim "imagick_r";
 exit 0;

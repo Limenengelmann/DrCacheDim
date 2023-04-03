@@ -1,0 +1,45 @@
+// Configuration for a single-core CPU.
+ 
+// Common params.
+num_cores       1
+line_size       64
+cpu_scheduling  false
+sim_refs        999999999
+warmup_fraction 0
+ 
+// Cache params.
+L1I {                        // P0 L1 instruction cache
+  type            instruction
+  core            0
+  size            65536        // 64K
+  assoc           8
+  parent          L2
+  prefetcher      none
+  replace_policy  LRU
+}
+L1D {                        // P0 L1 data cache
+  type            data
+  core            0
+  size            65536        // 64K
+  assoc           2
+  parent          L2
+  prefetcher      none
+  replace_policy  LRU
+}
+L2 {                         // P0 L2 unified cache
+  size            512K
+  assoc           16
+  inclusive       false
+  parent          L3
+  prefetcher      none
+  replace_policy  LRU
+}
+L3 {                          // LLC
+  size            1M
+  assoc           16
+  inclusive       false
+  parent          memory
+  prefetcher      none
+  replace_policy  LRU
+  // miss_file       misses.txt
+}
