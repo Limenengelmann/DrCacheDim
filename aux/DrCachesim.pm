@@ -2,6 +2,7 @@ package DrCachesim;
 
 use strict;
 use warnings;
+use File::Temp qw/ tempfile /;
 
 our $drdir="/home/elimtob/.local/opt/DynamoRIO";
 
@@ -9,6 +10,7 @@ sub new_cache {
    my $class = "cache";
    my %args = @_;
    my $self = {
+       cmd => undef,
        cfg => { # keys need to be exact DrCachesim config params
            type           => $args{type},
            core           => $args{core},
@@ -46,10 +48,68 @@ sub new_hierarchy {
    return $self;
 }
 
-sub parse_results {
+sub brutef_sweep {
+    my $S = ();
+
+    # size lims are exponents
+    #my ($L1I_smin, $L1I_smax) = shift;
+    #my ($L1D_smin, $L1D_smax) = shift;
+    #my ($L2_smin, $L2_smax)   = shift;
+    #my ($L3_smin, $L3_smax)   = shift;
+
+    ## assoc are also exponents
+    #my ($L1I_amin, $L1I_amax) = shift;
+    #my ($L1D_amin, $L1D_amax) = shift;
+    #my ($L2_amin, $L2_amax)   = shift;
+    #my ($L3_amin, $L3_amax)   = shift;
+
+    my ($L1I_smin, $L1I_smax, 
+        $L1D_smin, $L1D_smax, 
+        $L2_smin, $L2_smax,   
+        $L3_smin, $L3_smax,   
+        $L1I_amin, $L1I_amax, 
+        $L1D_amin, $L1D_amax, 
+        $L2_amin, $L2_amax,   
+        $L3_amin, $L3_amax) = @_;
+
+    #print "$L1I_smin, $L1D_smin, $L2_smin, $L3_smin, $L1I_amin, $L1D_amin, $L2_amin, $L3_amin\n";
+    #print "$L1I_smax, $L1D_smax, $L2_smax, $L3_smax, $L1I_amax, $L1D_amax, $L2_amax, $L3_amax\n";
+
+    my $count = ($L1I_smax-$L1I_smin+1)*($L1D_smax-$L1D_smin+1)*
+                ($L2_smax-$L2_smin+1)  *($L3_smax-$L3_smin+1)*
+                ($L1I_amax-$L1I_amin+1)*($L1D_amax-$L1D_amin+1)*
+                ($L2_amax-$L2_amin+1)  *($L3_amax-$L3_amin+1);
+    print "Warning: Generating up to $count Hierarchies!\n";
+
+    for (my $s1I=2**$L1I_smin; $s1I<=2**$L1I_smax; $s1I*=2) {
+    for (my $s1D=2**$L1D_smin; $s1D<=2**$L1D_smax; $s1D*=2) {
+    for (my $s2 =2**$L2_smin ; $s2 <=2**$L2_smax ; $s2 *=2) {
+    for (my $s3 =2**$L3_smin ; $s3 <=2**$L3_smax ; $s3 *=2) {
+    for (my $a1I=2**$L1I_amin; $a1I<=2**$L1I_amax; $a1I*=2) {
+    for (my $a1D=2**$L1D_amin; $a1D<=2**$L1D_amax; $a1D*=2) {
+    for (my $a2 =2**$L2_amin ; $a2 <=2**$L2_amax ; $a2 *=2) {
+    for (my $a3 =2**$L3_amin ; $a3 <=2**$L3_amax ; $a3 *=2) {
+        #TODO maybe check for illformed hierarchies (e.g. assoc*linesize < cache size)
+        my $H = new_hierarchy();
+        $H->{L1I}->{cfg}->{size}  = $s1I;
+        $H->{L1D}->{cfg}->{size}  = $s1D;
+        $H->{L2}->{cfg}->{size}   = $s2 ;
+        $H->{L3}->{cfg}->{size}   = $s3 ;
+        $H->{L1I}->{cfg}->{assoc} = $a1I;
+        $H->{L1D}->{cfg}->{assoc} = $a1D;
+        $H->{L2}->{cfg}->{assoc}  = $a2 ;
+        $H->{L3}->{cfg}->{assoc}  = $a3 ;
+        push @$S, $H;
+    }}}}}}}}
+    return $S;
+}
+
+sub run_and_parse_output {
     my $cmd = shift;
     my $H   = shift;
-    $cmd    =~ s/ -- .*$/ -- echo 'babadibupi'/;
+
+    #$cmd    =~ s/ -- .*$/ -- echo 'babadibupi'/;
+    #$cmd = "echo 'babadibupi'";
 
     # safe open to merge stderr and stdout (drcachesim outputs stats to stderr)
     my $pid = open my $cmdout, '-|';
@@ -61,7 +121,7 @@ sub parse_results {
     
     my $state = 0;
     my $c; 
-    my $ret;
+    my $ret = 0;
     while (my $l = <$cmdout>) {
         #print "$l";
         #print "State = $state\n";
@@ -83,10 +143,15 @@ sub parse_results {
             $$H{$c}->{stats}->{$k} = $v;
         }
     }
+    $H->{cmd} = $cmd;
     return $ret;
 }
 
-use File::Temp qw/ tempfile /;
+#TODO load previous simulations in results folder
+sub load_results {
+    1;
+}
+
 sub create_cfg {
     my $H      = shift;
     my $tmpdir = "/tmp";

@@ -2,12 +2,13 @@ use strict;
 use warnings;
 use Data::Dumper;
 use Storable qw(dclone);
+use File::Temp qw/ tempfile /;
 
 use lib qw#./aux#;
 use SpecInt;
 use DrCachesim;
 
-my $memtrdir="/home/elimtob/Workspace/mymemtrace";
+my $CWD="/home/elimtob/Workspace/mymemtrace";
 #my $dbdir="/mnt/extSSD/traces";
 my $dbdir="/home/elimtob/Workspace/mymemtrace/traces";
 
@@ -17,10 +18,10 @@ sub collect_memrefs {
 
     my $pid = fork();
     if ($pid == 0) {
-        exec("$memtrdir/build/process_memrefs $db");
+        exec("$CWD/build/process_memrefs $db");
     }
 
-    my $ret = system(qq# drrun -root "$DrCachesim::drdir" -c "$memtrdir/build/libmymemtrace_x86.so" -- $r #);
+    my $ret = system(qq# drrun -root "$DrCachesim::drdir" -c "$CWD/build/libmymemtrace_x86.so" -- $r #);
 
     waitpid $pid, 0;
     
@@ -78,28 +79,41 @@ sub spec_cachesim {
     my $simcfg = DrCachesim::create_cfg($H);
     my $exe = %$SpecInt::test_run{$k}->[0];
     SpecInt::chdir $k;
-    print "Executing: $exe\n";
-    #my $simt = "-simulator_type basic_counts";
-    my $simt = "";
-    my $cmd = qq# drrun -root "$DrCachesim::drdir" -t drcachesim -config_file $simcfg $simt -- $exe 2>&1#;
-    my $ret = DrCachesim::parse_results($cmd, $H);
+    my $cmd = qq# drrun -root "$DrCachesim::drdir"       
+                        -t drcachesim                    
+                        -ipc_name /tmp/drcachesim_pipe$$ 
+                        -config_file $simcfg             
+                        -- $exe#;
+    # remove newlines and unnecessary whitespaces in command
+    $cmd = $cmd =~ s/\n/ /gr =~ s/  +/ /gr;
+    print "Executing: $cmd\n";
+    my $ret = DrCachesim::run_and_parse_output($cmd, $H);
     die "Ret $ret. Command failed: $!.\n" unless $ret == 0;
 }
 
-#spec_instrumentation "imagick_r", "$memtrdir/lib/libbbsize.so";
+#spec_instrumentation "imagick_r", "$CWD/lib/libbbsize.so";
 #run_all();
 
-my $H = DrCachesim::new_hierarchy();
-#DrCachesim::parse_results $H;
-$H->{L1I}->{cfg}->{size}  = 2**6;
-$H->{L1I}->{cfg}->{assoc} = 1;
-$H->{L1D}->{cfg}->{size}  = 2**16;
-$H->{L1D}->{cfg}->{assoc} = 4;
-$H->{L2}->{cfg}->{size}   = 2**20;
-$H->{L2}->{cfg}->{assoc}  = 8;
-$H->{L3}->{cfg}->{size}   = 2**30;
-$H->{L3}->{cfg}->{assoc}  = 16;
+my $x = "imagick_r";
+#                                    L1I    L1D    L2       L3
+my $sweep = DrCachesim::brutef_sweep((7,7), (9,9), (14,14), (20,20), 
+                                     (1,1), (0,3), (3,3),   (3,3));
+#TODO limit number of forks, maybe predetermine it and split $sweep accordingly using slices
+my @pids = ();
+foreach my $H (@$sweep) {
+    my $pid = fork;
+    if ($pid == 0) {
+        print "$$: Hello!\n";
+        print Dumper($H);
+        spec_cachesim $x, $H;
 
-spec_cachesim "imagick_r", $H;
-print Dumper($H);
+        #NOTE list context for $fh so file is not auto-deleted
+        my ($fh) = tempfile("${x}_sim_XXXXXXX", DIR => "$CWD/results");
+        print $fh Dumper($H);
+        exit 0;
+    }
+    push @pids, $pid;
+}
+wait for @pids;
+
 exit 0;
