@@ -1,0 +1,31 @@
+---- <application exited with code 0> ----
+Cache simulation results:
+Core #0 (1 thread(s))
+  L1I stats:
+    Hits:                       93,440,726
+    Misses:                          5,990
+    Compulsory misses:               3,869
+    Invalidations:                       0
+    Miss rate:                        0.01%
+  L1D stats:
+    Hits:                       25,726,000
+    Misses:                        824,873
+    Compulsory misses:              43,952
+    Invalidations:                       0
+    Miss rate:                        3.11%
+L2 stats:
+    Hits:                          714,041
+    Misses:                        116,822
+    Compulsory misses:              47,821
+    Invalidations:                       0
+    Local miss rate:                 14.06%
+    Child hits:                119,166,726
+    Total miss rate:                  0.10%
+L3 stats:
+    Hits:                           12,165
+    Misses:                        104,657
+    Compulsory misses:              47,821
+    Invalidations:                       0
+    Local miss rate:                 89.59%
+    Child hits:                119,880,767
+    Total miss rate:                  0.09%

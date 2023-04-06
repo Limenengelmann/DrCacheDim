@@ -2,10 +2,10 @@
  
 // Common params.
 num_cores       1
-line_size       64
-cpu_scheduling  false
-sim_refs        999999999
-warmup_fraction 0
+// line_size       64
+// cpu_scheduling  false
+// sim_refs        999999999
+// warmup_fraction 0
  
 // Cache params.
 L1I {                        // P0 L1 instruction cache
