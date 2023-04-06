@@ -1,6 +1,7 @@
 use strict; 
 use warnings;
 use Data::Dumper;
+use Storable qw(dclone);
 
 use lib qw#./aux#;
 use SpecInt;
@@ -72,35 +73,33 @@ sub spec_instrumentation {
 
 sub spec_cachesim {
     my $k = shift;
+    my $H = shift;
+    #my $simcfg = shift || "/home/elimtob/Workspace/mymemtrace/config/cachesim_single.dr";
+    my $simcfg = DrCachesim::create_cfg($H);
     my $exe = %$SpecInt::test_run{$k}->[0];
     SpecInt::chdir $k;
     print "Executing: $exe\n";
-    my $simcfg = "-config_file /home/elimtob/Workspace/mymemtrace/config/cachesim_single.dr";
     #my $simt = "-simulator_type basic_counts";
     my $simt = "";
-    my $ret = system(qq# drrun -root "$DrCachesim::drdir" -t drcachesim $simcfg $simt-- $exe #);
+    my $cmd = qq# drrun -root "$DrCachesim::drdir" -t drcachesim -config_file $simcfg $simt -- $exe 2>&1#;
+    my $ret = DrCachesim::parse_results($cmd, $H);
     die "Ret $ret. Command failed: $!.\n" unless $ret == 0;
 }
 
 #spec_instrumentation "imagick_r", "$memtrdir/lib/libbbsize.so";
 #run_all();
-#spec_cachesim "imagick_r";
 
 my $H = DrCachesim::new_hierarchy();
 #DrCachesim::parse_results $H;
-#print Dumper($H);
-#TODO Following problem: if keys map 1to1 to drcachesim parameters, cannot add custom fields
-$H->{L1} = {
-    name           => "test",
-    type           => "data",
-    core           => 0,
-    size           => 2**12,
-    assoc          => 8,
-    inclusive      => undef,
-    parent         => "memory",
-    prefetcher     => "none",
-    replace_policy => "LRU",
-};
+$H->{L1I}->{cfg}->{size}  = 2**6;
+$H->{L1I}->{cfg}->{assoc} = 1;
+$H->{L1D}->{cfg}->{size}  = 2**16;
+$H->{L1D}->{cfg}->{assoc} = 4;
+$H->{L2}->{cfg}->{size}   = 2**20;
+$H->{L2}->{cfg}->{assoc}  = 8;
+$H->{L3}->{cfg}->{size}   = 2**30;
+$H->{L3}->{cfg}->{assoc}  = 16;
 
-DrCachesim::create_cfg $H;
+spec_cachesim "imagick_r", $H;
+print Dumper($H);
 exit 0;

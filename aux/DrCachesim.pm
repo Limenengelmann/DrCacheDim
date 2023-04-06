@@ -7,26 +7,27 @@ our $drdir="/home/elimtob/.local/opt/DynamoRIO";
 
 sub new_cache {
    my $class = "cache";
-   # NOTE: keys that do not map to references need to be exact DrCachesim config params
-   # TODO how to use named params
+   my %args = @_;
    my $self = {
-        type           => undef,
-        core           => 0,
-        size           => undef,
-        assoc          => undef,
-        inclusive      => undef,
-        parent         => undef,
-        prefetcher     => "none",
-        replace_policy => "LRU",
-        stats          => {
-            "Hits"              => undef,
-            "Misses"            => undef,
-            "Compulsory misses" => undef,
-            "Invalidations"     => undef,
-            "Miss rate"         => undef,
-            "Local miss rate"   => undef,
-            "Child hits"        => undef,
-            "Total miss rate"   => undef,
+       cfg => { # keys need to be exact DrCachesim config params
+           type           => $args{type},
+           core           => $args{core},
+           size           => $args{size},
+           assoc          => $args{assoc},
+           inclusive      => $args{inclusive},
+           parent         => $args{parent},
+           prefetcher     => "none",
+           replace_policy => "LRU",
+       },
+       stats => {
+           "Hits"              => undef,
+           "Misses"            => undef,
+           "Compulsory misses" => undef,
+           "Invalidations"     => undef,
+           "Miss rate"         => undef,
+           "Local miss rate"   => undef,
+           "Child hits"        => undef,
+           "Total miss rate"   => undef,
        }
    };
    bless $self, $class;
@@ -36,27 +37,37 @@ sub new_cache {
 sub new_hierarchy {
    my $class = "hierarchy";
    my $self = {
-        L1I => new_cache(),
-        L1D => new_cache(),
-        L2  => new_cache(),
-        L3  => new_cache(),
+        L1I => new_cache(type => "instruction", core => 0, parent => "L2"),
+        L1D => new_cache(type => "data", core => 0, parent => "L2"),
+        L2  => new_cache(type => "unified", parent => "L3", inclusive => "false"),
+        L3  => new_cache(type => "unified", parent => "memory", inclusive => "false"),
    };
    bless $self, $class;
    return $self;
 }
 
 sub parse_results {
-    my $H   = shift;
     my $cmd = shift;
-    $cmd    = "cat aux/csim_res.txt";
-    open(my $cmdout, '-|', $cmd) or die "Didn't work mate: $!";
+    my $H   = shift;
+    $cmd    =~ s/ -- .*$/ -- echo 'babadibupi'/;
+
+    # safe open to merge stderr and stdout (drcachesim outputs stats to stderr)
+    my $pid = open my $cmdout, '-|';
+    if ($pid == 0) {
+        # child
+        open STDERR, ">&", \*STDOUT  or die "Safe open failed: $!";
+        exec $cmd or die "Exec failed: $!";
+    }
     
     my $state = 0;
-    my $c;
+    my $c; 
+    my $ret;
     while (my $l = <$cmdout>) {
-        #print $l;
+        #print "$l";
+        #print "State = $state\n";
         if ($state == 0 && $l =~ /---- <application exited with code (\d+)> ----/) {
-            die "App exited with error!\n" unless $1 == 0; # on nonzero exit code
+            $ret = $1;
+            last unless $ret == 0; # on nonzero exit code
             $state = 1;
         } elsif ($state == 1) {
             ($c) = $l =~ /\s*(L1I|L1D|L2|L3) stats:/;
@@ -72,14 +83,15 @@ sub parse_results {
             $$H{$c}->{stats}->{$k} = $v;
         }
     }
+    return $ret;
 }
 
 use File::Temp qw/ tempfile /;
 sub create_cfg {
     my $H      = shift;
     my $tmpdir = "/tmp";
-    #TODO enable real file output
-    #my ($fh, $fname) = tempfile(DIR => "/tmp");
+    #our $KEEP_ALL = 0;  # delete tmpfile at end of run
+    my ($fh, $fname) = tempfile("drcachesim_cfgXXXX", DIR => "/tmp", UNLINK => 1);
 
     my @C = ();
     my $params = qq#
@@ -88,13 +100,12 @@ sub create_cfg {
     push @C, $params;
 
     foreach my $lvl (keys(%$H)) {
-        my $c  = $H->{$lvl};
+        my $c  = $H->{$lvl}->{cfg};
         my $kv = ();
         foreach my $k (keys(%$c)) {
             my $v = $c->{$k};
-            # skip keys that map to references like "stats"
+            # skip keys that map to references
             next unless defined $v and ref $v eq "";
-            print "k=$k, v=$v\n";
             push @$kv, "\t$k $v";
         }
         $kv = join "\n", @$kv;
@@ -104,9 +115,10 @@ sub create_cfg {
             }
         #;
         push @C, $l;
-        #print "lvl=$lvl\n$l\n";
     }
     my $cfg = join "", @C;
-    $cfg =~ s/ {2,}/ /g;
-    print "$cfg\n";
+    $cfg =~ s/ {2,}/ /g;    # just for easier human readability
+
+    print $fh "$cfg\n";
+    return $fname;
 }
