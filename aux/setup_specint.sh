@@ -1,14 +1,15 @@
 #!/usr/bin/bash
 
-specdir=/opt/spec-cpu2017
-drdir=/opt/DynamoRIO
-curdir=`pwd`
+specdir=~/.local/opt/spec-cpu2017
 tuning="base"
 size="test"
 #cfg="base_refrate_linux-amd64-m64"
-cfg="linux-amd64-m64"
-builddir="build_${tuning}_$cfg.0000"
-rundir="run_${tuning}_${size}_$cfg.0000"
+cfg="linux-amd64"
+
+#-m64 automatically added by runcpu
+builddir="build_${tuning}_$cfg-m64.0000"
+rundir="run_${tuning}_${size}_$cfg-m64.0000"
+curdir=`pwd`
 
 progs=(
     "perlbench_r"
@@ -24,7 +25,7 @@ exes=(
     "perlbench_r"
     "mcf_r"
     "omnetpp_r"
-    "cpuxalan_r"
+    "cpuxalan_r"    # different from progs!
     "x264_r"
     "imagick_r"
     "xz_r"
@@ -47,25 +48,45 @@ build=(
     "specmake -j"
 )
 
-#runcpu --fake --loose --size test --tune base --config linux-amd64 $c
-#
-cd $specdir; source "$specdir/shrc"
-#for c in "${!runcmds[@]}"; do
-for ii in "${!progs[@]}"; do
-    c=${progs[$ii]}
-    x="${exes[$ii]}_${tuning}.$cfg"
-    go $c run $rundir
-    #ls -l "$x"
-    #XXX link binaries with their specinvoke name in the run directory
-    #ln -s "../../build/$builddir/${exes[$ii]}" "$x"
-    #rm "$x"
-    #specinvoke -n | grep "$x"
-    #ls "../../build/$builddir/${exe[$i]}"
-    # specinvoke exe name: cpuxalan_r_base.linux-amd64-m64
-    #echo "../../build/$builddir/${exes[$ii]}" "$x"
-    #ls build/$builddir/$c
-    #echo $c
-    #go $c run $rundir
+get_builddir() {
+    local ii=$1
+    runcpu --fake --loose --size $size --tune $tuning --config $cfg ${progs[$ii]}
     #go $c build $builddir
-    #find -maxdepth 1 -type f -executable 
+}
+
+run_specmake() {
+    local ii=$1
+    local c=${progs[$ii]}
+    local x="${exes[$ii]}_${tuning}.$cfg"
+
+    #XXX: this call has side effects (like overwriting the local variable "i")
+    go $c build $builddir
+    ${build[$ii]}
+    if [[ $? -ne 0 ]]; then
+        test
+        echo "run_specmake failed!"
+        echo "i=$ii, c=$c, x=$x, buildcmd=${build[$ii]}"
+        exit 1
+    fi
+}
+
+link_exe(){
+    local ii=$1
+    local c=${progs[$ii]}
+    local x="${exes[$ii]}_${tuning}.$cfg"
+
+    go $c run $rundir
+    if [[ -e $x ]]; then
+        ls -l "$x";
+    else
+        specinvoke -n | grep "$x"
+        ln -s "../../build/$builddir/${exes[$ii]}" "$x"
+    fi
+}
+
+cd $specdir; source "$specdir/shrc"
+for ii in "${!progs[@]}"; do
+    #get_builddir $ii
+    #run_specmake $ii
+    link_exe $ii
 done
