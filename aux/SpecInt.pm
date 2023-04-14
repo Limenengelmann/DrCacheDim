@@ -62,5 +62,5 @@ sub chdir {
     my $rdir=`source shrc; go $x run $rundir`; 
     chomp $rdir;
     chdir($rdir) or print "[SpecInt::chdir] Can't change into '$rdir': $!\n";
-    print "[SpecInt::chdir] Cwd: ". `pwd`;
+    #print "[SpecInt::chdir] Cwd: ". `pwd`;
 }

@@ -12,7 +12,6 @@ sub new_cache {
    my $class = "cache";
    my %args = @_;
    my $self = {
-       cmd => undef,
        lat => undef,
        cfg => { # keys need to be exact DrCachesim config params
            type           => $args{type},
@@ -47,6 +46,7 @@ sub new_hierarchy {
         L2  => new_cache(type => "unified", parent => "L3", inclusive => "false"),
         L3  => new_cache(type => "unified", parent => "memory", inclusive => "false"),
         MML => 1000,    # TODO main memory latency
+        cmd => undef,
    };
    bless $self, $class;
    return $self;
@@ -110,10 +110,34 @@ sub get_local_hierarchy {
     return $H;
 }
 
-sub brutef_sweep {
-    my %args = @_;
+sub int_log2 {
+    # inefficient, but works with float, int, always returns an int
+    # and is also not called often
+    my @N = @_;
+    my @res = ();
 
+    foreach my $n (@N) {
+        my $r = 1;
+        while ($n >= 2**$r) {
+            $r++;
+        }
+        push @res, $r-1;
+    }
+    return \@res;
+}
+
+sub brutef_sweep {
+    
+    my %args = @_;
     my $HP = $args{H};
+
+    # set default values
+    foreach my $l ("L1I", "L1D", "L2", "L3") {
+        unless (defined $args{$l}) {
+            $args{$l} = int_log2($HP->{$l}->{cfg}->{size} , $HP->{$l}->{cfg}->{size},
+                                 $HP->{$l}->{cfg}->{assoc}, $HP->{$l}->{cfg}->{assoc}); 
+        }
+    }
 
     my ($L1I_smin, $L1I_smax,
         $L1I_amin, $L1I_amax) = @{$args{L1I}};
@@ -124,8 +148,8 @@ sub brutef_sweep {
     my ($L3_smin, $L3_smax,
         $L3_amin, $L3_amax) = @{$args{L3}};
 
-    #print "$L1I_smin, $L1D_smin, $L2_smin, $L3_smin, $L1I_amin, $L1D_amin, $L2_amin, $L3_amin\n";
-    #print "$L1I_smax, $L1D_smax, $L2_smax, $L3_smax, $L1I_amax, $L1D_amax, $L2_amax, $L3_amax\n";
+    #print "min: $L1I_smin, $L1D_smin, $L2_smin, $L3_smin, $L1I_amin, $L1D_amin, $L2_amin, $L3_amin\n";
+    #print "max: $L1I_smax, $L1D_smax, $L2_smax, $L3_smax, $L1I_amax, $L1D_amax, $L2_amax, $L3_amax\n";
 
     my $count = ($L1I_smax-$L1I_smin+1)*($L1D_smax-$L1D_smin+1)*
                 ($L2_smax-$L2_smin+1)  *($L3_smax-$L3_smin+1)*
@@ -133,6 +157,7 @@ sub brutef_sweep {
                 ($L2_amax-$L2_amin+1)  *($L3_amax-$L3_amin+1);
     print "Warning: Generating up to $count Hierarchies!\n";
 
+    my $ill = 0;
     my $S = ();
     for (my $s1I=2**$L1I_smin; $s1I<=2**$L1I_smax; $s1I*=2) {
     for (my $s1D=2**$L1D_smin; $s1D<=2**$L1D_smax; $s1D*=2) {
@@ -142,7 +167,6 @@ sub brutef_sweep {
     for (my $a1D=2**$L1D_amin; $a1D<=2**$L1D_amax; $a1D*=2) {
     for (my $a2 =2**$L2_amin ; $a2 <=2**$L2_amax ; $a2 *=2) {
     for (my $a3 =2**$L3_amin ; $a3 <=2**$L3_amax ; $a3 *=2) {
-        #TODO maybe check for illformed hierarchies (e.g. assoc*linesize < cache size)
         my $H = $HP ? dclone($HP) : new_hierarchy();
         $H->{L1I}->{cfg}->{size}  = $s1I;
         $H->{L1D}->{cfg}->{size}  = $s1D;
@@ -152,8 +176,20 @@ sub brutef_sweep {
         $H->{L1D}->{cfg}->{assoc} = $a1D;
         $H->{L2}->{cfg}->{assoc}  = $a2 ;
         $H->{L3}->{cfg}->{assoc}  = $a3 ;
-        push @$S, $H;
+
+        # check for illformed hierarchies (e.g. assoc*linesize < cache size)
+        my $ok = 1;
+        foreach my $l ("L1I", "L1D", "L2", "L3") {
+            my $C = $H->{$l}->{cfg};
+            if ($C->{assoc} * 64 > $C->{size}) {
+                $ill++;
+                $ok = 0;
+                last;
+            }
+        }
+        push @$S, $H if $ok;
     }}}}}}}}
+    print "Skipped $ill illformed Hierarchies!\n" if $ill;
     return $S;
 }
 
@@ -173,12 +209,11 @@ sub run_and_parse_output {
     }
     
     my $state = 0;
-    my $c; 
+    my $c;
     my $ret = 0;
     my @cmd_out = ();
     while (my $l = <$cmdout>) {
-        #print $l;
-        push @cmd_out, $l unless $state > 0;    # only remember cmd out
+        push @cmd_out, $l if $state == 0;    # only remember cmd out
         #print "$l";
         #print "State = $state\n";
         if ($state == 0 && $l =~ /---- <application exited with code (\d+)> ----/) {
@@ -203,7 +238,7 @@ sub run_and_parse_output {
     $ret = 1 if $state == 0;    # something definetely went wrong
 
     if (wantarray()) { # list context
-        return ($ret, join(@cmd_out));
+        return ($ret, join("\n", @cmd_out));
     }
     else {
         return $ret;
