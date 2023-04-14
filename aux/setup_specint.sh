@@ -76,12 +76,9 @@ link_exe(){
     local x="${exes[$ii]}_${tuning}.$cfg"
 
     go $c run $rundir
-    if [[ -e $x ]]; then
-        ls -l "$x";
-    else
-        specinvoke -n | grep "$x"
-        ln -s "../../build/$builddir/${exes[$ii]}" "$x"
-    fi
+    #specinvoke -n | grep "$x"
+    ln -sf `realpath "../../build/$builddir/${exes[$ii]}"` "$x"
+    ls -l "$x";
 }
 
 cd $specdir; source "$specdir/shrc"
