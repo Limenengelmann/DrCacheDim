@@ -16,11 +16,14 @@ LVLS = ["L1I", "L1D", "L2", "L3"]
 # ╔═╡ f3956216-70e9-410a-9ee0-abd8300f0e48
 data = YAML.load_file("results/imagick_r_sim_117911.yml")
 
+# ╔═╡ d4970aba-fa12-47c3-93b2-724df8e9eae9
+scaleAMAT = 1e-3
+
 # ╔═╡ c7c4a801-f8cb-4c2f-8323-a53f749572e8
-c_sol = [32768, 1, 49152, 12, 1310720, 20, 8388608, 8, 11021.51408103]
+c_sol = [512, 8, 64, 12, 1024, 20, 16384, 8, 1.130623488695e7*scaleAMAT]
 
 # ╔═╡ 0188012b-3d05-4064-bb49-0e5774461b8f
-header = ("L1Isize", "L1Iassoc", "L1Dsize", "L1Dassoc", "L2size", "L2assoc", "L3size", "L3assoc", "AMAT")
+header = ("L1Isets", "L1Iassoc", "L1Dsets", "L1Dassoc", "L2sets", "L2assoc", "L3sets", "L3assoc", "AMAT")
 
 # ╔═╡ cdd74a56-eac4-4e08-a62a-63d83f38955b
 C = Matrix{Real}(undef,  length(header), length(data))
@@ -32,9 +35,11 @@ i = 1
 for d in data
 	c = Real[]
 	for lvl in LVLS
-		push!(c, d[lvl]["cfg"]["size"], d[lvl]["cfg"]["assoc"])
+		local a = d[lvl]["cfg"]["assoc"]
+		local s = d[lvl]["cfg"]["size"] / 64 / a # sets = size/64/assoc
+		push!(c, s, a)
 	end
-	push!(c, d["AMAT"]/1e3)
+	push!(c, d["AMAT"]*scaleAMAT)
 	println(c)
 	C[:,i] = c; i+=1
 end
@@ -55,16 +60,45 @@ calibrate = Model(Ipopt.Optimizer)
 set_silent(calibrate)
 
 # ╔═╡ 3c67b67c-a12e-49c0-8616-831fcdb33ce3
-w0 = rand(length(header)) .* 20000
+w0 = ones(length(header))
+#w0 = zeros(length(header))
 
 # ╔═╡ 2dda5412-aa02-41e2-846a-d14374a92aef
-@variable(calibrate, w[i=1:length(header)] >= 0, start=w0[i])
+@variable(calibrate, w[i=1:length(header)] >= 0.1, start=w0[i])
+
+# ╔═╡ ea8f2cc3-2e45-49b6-b52f-d35fd1a86a02
+@constraint(calibrate, w[9] == 1) # weights relative to latency weight
+
+# ╔═╡ 9528c6df-1f35-4654-ab75-63e014d9bfc1
+@constraint(calibrate, [i=1:2:7], w[i] <= w[i+1]) # sets < assoc (wrt. cost)
+
+# ╔═╡ 490d4692-4559-4ac2-9074-5609109cf544
+A = [1 0 0 0 -1  0  0  0 0
+	 0 0 1 0 -1  0  0  0 0
+     0 0 0 0  1  0 -1  0 0
+	 0 1 0 0  0 -1  0  0 0
+	 0 0 0 1  0 -1  0  0 0
+	 0 0 0 0  0  1  0 -1 0]
+
+# ╔═╡ e1288f8a-17bd-4e28-a9f4-33af8931a452
+@constraint(calibrate, A*w .>= 0) # sets < assoc (wrt. cost)
+
+# ╔═╡ 51cd50f6-358d-4b7b-99d9-9a988fe6c91a
+sum(C, dims = 2)
+
+# ╔═╡ 1cc1804f-c26a-4e32-9b0b-9da862972fdb
+z = size(C, 2) * c_sol - sum(C, dims=2)
+
+# ╔═╡ 5fe5c7d2-d24d-4d2b-b60e-6d7794b0a4e7
+dot(1:9,z)
 
 # ╔═╡ 27f5d9cb-daa8-4003-ab5e-c6e34d315988
 f(w...) = begin 
-res = 1
+res = 0
 for c in eachcol(C)
-	res *= LinearAlgebra.dot(w, c_sol - c)
+	wc = dot(w, c_sol - c)
+	wc = wc >= 0 ? wc + 10000 : wc
+	res += wc
 end
 return res
 end
@@ -72,11 +106,19 @@ end
 # ╔═╡ d3e99dc8-eff8-4020-8f03-8c381330f9ed
 f(1,2,3,4,5,6,7,8,9)
 
+# ╔═╡ c79f2841-c0c2-4b38-93b1-3fb568166307
+g(w...) = dot(w,z)
+
 # ╔═╡ f451285b-77f1-4720-9b00-4befb10ac9ed
 register(calibrate, :f, length(header), f, autodiff = true)
 
+# ╔═╡ 57ed28bd-3f2f-471e-a2a5-d094d15b9a73
+register(calibrate, :g, length(header), g, autodiff = true)
+
 # ╔═╡ 9fbb750e-ffb1-4d2a-860b-1add424dcb0b
-@NLexpression(calibrate, Min, f(w...))
+#@NLexpression(calibrate, Min, f(w...))
+#@NLexpression(calibrate, Min, g(w...))
+@objective(calibrate, Min, dot(w,z))
 
 # ╔═╡ 5f0c87bb-6717-4f46-887d-d0cade333346
 optimize!(calibrate)
@@ -86,6 +128,12 @@ print(calibrate)
 
 # ╔═╡ 92eadf71-1d58-4eea-9f5c-60db6ddaa136
 solution_summary(calibrate, verbose=true)
+
+# ╔═╡ 49736cc8-67cb-43f0-8452-9ae372ac10ab
+value.(w)
+
+# ╔═╡ 7def7b33-4694-4f9e-9c64-6ee652f12582
+f(value.(w)...)	#objective value
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -541,6 +589,7 @@ version = "17.4.0+0"
 # ╠═ab7ffb3d-e310-43d4-8bff-8241e0b5d271
 # ╠═1aa2daed-e843-4adb-80b1-b1f7006ca2c9
 # ╠═f3956216-70e9-410a-9ee0-abd8300f0e48
+# ╠═d4970aba-fa12-47c3-93b2-724df8e9eae9
 # ╠═c7c4a801-f8cb-4c2f-8323-a53f749572e8
 # ╠═0188012b-3d05-4064-bb49-0e5774461b8f
 # ╠═cdd74a56-eac4-4e08-a62a-63d83f38955b
@@ -553,12 +602,23 @@ version = "17.4.0+0"
 # ╠═a4665e27-f9fa-4336-a7fe-3a84f6c0d26b
 # ╠═3c67b67c-a12e-49c0-8616-831fcdb33ce3
 # ╠═2dda5412-aa02-41e2-846a-d14374a92aef
+# ╠═ea8f2cc3-2e45-49b6-b52f-d35fd1a86a02
+# ╠═9528c6df-1f35-4654-ab75-63e014d9bfc1
+# ╠═490d4692-4559-4ac2-9074-5609109cf544
+# ╠═e1288f8a-17bd-4e28-a9f4-33af8931a452
+# ╠═51cd50f6-358d-4b7b-99d9-9a988fe6c91a
+# ╠═1cc1804f-c26a-4e32-9b0b-9da862972fdb
+# ╠═5fe5c7d2-d24d-4d2b-b60e-6d7794b0a4e7
 # ╠═27f5d9cb-daa8-4003-ab5e-c6e34d315988
 # ╠═d3e99dc8-eff8-4020-8f03-8c381330f9ed
+# ╠═c79f2841-c0c2-4b38-93b1-3fb568166307
 # ╠═f451285b-77f1-4720-9b00-4befb10ac9ed
+# ╠═57ed28bd-3f2f-471e-a2a5-d094d15b9a73
 # ╠═9fbb750e-ffb1-4d2a-860b-1add424dcb0b
 # ╠═5f0c87bb-6717-4f46-887d-d0cade333346
 # ╠═49545a64-616b-491b-8984-ecbedb58df0a
 # ╠═92eadf71-1d58-4eea-9f5c-60db6ddaa136
+# ╠═49736cc8-67cb-43f0-8452-9ae372ac10ab
+# ╠═7def7b33-4694-4f9e-9c64-6ee652f12582
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

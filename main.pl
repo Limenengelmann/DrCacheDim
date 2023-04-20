@@ -23,7 +23,7 @@ sub collect_memrefs {
         exec("$CWD/build/process_memrefs $db");
     }
 
-    my $ret = system(qq# drrun -root "$DrCachesim::drdir" -c "$CWD/build/libmymemtrace_x86.so" -- $r #);
+    my $ret = system(qq# drrun -root "$DrCachesim::DRDIR" -c "$CWD/build/libmymemtrace_x86.so" -- $r #);
 
     waitpid $pid, 0;
     
@@ -70,7 +70,7 @@ sub spec_instrumentation {
 
     SpecInt::chdir $k;
     print "Executing: $exe\n";
-    my $ret = system(qq# drrun -root "$DrCachesim::drdir" -c "$client" -- $exe #);
+    my $ret = system(qq# drrun -root "$DrCachesim::DRDIR" -c "$client" -- $exe #);
     die "Ret $ret. Command failed: $!.\n" unless $ret == 0;
 }
 
@@ -128,7 +128,7 @@ sub parallel_sweep {
                 print $writer "\n";
             }
             #FIXME strips object type
-            DumpFile("/tmp/${x}_sim_$$", \@slice) or die "parallel_sweep: Can't open file: $!";
+            DumpFile("/tmp/${x}_sim_$$.yml", \@slice) or die "parallel_sweep: Can't open file: $!";
             close $writer;
             exit 0;
         }
@@ -154,17 +154,17 @@ sub parallel_sweep {
     @$sweep = ();   # empty the sweep
     foreach my $p (@pids) {
         waitpid $p, 0;
-        my $fname = "/tmp/${x}_sim_$p";
+        my $fname = "/tmp/${x}_sim_$p.yml";
         die "parallel_sweep: Error in process $p: Missing output file '$fname'. Aborting" unless -e $fname;
         #my $s = `cat /tmp/${x}_sim_$p`;
         #$s = eval "my " . $s or die "eval failed: $@";
-        my $s = LoadFile("/tmp/${x}_sim_$p") or die "parallel_sweep: Can't load tmp results: $!";
+        my $s = LoadFile($fname) or die "parallel_sweep: Can't load tmp results: $!";
         push @$sweep, @$s;
         `rm $fname`;
     }
     # collect results and store in results
     my ($fh) = ("${x}_sim_XXXX", DIR => "$CWD/results");
-    DumpFile("$CWD/results/${x}_sim_$$", $sweep) or die "parallel_sweep: Can't load tmp results: $!";
+    DumpFile("$CWD/results/${x}_sim_$$.yml", $sweep) or die "parallel_sweep: Can't load tmp results: $!";
 }
 
 #spec_instrumentation "imagick_r", "$CWD/lib/libbbsize.so";

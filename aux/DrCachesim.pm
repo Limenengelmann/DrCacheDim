@@ -6,7 +6,9 @@ use File::Temp qw/ tempfile /;
 use List::Util qw( min max );
 use Storable qw(dclone);
 
-our $drdir="/home/elimtob/.local/opt/DynamoRIO";
+our $DRDIR="/home/elimtob/.local/opt/DynamoRIO";
+
+our @LVLS=("L1I", "L1D", "L2", "L3");
 
 sub new_cache {
    my $class = "cache";
@@ -55,7 +57,7 @@ sub new_hierarchy {
 sub drrun_cachesim {
     my $simcfg = shift;
     my $exe = shift;
-    my $cmd = qq# drrun -root "$drdir"
+    my $cmd = qq# drrun -root "$DRDIR"
                         -t drcachesim
                         -ipc_name /tmp/drcachesim_pipe$$
                         -config_file "$simcfg"
@@ -100,7 +102,7 @@ sub get_local_hierarchy {
     #my @i3 = ($b[1]..$b[2]);
     #my @i1d = max grep {@ds{$_} <= $H->{L1I}->{cfg}->{size}}, @I;
     #my @i2 = max grep({@ds{$_} <= $H->{L2}->{cfg}->{size}}, @I);
-    foreach my $l ("L1D", "L2", "L3") {
+    foreach my $l (@LVLS) {
         $H->{$l}->{lat} = @T[max(grep({$S[$_] <= $H->{$l}->{cfg}->{size}} @I))];
     }
 
@@ -132,7 +134,7 @@ sub brutef_sweep {
     my $HP = $args{H};
 
     # set default values
-    foreach my $l ("L1I", "L1D", "L2", "L3") {
+    foreach my $l (@LVLS) {
         unless (defined $args{$l}) {
             $args{$l} = int_log2($HP->{$l}->{cfg}->{size} , $HP->{$l}->{cfg}->{size},
                                  $HP->{$l}->{cfg}->{assoc}, $HP->{$l}->{cfg}->{assoc}); 
@@ -249,7 +251,7 @@ sub set_amat {
     # evaluate "goodness" of a hierarchy by simply weighing off size of the cash and average miss rate
     my $H = shift;
     my $AMAT = 0;
-    foreach my $l ("L1I", "L1D", "L2", "L3") {
+    foreach my $l (@LVLS) {
         my $c = $H->{$l};
         $AMAT += $c->{lat} * $c->{stats}->{Hits};
     }
@@ -274,7 +276,7 @@ sub create_cfg {
     #;
     push @C, $params;
 
-    foreach my $lvl ("L1I", "L1D", "L2", "L3") {
+    foreach my $lvl (@LVLS) {
         my $c  = $H->{$lvl}->{cfg};
         my $kv = ();
         foreach my $k (keys(%$c)) {
