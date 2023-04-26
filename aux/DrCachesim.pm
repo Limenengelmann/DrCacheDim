@@ -5,10 +5,13 @@ use warnings;
 use File::Temp qw/ tempfile /;
 use List::Util qw( min max );
 use Storable qw(dclone);
+use YAML qw/ Load LoadFile Dump DumpFile /;
+use Term::ANSIColor;
 
 our $DRDIR="/home/elimtob/.local/opt/DynamoRIO";
 
 our @LVLS=("L1I", "L1D", "L2", "L3");
+our $LINE_SIZE=64;
 
 sub new_cache {
    my $class = "cache";
@@ -31,9 +34,7 @@ sub new_cache {
            "Compulsory misses" => undef,
            "Invalidations"     => undef,
            "Miss rate"         => undef,
-           "Local miss rate"   => undef,
            "Child hits"        => undef,
-           "Total miss rate"   => undef,
        }
    };
    bless $self, $class;
@@ -43,12 +44,14 @@ sub new_cache {
 sub new_hierarchy {
    my $class = "hierarchy";
    my $self = {
-        L1I => new_cache(type => "instruction", core => 0, parent => "L2"),
-        L1D => new_cache(type => "data", core => 0, parent => "L2"),
-        L2  => new_cache(type => "unified", parent => "L3", inclusive => "false"),
-        L3  => new_cache(type => "unified", parent => "memory", inclusive => "false"),
-        MML => 1000,    # TODO main memory latency
-        cmd => undef,
+        L1I  => new_cache(type => "instruction", core => 0, parent => "L2"),
+        L1D  => new_cache(type => "data", core => 0, parent => "L2"),
+        L2   => new_cache(type => "unified", parent => "L3", inclusive => "false"),
+        L3   => new_cache(type => "unified", parent => "memory", inclusive => "false"),
+        MML  => 1000,    # TODO main memory latency
+        AMAT => undef,
+        cmd  => undef,
+        "Total miss rate" => undef,
    };
    bless $self, $class;
    return $self;
@@ -73,13 +76,14 @@ sub beep_when_done {
 sub get_local_hierarchy {
     my $H = new_hierarchy();
 
+    #TODO more precise way to do it via looking in /proc/.../cache
     my $out = `getconf -a | grep CACHE`;
 
     ($H->{L1I}->{cfg}->{size} ) = $out =~ /LEVEL1_ICACHE_SIZE\s*(\d+)/;
     ($H->{L1D}->{cfg}->{size} ) = $out =~ /LEVEL1_DCACHE_SIZE\s*(\d+)/;
     ($H->{L2}->{cfg}->{size}  ) = $out =~ /LEVEL2_CACHE_SIZE\s*(\d+)/;
     ($H->{L3}->{cfg}->{size}  ) = $out =~ /LEVEL3_CACHE_SIZE\s*(\d+)/;
-    ($H->{L1I}->{cfg}->{assoc}) = $out =~ /LEVEL1_ICACHE_ASSOC\s*(\d+)/ || 1;
+    ($H->{L1I}->{cfg}->{assoc}) = $out =~ /LEVEL1_ICACHE_ASSOC\s*(\d+)/ || 8;
     ($H->{L1D}->{cfg}->{assoc}) = $out =~ /LEVEL1_DCACHE_ASSOC\s*(\d+)/;
     ($H->{L2}->{cfg}->{assoc} ) = $out =~ /LEVEL2_CACHE_ASSOC\s*(\d+)/;
     ($H->{L3}->{cfg}->{assoc} ) = $out =~ /LEVEL3_CACHE_ASSOC\s*(\d+)/;
@@ -93,15 +97,6 @@ sub get_local_hierarchy {
     my @T = ($Lat =~ /\s*\d+\s+([\d.]+)/g);
     my @I = (0..$#S-1);
 
-    #my @ds = map ($s[$_+1]-$s[$_]), @I;
-    #my @dt = map ($t[$_+1]-$t[$_]/$ds[$_]), @I;
-    #my @B = max(grep({$S[$_] <= $H->{L1D}->{cfg}->{size}} @I)) . "\n";
-    #print join(", ", @B) . "\n";
-    #my @i1 = (0..$b[0]);
-    #my @i2 = ($b[0]..$b[1]);
-    #my @i3 = ($b[1]..$b[2]);
-    #my @i1d = max grep {@ds{$_} <= $H->{L1I}->{cfg}->{size}}, @I;
-    #my @i2 = max grep({@ds{$_} <= $H->{L2}->{cfg}->{size}}, @I);
     foreach my $l (@LVLS) {
         $H->{$l}->{lat} = @T[max(grep({$S[$_] <= $H->{$l}->{cfg}->{size}} @I))];
     }
@@ -126,6 +121,33 @@ sub int_log2 {
         push @res, $r-1;
     }
     return \@res;
+}
+
+sub valid_config {
+    # Check that a hierarchy can be simulated with dynamorio
+    # And that the sizes make "sense", e.g. L1 < L2 < L3
+    my $H = shift;
+    my $L1I = $H->{L1I}->{cfg};
+    my $L1D = $H->{L1D}->{cfg};
+    my $L2 = $H->{L2}->{cfg};
+    my $L3 = $H->{L3}->{cfg};
+
+    # Rationale for ">" instead of ">=":
+    # Since the simulator only supports sizes as powers of 2,
+    # we might get situations, where the performance improves tremendously
+    # between 2^(n-1) and 2^n, where n is the next levels size.
+    # So those configurations should be allowed
+    my $weird_size = $L1I->{size} > $L1D->{size} ||
+                     $L1D->{size} > $L2->{size}  ||
+                     $L2->{size}  > $L3->{size};
+    my $bad_size = $L1I->{assoc} * $LINE_SIZE > $L1I->{size} ||
+                   $L1D->{assoc} * $LINE_SIZE > $L1D->{size} ||
+                   $L2->{assoc}  * $LINE_SIZE > $L2->{size}  ||
+                   $L3->{assoc}  * $LINE_SIZE > $L3->{size};
+    #print colored("Weird size\n", "red") if $weird_size;
+    #print colored("Bad size\n", "red") if $bad_size;
+
+    return not ($weird_size or $bad_size);
 }
 
 sub brutef_sweep {
@@ -179,19 +201,14 @@ sub brutef_sweep {
         $H->{L2}->{cfg}->{assoc}  = $a2 ;
         $H->{L3}->{cfg}->{assoc}  = $a3 ;
 
-        # check for illformed hierarchies (e.g. assoc*linesize < cache size)
-        my $ok = 1;
-        foreach my $l ("L1I", "L1D", "L2", "L3") {
-            my $C = $H->{$l}->{cfg};
-            if ($C->{assoc} * 64 > $C->{size}) {
-                $ill++;
-                $ok = 0;
-                last;
-            }
+        if (valid_config($H)) {
+            push @$S, $H;
+        } else {
+            #print Dump($H);
+            $ill++;
         }
-        push @$S, $H if $ok;
     }}}}}}}}
-    print "Skipped $ill illformed Hierarchies!\n" if $ill;
+    print "Skipped $ill/$count bad Hierarchies!\n" if $ill;
     return $S;
 }
 
@@ -233,7 +250,13 @@ sub run_and_parse_output {
             my ($k, $v) = $l =~ s/(\d),(\d)/$1$2/r =~ /\s+([\w\s]+):\s+([\d.]+)%?/;
             #print "k=$k, v=$v\n";
             die "Regex matching failed\n" if $k eq "" || $v eq "";
-            $$H{$c}->{stats}->{$k} = $v;
+            if ($k eq "Total miss rate") {  # Store total missrate in hierarchy, not L3
+                $H->{$k} = $v;
+            } elsif ($k eq "Local miss rate") {   # L3 missrate has different naming for some reason
+                $H->{$c}->{stats}->{"Miss rate"} = $v;
+            } else {
+                $H->{$c}->{stats}->{$k} = $v;
+            }
         }
     }
     $H->{cmd} = $cmd;
@@ -250,17 +273,31 @@ sub run_and_parse_output {
 sub set_amat {
     # evaluate "goodness" of a hierarchy by simply weighing off size of the cash and average miss rate
     my $H = shift;
-    my $AMAT = 0;
-    foreach my $l (@LVLS) {
-        my $c = $H->{$l};
-        $AMAT += $c->{lat} * $c->{stats}->{Hits};
-    }
-    $H->{AMAT} = $AMAT + $H->{L3}->{stats}->{Misses} * $H->{MML};
+    my $L1I = $H->{L1I};
+    my $L1D = $H->{L1D};
+    my $L2 = $H->{L2};
+    my $L3 = $H->{L3};
+
+    #TODO how to include L1I latency as well
+    my $AMAT =   $L1D->{lat} + $L1D->{stats}->{"Miss rate"}
+               * ($L2->{lat} +  $L2->{stats}->{"Miss rate"}
+               * ($L3->{lat} +  $L3->{stats}->{"Miss rate"}
+               * $H->{MML}));
+    print 'L1D->{lat}         undefined\n' if not defined $L1D->{lat};
+    print 'L1D->{"Miss rate"} undefined\n' if not defined $L1D->{stats}->{"Miss rate"};
+    print 'L2->{lat}          undefined\n' if not defined $L2->{lat};
+    print 'L3->{lat}          undefined\n' if not defined $L3->{lat};
+    print 'H->{MML}           undefined\n' if not defined $H->{MML};
+    print 'L2->{"Miss rate"}  undefined\n' if not defined $L2->{stats}->{"Miss rate"};
+    print 'L3->{"Miss rate"}  undefined\n' if not defined $L3->{stats}->{"Miss rate"};
+
+    #print Dump($H);
+    $H->{AMAT} = $AMAT;
     return $AMAT;
 }
 
-#TODO load previous simulations in results folder
 sub load_results {
+#TODO load previous simulations in results folder
     1;
 }
 

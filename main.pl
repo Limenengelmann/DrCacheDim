@@ -8,6 +8,7 @@ use lib qw#./aux#;
 use SpecInt;
 use DrCachesim;
 use YAML qw/ Load LoadFile Dump DumpFile /;
+use List::Util qw( sample );
 use IO::Handle;
 
 my $CWD="/home/elimtob/Workspace/mymemtrace";
@@ -109,13 +110,14 @@ sub parallel_sweep {
 
     pipe(my $reader, my $writer);
 
+    #TODO trap SIGINT for graceful shutdown
+    #TODO estimate time left
     my @pids = ();
     for(my $p=0; $p<$procs; $p++){
         my ($b1, $b2) = ($p*$share, ($p+1)*$share -1);
         my @slice = @$sweep[$b1 .. $b2];
         my $slen = @slice;
         #print "proc $p: Share from $b1 to $b2 (length slice: $slen, slice: $s)\n";
-        #TODO print progress
         my $pid = fork;
         if ($pid == 0) {
             close $reader;
@@ -124,10 +126,11 @@ sub parallel_sweep {
                 print "";
                 spec_cachesim $x, $H;
                 DrCachesim::set_amat $H;
-                #print Dumper($H);
+                #print Dump($H);
                 print $writer "\n";
             }
             #FIXME strips object type
+            #XXX: Does that really matter? Maybe for loading, but even then maybe scrap OO completely
             DumpFile("/tmp/${x}_sim_$$.yml", \@slice) or die "parallel_sweep: Can't open file: $!";
             close $writer;
             exit 0;
@@ -173,16 +176,27 @@ sub parallel_sweep {
 
 #check_fetch_latency
 my $H = DrCachesim::get_local_hierarchy();
-my $s1I = DrCachesim::brutef_sweep(H => $H, L1I => [7,9,1,3]);
-my $s1D = DrCachesim::brutef_sweep(H => $H, L1D => [9,12,1,3]);
-my $s2  = DrCachesim::brutef_sweep(H => $H, L2  => [14,17,1,4]);
-my $s3  = DrCachesim::brutef_sweep(H => $H, L3  => [20,23,1,5]);
-my $sweep = [
-    #@$s1I, 
+my $s1I = DrCachesim::brutef_sweep(H => $H, L1I => [15,15,1,3]);
+my $s1D = DrCachesim::brutef_sweep(H => $H, L1D => [16,17,1,3]);
+my $s2  = DrCachesim::brutef_sweep(H => $H, L2  => [21,23,1,4]);
+my $s3  = DrCachesim::brutef_sweep(H => $H, L3  => [23,25,1,4]);
+my $level_sweep = [
+    @$s1I, 
     @$s1D,
-    #@$s2, 
-    #@$s3,
+    @$s2,
+    @$s3,
 ];
+
+my $cube_sweep = DrCachesim::brutef_sweep(H => $H, L1I => [10,11,1,3], 
+                                                   L1D => [10,13,1,3],
+                                                   L2  => [14,17,1,3],
+                                                   L3  => [18,20,1,3]);
+
+my $sweep = $level_sweep;
+
+my $cap = 10;
+print "Limiting sweep to $cap simulation\n";
+@$sweep = sample $cap, @$sweep;
 
 my $x = "imagick_r";
 parallel_sweep $x, $sweep;
