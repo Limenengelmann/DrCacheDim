@@ -9,6 +9,7 @@ use SpecInt;
 use DrCachesim;
 use YAML qw/ Load LoadFile Dump DumpFile /;
 use List::Util qw( sample );
+use Time::HiRes qw( time );
 use IO::Handle;
 
 my $CWD="/home/elimtob/Workspace/mymemtrace";
@@ -112,6 +113,7 @@ sub parallel_sweep {
 
     #TODO trap SIGINT for graceful shutdown
     #TODO estimate time left
+    #TODO measure simulation speed
     my @pids = ();
     for(my $p=0; $p<$procs; $p++){
         my ($b1, $b2) = ($p*$share, ($p+1)*$share -1);
@@ -141,18 +143,22 @@ sub parallel_sweep {
     close $writer;
     # check progress
     my $count = 0;
-    
+    my $tic = time();
+    my $time_left = -1;
     do {
-        printf "%d/%d simulations done\r", $count, $len;
+        my $toc = time();
+        my $sim_speed = $count / ($toc-$tic);
+        $time_left = ($len-$count) / $sim_speed if $sim_speed > 0;
+        printf "%d/%d simulations done in %.1fs, %.1fs left (%.1f sims/s)\r", $count, $len, $toc-$tic, $time_left, $sim_speed;
         STDOUT->flush();
         $count++;
     } while (my $c = <$reader>);
 
-    while (my $c = <$reader>) {
-        $count++;
-        printf "%d/%d simulations done\r", $count, $len;
-        STDOUT->flush();
-    }
+    #while (my $c = <$reader>) {
+    #    $count++;
+    #    printf "%d/%d simulations done\r", $count, $len;
+    #    STDOUT->flush();
+    #}
 
     @$sweep = ();   # empty the sweep
     foreach my $p (@pids) {
@@ -192,9 +198,9 @@ my $cube_sweep = DrCachesim::brutef_sweep(H => $H, L1I => [10,11,1,3],
                                                    L2  => [14,17,1,3],
                                                    L3  => [18,20,1,3]);
 
-my $sweep = $level_sweep;
+my $sweep = $cube_sweep;
 
-my $cap = 10;
+my $cap = 100;
 print "Limiting sweep to $cap simulation\n";
 @$sweep = sample $cap, @$sweep;
 
