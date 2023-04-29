@@ -153,12 +153,7 @@ sub parallel_sweep {
         STDOUT->flush();
         $count++;
     } while (my $c = <$reader>);
-
-    #while (my $c = <$reader>) {
-    #    $count++;
-    #    printf "%d/%d simulations done\r", $count, $len;
-    #    STDOUT->flush();
-    #}
+    print "\n";
 
     @$sweep = ();   # empty the sweep
     foreach my $p (@pids) {
@@ -172,41 +167,44 @@ sub parallel_sweep {
         `rm $fname`;
     }
     # collect results and store in results
-    my ($fh) = ("${x}_sim_XXXX", DIR => "$CWD/results");
     DumpFile("$CWD/results/${x}_sim_$$.yml", $sweep) or die "parallel_sweep: Can't load tmp results: $!";
 }
 
-#spec_instrumentation "imagick_r", "$CWD/lib/libbbsize.so";
-#run_all();
-#parallel_sweep $x, $sweep;
+sub run_simulation {
+    #spec_instrumentation "imagick_r", "$CWD/lib/libbbsize.so";
+    #run_all();
+    #parallel_sweep $x, $sweep;
 
-#check_fetch_latency
-my $H = DrCachesim::get_local_hierarchy();
-my $s1I = DrCachesim::brutef_sweep(H => $H, L1I => [15,15,1,3]);
-my $s1D = DrCachesim::brutef_sweep(H => $H, L1D => [16,17,1,3]);
-my $s2  = DrCachesim::brutef_sweep(H => $H, L2  => [21,23,1,4]);
-my $s3  = DrCachesim::brutef_sweep(H => $H, L3  => [23,25,1,4]);
-my $level_sweep = [
-    @$s1I, 
-    @$s1D,
-    @$s2,
-    @$s3,
-];
+    #check_fetch_latency
+    my $H = DrCachesim::get_local_hierarchy();
+    my $s1I = DrCachesim::brutef_sweep(H => $H, L1I => [15,15,1,3]);
+    my $s1D = DrCachesim::brutef_sweep(H => $H, L1D => [16,17,1,3]);
+    my $s2  = DrCachesim::brutef_sweep(H => $H, L2  => [21,23,1,4]);
+    my $s3  = DrCachesim::brutef_sweep(H => $H, L3  => [23,25,1,4]);
+    my $level_sweep = [
+        @$s1I, 
+        @$s1D,
+        @$s2,
+        @$s3,
+    ];
 
-my $cube_sweep = DrCachesim::brutef_sweep(H => $H, L1I => [10,11,1,3], 
-                                                   L1D => [10,13,1,3],
-                                                   L2  => [14,17,1,3],
-                                                   L3  => [18,20,1,3]);
+    my $cube_sweep = DrCachesim::brutef_sweep(H => $H, L1I => [10,11,1,3], 
+                                                       L1D => [10,13,1,3],
+                                                       L2  => [14,17,1,3],
+                                                       L3  => [18,20,1,3]);
 
-my $sweep = $cube_sweep;
+    my $sweep = $cube_sweep;
 
-my $cap = 100;
-print "Limiting sweep to $cap simulation\n";
-@$sweep = sample $cap, @$sweep;
+    my $cap = 4000;
+    print "Limiting sweep to $cap simulation\n";
+    @$sweep = sample $cap, @$sweep;
 
-my $x = "imagick_r";
-parallel_sweep $x, $sweep;
-#print Dumper($$sweep[0]);
-DrCachesim::beep_when_done();
+    my $x = "imagick_r";
+    parallel_sweep $x, $sweep;
+    #print Dumper($$sweep[0]);
+    DrCachesim::beep_when_done();
+}
+
+DrCachesim::update_simulations "./results";
 
 exit 0;
