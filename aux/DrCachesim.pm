@@ -153,7 +153,7 @@ sub valid_config {
 sub brutef_sweep {
     
     my %args = @_;
-    my $HP = $args{H};
+    my $HP = $args{H};  # prototype, fills in potentially missing params
 
     # set default values
     foreach my $l (@LVLS) {
@@ -191,7 +191,7 @@ sub brutef_sweep {
     for (my $a1D=2**$L1D_amin; $a1D<=2**$L1D_amax; $a1D*=2) {
     for (my $a2 =2**$L2_amin ; $a2 <=2**$L2_amax ; $a2 *=2) {
     for (my $a3 =2**$L3_amin ; $a3 <=2**$L3_amax ; $a3 *=2) {
-        my $H = $HP ? dclone($HP) : new_hierarchy();
+        my $H = defined $HP ? dclone($HP) : new_hierarchy();
         $H->{L1I}->{cfg}->{size}  = $s1I;
         $H->{L1D}->{cfg}->{size}  = $s1D;
         $H->{L2}->{cfg}->{size}   = $s2 ;
@@ -278,8 +278,9 @@ sub set_amat {
     my $L2 = $H->{L2};
     my $L3 = $H->{L3};
 
-    #TODO how to include L1I latency as well
-    my $AMAT =   $L1D->{lat} + $L1D->{stats}->{"Miss rate"}
+    my $AMAT = $L1D->{lat}
+               + ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"})
+               / ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"} + $L1D->{stats}->{"Hits"} + $L1I->{stats}->{"Hits"})
                * ($L2->{lat} +  $L2->{stats}->{"Miss rate"}
                * ($L3->{lat} +  $L3->{stats}->{"Miss rate"}
                * $H->{MML}));
@@ -294,6 +295,23 @@ sub set_amat {
     #print Dump($H);
     $H->{AMAT} = $AMAT;
     return $AMAT;
+}
+
+sub update_simulations {
+    # Update non-simulated parameters like latency or AMAT 
+    # for all simulations in the given folder
+    my $folder = shift;
+    my $all = `find $folder -name "*.yml" -type f`;
+    my @list = split "\n", $all;
+    foreach my $fname (@list) {
+        print "Loading $fname\n";
+        my $s = LoadFile($fname) or die "update_simulations: Can't load '$fname': $!";
+        foreach my $H (@$s) {
+            set_amat $H;
+        }
+        print "Writing back $fname\n";
+        DumpFile($fname, $s) or die "update_simulations: Can't dump '$fname': $!";
+    }
 }
 
 sub load_results {

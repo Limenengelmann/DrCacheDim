@@ -9,7 +9,7 @@ import glob
 
 proot="/home/elimtob/Workspace/mymemtrace"
 
-fglob=f"{proot}/results/imagick_r_sim_*"
+fglob=f"{proot}/results/keep/imagick_r_test_sim_4000.yml"
 
 sweeps = []
 for fname in glob.glob(fglob):
@@ -21,17 +21,28 @@ df = pd.concat(sweeps)
 print(df)
 
 D = [
-        "L1D.cfg.assoc",
         "L1D.cfg.size",
-        "L1D.stats.Miss rate",
-        "L2.cfg.assoc",
+        "L1D.cfg.assoc",
+        #"L1D.stats.Miss rate",
+        "L1D.stats.Misses",
         "L2.cfg.size",
-        "L2.stats.Miss rate",
-        "L3.cfg.assoc",
+        "L2.cfg.assoc",
+        #"L2.stats.Miss rate",
+        "L2.stats.Misses",
         "L3.cfg.size",
-        "L3.stats.Miss rate",
+        "L3.cfg.assoc",
+        #"L3.stats.Miss rate",
+        "L3.stats.Misses",
         "AMAT",
 ]
+
+dims = []
+for d in D:
+    dd = dict(values = df[d], label=d)
+    if d.endswith("assoc"):
+        #dd["tickvals"] = [32,16,8,4,2,1]
+        pass
+    dims.append(dd)
 
 fig = go.Figure(data=
     go.Parcoords(
@@ -41,52 +52,9 @@ fig = go.Figure(data=
                     #cmin = 1,
                     #cmax = 16,
         ),
-        dimensions = list([
-                        dict(
-                            label = "L1D ways", values = df['L1D.cfg.assoc'],
-                            tickvals = [1,2,4,8,16],
-                        ),
-                        dict(
-                            label = "L1D size", values = df['L1D.cfg.size'],
-                        ),
-                        dict(
-                            label = "L1D MR", values = df['L1D.stats.Miss rate'],
-                        ),
-                        dict(
-                            label = "L2 ways", values = df['L2.cfg.assoc'],
-                            tickvals = [1,2,4,8,16],
-                        ),
-                        dict(
-                            label = "L2 size", values = df['L2.cfg.size'],
-                        ),
-                        dict(
-                            label = "L2 MR", values = df['L2.stats.Miss rate'],
-                        ),
-                        dict(
-                            label = "L3 ways", values = df['L3.cfg.assoc'],
-                            tickvals = [1,2,4,8,16,32],
-                        ),
-                        dict(
-                            label = "L3 size", values = df['L3.cfg.size'],
-                        ),
-                        dict(
-                            label = "L3 MR", values = df['L3.stats.Miss rate'],
-                        ),
-                        dict(
-                            label = "AMAT", values = df['L3.cfg.size'],
-                        ),
-        ]),
+        dimensions = dims,
         unselected = dict(line = dict(opacity = 0.05))
     )
 )
-
-#fig = px.parallel_coordinates(df,
-#                              #color="L1D.cfg.assoc", 
-#                              color="AMAT", 
-#                              #color_continuous_scale=px.colors.diverging.Tealrose,
-#                              #color_continuous_midpoint=5
-#                              dimensions=D, 
-#                              #labels=L,
-#)
 
 fig.show()

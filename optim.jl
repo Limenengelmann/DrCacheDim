@@ -14,13 +14,14 @@ cd("/home/elimtob/Workspace/mymemtrace");
 LVLS = ["L1I", "L1D", "L2", "L3"]
 
 # ╔═╡ f3956216-70e9-410a-9ee0-abd8300f0e48
-data = YAML.load_file("results/imagick_r_sim_117911.yml")
+data = YAML.load_file("results/keep/imagick_r_test_sim_4000.yml")
+
 
 # ╔═╡ d4970aba-fa12-47c3-93b2-724df8e9eae9
 scaleAMAT = 1e-3
 
 # ╔═╡ c7c4a801-f8cb-4c2f-8323-a53f749572e8
-c_sol = [512, 8, 64, 12, 1024, 20, 16384, 8, 1.130623488695e7*scaleAMAT]
+c_sol = [512, 8, 64, 12, 1024, 20, 16384, 8, 480000*scaleAMAT]
 
 # ╔═╡ 0188012b-3d05-4064-bb49-0e5774461b8f
 header = ("L1Isets", "L1Iassoc", "L1Dsets", "L1Dassoc", "L2sets", "L2assoc", "L3sets", "L3assoc", "AMAT")
@@ -53,6 +54,9 @@ c_sol .- C[:,1:end]
 # ╔═╡ 78f6bfe9-967a-40b8-9fcf-2af46841106e
 data[1]["L1I"]
 
+# ╔═╡ d6276e35-e043-429e-9d3c-850d1d4dc91d
+print("-------------------------------------------------------------------------")
+
 # ╔═╡ 874f9508-9c52-4368-b701-df3517977c74
 calibrate = Model(Ipopt.Optimizer)
 
@@ -60,8 +64,10 @@ calibrate = Model(Ipopt.Optimizer)
 set_silent(calibrate)
 
 # ╔═╡ 3c67b67c-a12e-49c0-8616-831fcdb33ce3
-w0 = ones(length(header))
+#w0 = ones(length(header))
 #w0 = zeros(length(header))
+w0 = rand(length(header))*9
+#w0 = [1,2,3,4,5,6,7,8,1]
 
 # ╔═╡ 2dda5412-aa02-41e2-846a-d14374a92aef
 @variable(calibrate, w[i=1:length(header)] >= 0.1, start=w0[i])
@@ -81,7 +87,7 @@ A = [1 0 0 0 -1  0  0  0 0
 	 0 0 0 0  0  1  0 -1 0]
 
 # ╔═╡ e1288f8a-17bd-4e28-a9f4-33af8931a452
-@constraint(calibrate, A*w .>= 0) # sets < assoc (wrt. cost)
+@constraint(calibrate, A*w .>= 0) #
 
 # ╔═╡ 51cd50f6-358d-4b7b-99d9-9a988fe6c91a
 sum(C, dims = 2)
@@ -97,7 +103,7 @@ f(w...) = begin
 res = 0
 for c in eachcol(C)
 	wc = dot(w, c_sol - c)
-	wc = wc >= 0 ? wc + 10000 : wc
+	wc = wc >= 0 ? wc + 1 : wc
 	res += wc
 end
 return res
@@ -117,13 +123,14 @@ register(calibrate, :g, length(header), g, autodiff = true)
 
 # ╔═╡ 9fbb750e-ffb1-4d2a-860b-1add424dcb0b
 #@NLexpression(calibrate, Min, f(w...))
-#@NLexpression(calibrate, Min, g(w...))
-@objective(calibrate, Min, dot(w,z))
+@NLexpression(calibrate, Min, g(w...))
+#@objective(calibrate, Min, dot(w,z))
 
 # ╔═╡ 5f0c87bb-6717-4f46-887d-d0cade333346
 optimize!(calibrate)
 
 # ╔═╡ 49545a64-616b-491b-8984-ecbedb58df0a
+# ╠═╡ show_logs = false
 print(calibrate)
 
 # ╔═╡ 92eadf71-1d58-4eea-9f5c-60db6ddaa136
@@ -598,6 +605,7 @@ version = "17.4.0+0"
 # ╠═a7fb9de9-22b0-4826-8730-0c2f23fa894a
 # ╠═6a25e6c8-10c6-474f-b4ee-799b978c3d84
 # ╠═78f6bfe9-967a-40b8-9fcf-2af46841106e
+# ╠═d6276e35-e043-429e-9d3c-850d1d4dc91d
 # ╠═874f9508-9c52-4368-b701-df3517977c74
 # ╠═a4665e27-f9fa-4336-a7fe-3a84f6c0d26b
 # ╠═3c67b67c-a12e-49c0-8616-831fcdb33ce3

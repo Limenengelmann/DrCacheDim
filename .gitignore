@@ -1,5 +1,7 @@
 .*
-/build
+*/build
 /data
-/traces
+*/traces
+*/bin
+*/lib
 /results
