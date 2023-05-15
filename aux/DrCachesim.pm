@@ -13,6 +13,8 @@ our $DRDIR="/home/elimtob/.local/opt/DynamoRIO";
 our @LVLS=("L1I", "L1D", "L2", "L3");
 our $LINE_SIZE=64;
 
+#TODO store simulations in sqlite instead of yaml
+
 sub new_cache {
    my $class = "cache";
    my %args = @_;
@@ -46,8 +48,8 @@ sub new_hierarchy {
    my $self = {
         L1I  => new_cache(type => "instruction", core => 0, parent => "L2"),
         L1D  => new_cache(type => "data", core => 0, parent => "L2"),
-        L2   => new_cache(type => "unified", parent => "L3", inclusive => "false"),
-        L3   => new_cache(type => "unified", parent => "memory", inclusive => "false"),
+        L2   => new_cache(type => "unified", parent => "L3", inclusive => "true"),
+        L3   => new_cache(type => "unified", parent => "memory", inclusive => "true"),
         MML  => 1000,    # TODO main memory latency
         AMAT => undef,
         cmd  => undef,
@@ -60,10 +62,12 @@ sub new_hierarchy {
 sub drrun_cachesim {
     my $simcfg = shift;
     my $exe = shift;
+    my $drargs = shift || "";
     my $cmd = qq# drrun -root "$DRDIR"
                         -t drcachesim
                         -ipc_name /tmp/drcachesim_pipe$$
                         -config_file "$simcfg"
+                        $drargs
                         -- $exe#;
 
     return $cmd =~ s/\n/ /gr =~ s/  +/ /gr;
@@ -247,7 +251,7 @@ sub run_and_parse_output {
                 $c = $1;
                 next;
             }
-            my ($k, $v) = $l =~ s/(\d),(\d)/$1$2/r =~ /\s+([\w\s]+):\s+([\d.]+)%?/;
+            my ($k, $v) = $l =~ s/(\d),(\d)/$1$2/gr =~ /\s+([\w\s]+):\s+([\d.]+)%?/;
             #print "k=$k, v=$v\n";
             die "Regex matching failed\n" if $k eq "" || $v eq "";
             if ($k eq "Total miss rate") {  # Store total missrate in hierarchy, not L3
@@ -298,10 +302,11 @@ sub set_amat {
 }
 
 sub update_simulations {
-    # Update non-simulated parameters like latency or AMAT 
+    # Update non-simulated parameters like latency or AMAT
     # for all simulations in the given folder
     my $folder = shift;
-    my $all = `find $folder -name "*.yml" -type f`;
+    my $fglob = "*.yml";
+    my $all = `find $folder -name "$fglob" -type f`;
     my @list = split "\n", $all;
     foreach my $fname (@list) {
         print "Loading $fname\n";

@@ -1,14 +1,15 @@
 use strict; 
 use warnings;
-use Data::Dumper;
-use Storable qw(dclone);
-use File::Temp qw/ tempfile /;
-
 use lib qw#./aux#;
 use SpecInt;
 use DrCachesim;
+
+use Data::Dumper;
+use Storable qw(dclone);
+use File::Temp qw/ tempfile /;
+use File::Copy qw/ move /;
 use YAML qw/ Load LoadFile Dump DumpFile /;
-use List::Util qw( sample );
+use List::Util qw( sample none );
 use Time::HiRes qw( time );
 use IO::Handle;
 
@@ -17,15 +18,17 @@ my $CWD="/home/elimtob/Workspace/mymemtrace";
 my $dbdir="/home/elimtob/Workspace/mymemtrace/traces";
 
 sub collect_memrefs {
-    my $r = shift;
+    my $x = shift;
     my $db = shift;
+    
+    my ($cmd, $drargs) = &$x();
 
     my $pid = fork();
     if ($pid == 0) {
-        exec("$CWD/build/process_memrefs $db");
+        exec("$CWD/bin/process_memrefs $db");
     }
 
-    my $ret = system(qq# drrun -root "$DrCachesim::DRDIR" -c "$CWD/build/libmymemtrace_x86.so" -- $r #);
+    my $ret = system(qq# drrun -root "$DrCachesim::DRDIR" -c "$CWD/lib/libmymemtrace_x86.so" $drargs -- $cmd #);
 
     waitpid $pid, 0;
     
@@ -76,29 +79,31 @@ sub spec_instrumentation {
     die "Ret $ret. Command failed: $!.\n" unless $ret == 0;
 }
 
-sub spec_cachesim {
-    my $k = shift;
+sub run_cachesim {
+    #my $k = shift;
+    my $cb = shift;
     my $H = shift;
     #my $simcfg = shift || "/home/elimtob/Workspace/mymemtrace/config/cachesim_single.dr";
     my $simcfg = DrCachesim::create_cfg($H);
     #TODO run all parts instead
-    my $exe = %$SpecInt::test_run{$k}->[0];
-    SpecInt::chdir $k;
-    my $cmd = DrCachesim::drrun_cachesim($simcfg, $exe);
+    #my $exe = %$SpecInt::test_run{$k}->[0];
+    my ($exe, $drargs) = &$cb();
+    #SpecInt::chdir $k;
+    my $cmd = DrCachesim::drrun_cachesim($simcfg, $exe, $drargs);
     #print "Executing: $cmd\n";
     #print "Before: " . Dumper($H);
     #my $ret = DrCachesim::run_and_parse_output($cmd, $H);
-    my ($ret, $cmdout) = DrCachesim::run_and_parse_output($cmd, $H); #print $cmdout;
+    my ($ret, $cmdout) = DrCachesim::run_and_parse_output($cmd, $H, $drargs); #print $cmdout;
     #print "After: " . Dumper($H);
     if ($ret != 0) {
-        my $msg = "[spec_cachesim#$$]: run and parse returned $ret. Command failed: $!";
+        my $msg = "[run_cachesim#$$]: run and parse returned $ret. Command failed: $!";
         my $h = Dump($H);
         die "$msg\nCommand output: $cmdout\nCommand: $cmd\nConfig:$h\n";
     }
 }
 
 sub parallel_sweep {
-    my $x     = shift;
+    my $cb     = shift;
     my $sweep = shift;
     my $procs = shift || `nproc --all`;
     chomp $procs;
@@ -126,14 +131,14 @@ sub parallel_sweep {
 
             foreach my $H (@slice) {
                 print "";
-                spec_cachesim $x, $H;
+                run_cachesim $cb, $H;
                 DrCachesim::set_amat $H;
                 #print Dump($H);
                 print $writer "\n";
             }
             #FIXME strips object type
             #XXX: Does that really matter? Maybe for loading, but even then maybe scrap OO completely
-            DumpFile("/tmp/${x}_sim_$$.yml", \@slice) or die "parallel_sweep: Can't open file: $!";
+            DumpFile("/tmp/drcachesim_$$.yml", \@slice) or die "parallel_sweep: Can't open file: $!";
             close $writer;
             exit 0;
         }
@@ -158,7 +163,7 @@ sub parallel_sweep {
     @$sweep = ();   # empty the sweep
     foreach my $p (@pids) {
         waitpid $p, 0;
-        my $fname = "/tmp/${x}_sim_$p.yml";
+        my $fname = "/tmp/drcachesim_$p.yml";
         die "parallel_sweep: Error in process $p: Missing output file '$fname'. Aborting" unless -e $fname;
         #my $s = `cat /tmp/${x}_sim_$p`;
         #$s = eval "my " . $s or die "eval failed: $@";
@@ -167,16 +172,22 @@ sub parallel_sweep {
         `rm $fname`;
     }
     # collect results and store in results
-    DumpFile("$CWD/results/${x}_sim_$$.yml", $sweep) or die "parallel_sweep: Can't load tmp results: $!";
+    my $rfile = "$CWD/results/drcachesim_$$.yml";
+    DumpFile($rfile, $sweep) or die "parallel_sweep: Can't load tmp results: $!";
+    return $rfile;
 }
 
 sub run_simulation {
+    my $x = shift;
+    my $name = shift;
     #spec_instrumentation "imagick_r", "$CWD/lib/libbbsize.so";
     #run_all();
     #parallel_sweep $x, $sweep;
 
     #check_fetch_latency
+    #XXX: only number of sets per way needs to be power of 2
     my $H = DrCachesim::get_local_hierarchy();
+
     my $s1I = DrCachesim::brutef_sweep(H => $H, L1I => [15,15,1,3]);
     my $s1D = DrCachesim::brutef_sweep(H => $H, L1D => [16,17,1,3]);
     my $s2  = DrCachesim::brutef_sweep(H => $H, L2  => [21,23,1,4]);
@@ -188,23 +199,70 @@ sub run_simulation {
         @$s3,
     ];
 
-    my $cube_sweep = DrCachesim::brutef_sweep(H => $H, L1I => [10,11,1,3], 
+    my $hcube_sweep = DrCachesim::brutef_sweep(H => $H, L1I => [10,11,1,3], 
                                                        L1D => [10,13,1,3],
                                                        L2  => [14,17,1,3],
                                                        L3  => [18,20,1,3]);
 
-    my $sweep = $cube_sweep;
+    my $sweep = $hcube_sweep;
 
-    my $cap = 4000;
+    my $cap = 1;
     print "Limiting sweep to $cap simulation\n";
     @$sweep = sample $cap, @$sweep;
+    #push @$sweep, $H;
+    #$H->{L1D}->{cfg}->{assoc} = 8;
+    $H->{L1D}->{cfg}->{size} >>= 5;
+    #$H->{L2}->{cfg}->{assoc} = 8;
+    #$H->{L2}->{cfg}->{size} = 2 << 15;
+    #$H->{L3}->{cfg}->{assoc} = 8;
+    #$H->{L3}->{cfg}->{size} = 2 << 19;
+    @$sweep = ($H);
+    #print Dump($$sweep[0]);
 
-    my $x = "imagick_r";
-    parallel_sweep $x, $sweep;
+    my $rfile = parallel_sweep $x, $sweep;
+
+    my @tstamp = reverse localtime;
+    $tstamp[-5]++;
+    my $tstamp= join("-", @tstamp[-5 .. -1]);
+
+    move "$rfile", "$CWD/results/${name}_$tstamp.yml";
     #print Dumper($$sweep[0]);
-    DrCachesim::beep_when_done();
+    print Dump($$sweep[0]->{L1D});
+    print Dump($$sweep[0]->{cmd});
+    #print Dump($$sweep[0]->{L1D}->{stats});
+    #print Dump($$sweep[0]);
+    #DrCachesim::beep_when_done();
 }
 
-DrCachesim::update_simulations "./results";
+my $name = "imagick_r";
+my $x = SpecInt::testrun_dispatcher($name);
+
+$name = "cachetest";
+$x = sub {
+    my $H = DrCachesim::get_local_hierarchy();
+    my $s1 = $H->{L1D}->{cfg}->{size}*2;
+    $s1 = 98304;
+    my $r1 = $s1*5/64;
+    $r1 = 100000;
+
+    my $s2 = $H->{L2}->{cfg}->{size};
+    my $r2 = 1;
+
+    my $s3 = $H->{L3}->{cfg}->{size};
+    my $r3 = 1;
+
+    my $cmd = sprintf "$CWD/bin/$name %d %d %d %d %d %d", $s1, $r1, $s2, $r2, $s3, $r3;
+    my $drargs = join(" ", 
+        #"-skip_refs 5000000",
+        #"-simulator_type basic_counts",
+    );
+
+    return ($cmd, $drargs);
+};
+
+#run_simulation($x, $name);
+#DrCachesim::update_simulations "./results";
+my $dbname = 
+collect_memrefs($x, "./tracer/traces/$name-1.db");
 
 exit 0;

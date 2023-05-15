@@ -61,6 +61,17 @@ sub chdir {
     chdir("$specdir");
     my $rdir=`source shrc; go $x run $rundir`; 
     chomp $rdir;
-    chdir($rdir) or print "[SpecInt::chdir] Can't change into '$rdir': $!\n";
+    chdir($rdir) or die "[SpecInt::chdir] Can't change into '$rdir': $!\n";
     #print "[SpecInt::chdir] Cwd: ". `pwd`;
+}
+
+sub testrun_dispatcher {
+    my $k = shift;
+    my $cb = sub {
+        SpecInt::chdir $k;
+        my $cmd = %$test_run{$k}->[0];
+        my $drargs = "";
+        return ($cmd, $drargs);
+    };
+    return $cb;
 }

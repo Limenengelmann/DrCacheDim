@@ -26,9 +26,13 @@ target_link_libraries(process_memrefs sqlite3)
 
 #configure_DynamoRIO_main_headers()
 
+# testing partial tracing
 add_executable(matmul ${CMAKE_SOURCE_DIR}/aux/matmul.c)
 configure_DynamoRIO_static(matmul)
 use_DynamoRIO_drmemtrace(matmul)
+
+add_executable(cachetest ${CMAKE_SOURCE_DIR}/aux/cachetest.c)
+set_target_properties(cachetest PROPERTIES COMPILE_FLAGS "-g -O0")
 
 #use_DynamoRIO_static_client(matmul drmemtrace_static)
 #link_directories(BEFORE ${DynamoRIO_DIR}/../tools/lib64/release)
