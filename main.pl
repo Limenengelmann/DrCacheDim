@@ -1,6 +1,8 @@
+#!/usr/bin/perl
 use strict; 
 use warnings;
 use lib qw#./aux#;
+use RefGen;
 use SpecInt;
 use DrCachesim;
 
@@ -214,9 +216,9 @@ sub run_simulation {
     ];
 
     my $hcube_sweep = DrCachesim::brutef_sweep(H => $H, L1I => [10,11,1,3], 
-                                                       L1D => [10,13,1,3],
-                                                       L2  => [14,17,1,3],
-                                                       L3  => [18,20,1,3]);
+                                                        L1D => [10,13,1,3],
+                                                        L2  => [14,17,1,3],
+                                                        L3  => [18,20,1,3]);
 
     my $sweep = $hcube_sweep;
     #$sweep = $level_sweep;
@@ -273,11 +275,20 @@ my $x2 = sub {
 #
 #run_simulation($x2, $name2);
 #cache, miss_analyzer, TLB, histogram, reuse_distance, basic_counts, opcode_mix, view or func_view
-run_analysistool($x1, "-simulator_type reuse_distance");
+#run_analysistool($x1, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_histogram_bin_multiplier 1.05");
+#run_analysistool($x1, "-simulator_type reuse_distance -reuse_distance_threshold 1");
 #DrCachesim::update_simulations "./results";
 #my $dbname = 
 #collect_memrefs($x, "./tracer/traces/$name-1.db");
 
 #my $S = LoadFile("results/imagick_r_level.yml");
 #print Dump(DrCachesim::get_best($S));
+my $fn = RefGen::generate_code 2<<7, 1, 2<<9, 1, 2<<10, 1;
+$fn = RefGen::compile_code $fn;
+
+my $x3 = sub { return ($fn, ""); };
+run_analysistool($x3, "-simulator_type reuse_distance");
+
+#system("cat $fn");
+
 exit 0;

@@ -18,16 +18,23 @@
 #define handle_error(msg) \
     do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
+extern const size_t size1;
+extern const size_t reps1;
+extern const size_t size2;
+extern const size_t reps2;
+extern const size_t size3;
+extern const size_t reps3;
+extern int64_t generate_memrefs(char* A);
 
 int main(int argc, char** argv) {
-    srand(0);
+    //srand(0);
 
-    const size_t size1 = (size_t) atoi(argv[L1_SIZE]);
-    const size_t reps1 = (size_t) atoi(argv[L1_REPS]);
-    const size_t size2 = (size_t) atoi(argv[L2_SIZE]);
-    const size_t reps2 = (size_t) atoi(argv[L2_REPS]);
-    const size_t size3 = (size_t) atoi(argv[L3_SIZE]);
-    const size_t reps3 = (size_t) atoi(argv[L3_REPS]);
+    //const size_t size1 = (size_t) atoi(argv[L1_SIZE]);
+    //const size_t reps1 = (size_t) atoi(argv[L1_REPS]);
+    //const size_t size2 = (size_t) atoi(argv[L2_SIZE]);
+    //const size_t reps2 = (size_t) atoi(argv[L2_REPS]);
+    //const size_t size3 = (size_t) atoi(argv[L3_SIZE]);
+    //const size_t reps3 = (size_t) atoi(argv[L3_REPS]);
 
     register int8_t *A, *B, *C, *D;
     // allocate array
@@ -48,6 +55,8 @@ int main(int argc, char** argv) {
         handle_error("fread failed:");
     fclose(rnd);
 
+    generate_memrefs(A);
+    /*
     register int64_t t = 0;
     for(size_t r3=0; r3<reps3; r3++) {
         //B = A + rand() % (size3 / size2);
@@ -57,17 +66,6 @@ int main(int argc, char** argv) {
             D = C;
             for(size_t r1=0; r1<reps1; r1++) {
                 t += *D;
-                //t += *(A + rand() % size3);
-                //printf("%ld\n", (uintptr_t) (D - A));
-                //++*B+=LINE_SIZE;
-                //if (B >= A + size3)
-                //    B = A;
-                //B[rand() % size3]++;
-                //for(size_t i=0; i<size1; i+=LINEWIDTH) {
-                //  //t += C[i];
-                //  //C[i] += C[i];
-                //  //C[i] = C[i+64];
-                //}
                 D += LINEWIDTH;
                 if (D >= C + size1)
                     D = C;
@@ -80,6 +78,7 @@ int main(int argc, char** argv) {
         if (B >= A + size3)
             B = A;
     }
+    */
 
     //free(A);
 }
