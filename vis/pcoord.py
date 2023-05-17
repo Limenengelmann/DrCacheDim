@@ -9,7 +9,8 @@ import glob
 
 proot="/home/elimtob/Workspace/mymemtrace"
 
-fglob=f"{proot}/results/keep/imagick_r_test_sim_4000.yml"
+fglob=f"{proot}/results/keep/imagick_r_1000.yml"
+#fglob=f"{proot}/results/keep/cachetest_1000.yml"
 
 sweeps = []
 for fname in glob.glob(fglob):
@@ -20,20 +21,33 @@ for fname in glob.glob(fglob):
 df = pd.concat(sweeps)
 print(df)
 
+#TODO Miss rate key missing?
+s1D = "L1D.cfg.size"
+a1D = "L1D.cfg.assoc"
+m1D = "L1D.stats.Misses"
+mr1D = "L1D.stats.Miss rate"
+
+s1I = "L1I.cfg.size"
+a1I = "L1I.cfg.assoc"
+m1I = "L1I.stats.Misses"
+mr1I = "L1I.stats.Miss rate",
+
+s2 = "L2.cfg.size"
+a2 = "L2.cfg.assoc"
+m2 = "L2.stats.Misses"
+mr2 = "L2.stats.Miss rate",
+
+s3 = "L3.cfg.size"
+a3 = "L3.cfg.assoc"
+m3 = "L3.stats.Misses"
+mr3 = "L3.stats.Miss rate",
+
 D = [
-        "L1D.cfg.size",
-        "L1D.cfg.assoc",
-        #"L1D.stats.Miss rate",
-        "L1D.stats.Misses",
-        "L2.cfg.size",
-        "L2.cfg.assoc",
-        #"L2.stats.Miss rate",
-        "L2.stats.Misses",
-        "L3.cfg.size",
-        "L3.cfg.assoc",
-        #"L3.stats.Miss rate",
-        "L3.stats.Misses",
-        "AMAT",
+        m1D, m2, m3, "AMAT",
+        s1D, a1D,
+        s2, a2,
+        s3, a3,
+        "VAL",
 ]
 
 dims = []
@@ -46,14 +60,14 @@ for d in D:
 
 fig = go.Figure(data=
     go.Parcoords(
-        line = dict(color = df['AMAT'],
+        line = dict(color = df['VAL'],
                     #colorscale = [[0,'purple'],[0.5,'lightseagreen'],[1,'gold']]
                     showscale = True,
                     #cmin = 1,
                     #cmax = 16,
         ),
         dimensions = dims,
-        unselected = dict(line = dict(opacity = 0.05))
+        unselected = dict(line = dict(opacity = 0.0005))
     )
 )
 

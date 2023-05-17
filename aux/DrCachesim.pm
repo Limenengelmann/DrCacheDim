@@ -3,7 +3,7 @@ package DrCachesim;
 use strict;
 use warnings;
 use File::Temp qw/ tempfile /;
-use List::Util qw( min max );
+use List::Util qw( min max reduce );
 use Storable qw(dclone);
 use YAML qw/ Load LoadFile Dump DumpFile /;
 use Term::ANSIColor;
@@ -12,6 +12,17 @@ our $DRDIR="/home/elimtob/.local/opt/DynamoRIO";
 
 our @LVLS=("L1I", "L1D", "L2", "L3");
 our $LINE_SIZE=64;
+our @COST=(
+    1000, #998.69,  # L1Isets
+    2000, #1998.65, #L1Iassoc 
+    1000, #998.69 , # L1Dsets 
+    2000, #1998.65, #L1Dassoc 
+    100 , #99.07  , #  L2sets 
+    200 , #198.98 , # L2assoc 
+    10  , #9.35   , #  L3sets 
+    20  , #19.48  , # L3assoc 
+    1.00, #    AMAT
+);
 
 #TODO store simulations in sqlite instead of yaml
 
@@ -52,6 +63,7 @@ sub new_hierarchy {
         L3   => new_cache(type => "unified", parent => "memory", inclusive => "true"),
         MML  => 1000,    # TODO main memory latency
         AMAT => undef,
+        VAL  => undef,
         cmd  => undef,
         "Total miss rate" => undef,
    };
@@ -59,14 +71,16 @@ sub new_hierarchy {
    return $self;
 }
 
-sub drrun_cachesim {
-    my $simcfg = shift;
+sub get_cmd {
     my $exe = shift;
+    my $simcfg = shift || "";
     my $drargs = shift || "";
+    $simcfg = "-config_file \"$simcfg\"" unless $simcfg eq "";
+    #TODO maybe just join
     my $cmd = qq# drrun -root "$DRDIR"
                         -t drcachesim
                         -ipc_name /tmp/drcachesim_pipe$$
-                        -config_file "$simcfg"
+                        $simcfg
                         $drargs
                         -- $exe#;
 
@@ -264,7 +278,7 @@ sub run_and_parse_output {
         }
     }
     $H->{cmd} = $cmd;
-    $ret = 1 if $state == 0;    # something definetely went wrong
+    #$ret = 1 if $state == 0;    # something definetely went wrong
 
     if (wantarray()) { # list context
         return ($ret, join("\n", @cmd_out));
@@ -274,13 +288,38 @@ sub run_and_parse_output {
     }
 }
 
+sub get_best {
+    my $S = shift; 
+    my $min = reduce { $a->{VAL} < $b->{VAL} ? $a : $b } @$S;
+    return $min;
+}
+
+sub set_val {
+    my $H = shift;
+    my $L1I = $H->{L1I};
+    my $L1D = $H->{L1D};
+    my $L2  = $H->{L2};
+    my $L3  = $H->{L3};
+    my $val = $L1I->{cfg}->{size}/64/$L1I->{cfg}->{assoc}*$COST[0] +
+              $L1I->{cfg}->{assoc}*$COST[1] +
+              $L1D->{cfg}->{size}/64/$L1D->{cfg}->{assoc}*$COST[2] +
+              $L1D->{cfg}->{assoc}*$COST[3] +
+              $L2->{cfg}->{size}/64/$L2->{cfg}->{assoc}*$COST[4] +
+              $L2->{cfg}->{assoc}*$COST[5] +
+              $L3->{cfg}->{size}/64/$L3->{cfg}->{assoc}*$COST[6] +
+              $L3->{cfg}->{assoc}*$COST[7] +
+              $H->{AMAT}*$COST[8];
+    $H->{VAL} = $val;
+    return $val;
+}
+
 sub set_amat {
     # evaluate "goodness" of a hierarchy by simply weighing off size of the cash and average miss rate
     my $H = shift;
     my $L1I = $H->{L1I};
     my $L1D = $H->{L1D};
-    my $L2 = $H->{L2};
-    my $L3 = $H->{L3};
+    my $L2  = $H->{L2};
+    my $L3  = $H->{L3};
 
     my $AMAT = $L1D->{lat}
                + ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"})
@@ -313,6 +352,7 @@ sub update_simulations {
         my $s = LoadFile($fname) or die "update_simulations: Can't load '$fname': $!";
         foreach my $H (@$s) {
             set_amat $H;
+            set_val $H;
         }
         print "Writing back $fname\n";
         DumpFile($fname, $s) or die "update_simulations: Can't dump '$fname': $!";

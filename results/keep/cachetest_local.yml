@@ -1,0 +1,78 @@
+---
+- AMAT: 293.068232416874
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 49152
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: ~
+      Compulsory misses: 1920
+      Hits: 5047923
+      Invalidations: 0
+      Miss rate: 0.04
+      Misses: 2171
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: ~
+      Compulsory misses: 1297
+      Hits: 9158847
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 1336
+  L2:
+    cfg:
+      assoc: 20
+      core: ~
+      inclusive: true
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1310720
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 14206770
+      Compulsory misses: 3217
+      Hits: 290
+      Invalidations: 0
+      Miss rate: 91.73
+      Misses: 3217
+  L3:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: true
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 8388608
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 14207060
+      Compulsory misses: 3217
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 3217
+  MML: 126.90635
+  Total miss rate: 0.02
+  VAL: 438693.068232417
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe611886 -config_file "/tmp/drcachesim_cfgQ6Ek" -- /home/elimtob/Workspace/mymemtrace/bin/cachetest 49152 1000000 1310720 1 8388608 1'

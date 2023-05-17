@@ -1,0 +1,78 @@
+---
+- AMAT: 549.577738742424
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 49152
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: ~
+      Compulsory misses: 46341
+      Hits: 25332177
+      Invalidations: 162
+      Miss rate: 3.78
+      Misses: 994890
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: ~
+      Compulsory misses: 4038
+      Hits: 92326494
+      Invalidations: 1565
+      Miss rate: 0.02
+      Misses: 18096
+  L2:
+    cfg:
+      assoc: 20
+      core: ~
+      inclusive: true
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1310720
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 117658671
+      Compulsory misses: 50379
+      Hits: 910770
+      Invalidations: 0
+      Miss rate: 10.09
+      Misses: 102216
+  L3:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: true
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 8388608
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 118569441
+      Compulsory misses: 50379
+      Hits: 51837
+      Invalidations: 0
+      Miss rate: 49.29
+      Misses: 50379
+  MML: 126.90635
+  Total miss rate: 0.04
+  VAL: 438949.577738742
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe580181 -config_file "/tmp/drcachesim_cfgQB7n" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '

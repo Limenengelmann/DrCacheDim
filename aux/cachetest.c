@@ -56,8 +56,8 @@ int main(int argc, char** argv) {
             //C = B + rand() % (size2 / size1);
             D = C;
             for(size_t r1=0; r1<reps1; r1++) {
-                //t += *D;
-                t += *(A + rand() % size3);
+                t += *D;
+                //t += *(A + rand() % size3);
                 //printf("%ld\n", (uintptr_t) (D - A));
                 //++*B+=LINE_SIZE;
                 //if (B >= A + size3)

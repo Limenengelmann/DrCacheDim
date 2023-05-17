@@ -68,6 +68,7 @@ sub run_all {
     print "Successfull cmds: $succ. Failed cmds: " . scalar(@failed) . ".\n@failed\n";
 }
 
+# TODO move to SPECINT module
 sub spec_instrumentation {
     my $k = shift;
     my $client = shift;
@@ -89,7 +90,7 @@ sub run_cachesim {
     #my $exe = %$SpecInt::test_run{$k}->[0];
     my ($exe, $drargs) = &$cb();
     #SpecInt::chdir $k;
-    my $cmd = DrCachesim::drrun_cachesim($simcfg, $exe, $drargs);
+    my $cmd = DrCachesim::get_cmd($exe, $simcfg, $drargs);
     #print "Executing: $cmd\n";
     #print "Before: " . Dumper($H);
     #my $ret = DrCachesim::run_and_parse_output($cmd, $H);
@@ -103,7 +104,7 @@ sub run_cachesim {
 }
 
 sub parallel_sweep {
-    my $cb     = shift;
+    my $cb    = shift;
     my $sweep = shift;
     my $procs = shift || `nproc --all`;
     chomp $procs;
@@ -117,8 +118,7 @@ sub parallel_sweep {
     pipe(my $reader, my $writer);
 
     #TODO trap SIGINT for graceful shutdown
-    #TODO estimate time left
-    #TODO measure simulation speed
+    #TODO add logic to just print output for different simulator types
     my @pids = ();
     for(my $p=0; $p<$procs; $p++){
         my ($b1, $b2) = ($p*$share, ($p+1)*$share -1);
@@ -133,8 +133,9 @@ sub parallel_sweep {
                 print "";
                 run_cachesim $cb, $H;
                 DrCachesim::set_amat $H;
+                DrCachesim::set_val $H;
                 #print Dump($H);
-                print $writer "\n";
+                print $writer "\n"; # comm to pipe
             }
             #FIXME strips object type
             #XXX: Does that really matter? Maybe for loading, but even then maybe scrap OO completely
@@ -177,6 +178,19 @@ sub parallel_sweep {
     return $rfile;
 }
 
+sub run_analysistool {
+    my $cb = shift;
+    my $tool = shift;
+    my ($exe, $drargs) = &$cb();
+    #SpecInt::chdir $k;
+    #TODO handle potential duplicate simulator type
+    $drargs ||= "";
+    $drargs .= " $tool";
+    my $cmd = DrCachesim::get_cmd($exe, "", $drargs);
+    print("Running: $cmd\n");
+    system($cmd);
+}
+
 sub run_simulation {
     my $x = shift;
     my $name = shift;
@@ -188,10 +202,10 @@ sub run_simulation {
     #XXX: only number of sets per way needs to be power of 2
     my $H = DrCachesim::get_local_hierarchy();
 
-    my $s1I = DrCachesim::brutef_sweep(H => $H, L1I => [15,15,1,3]);
-    my $s1D = DrCachesim::brutef_sweep(H => $H, L1D => [16,17,1,3]);
-    my $s2  = DrCachesim::brutef_sweep(H => $H, L2  => [21,23,1,4]);
-    my $s3  = DrCachesim::brutef_sweep(H => $H, L3  => [23,25,1,4]);
+    my $s1I = DrCachesim::brutef_sweep(H => $H, L1I => [13,17,1,4]);
+    my $s1D = DrCachesim::brutef_sweep(H => $H, L1D => [13,17,1,4]);
+    my $s2  = DrCachesim::brutef_sweep(H => $H, L2  => [19,23,1,4]);
+    my $s3  = DrCachesim::brutef_sweep(H => $H, L3  => [21,25,1,4]);
     my $level_sweep = [
         @$s1I, 
         @$s1D,
@@ -205,13 +219,14 @@ sub run_simulation {
                                                        L3  => [18,20,1,3]);
 
     my $sweep = $hcube_sweep;
+    #$sweep = $level_sweep;
 
-    my $cap = 1;
+    my $cap = 1000;
     print "Limiting sweep to $cap simulation\n";
     @$sweep = sample $cap, @$sweep;
-    #push @$sweep, $H;
+    push @$sweep, $H;
     #$H->{L1D}->{cfg}->{assoc} = 8;
-    $H->{L1D}->{cfg}->{size} >>= 5;
+    #$H->{L1D}->{cfg}->{size} >>= 5;
     #$H->{L2}->{cfg}->{assoc} = 8;
     #$H->{L2}->{cfg}->{size} = 2 << 15;
     #$H->{L3}->{cfg}->{assoc} = 8;
@@ -226,24 +241,19 @@ sub run_simulation {
     my $tstamp= join("-", @tstamp[-5 .. -1]);
 
     move "$rfile", "$CWD/results/${name}_$tstamp.yml";
-    #print Dumper($$sweep[0]);
-    print Dump($$sweep[0]->{L1D});
-    print Dump($$sweep[0]->{cmd});
     #print Dump($$sweep[0]->{L1D}->{stats});
-    #print Dump($$sweep[0]);
-    #DrCachesim::beep_when_done();
+    DrCachesim::beep_when_done();
 }
 
-my $name = "imagick_r";
-my $x = SpecInt::testrun_dispatcher($name);
+my $name1 = "imagick_r";
+my $x1 = SpecInt::testrun_dispatcher($name1);
 
-$name = "cachetest";
-$x = sub {
+my $name2 = "cachetest";
+my $x2 = sub {
     my $H = DrCachesim::get_local_hierarchy();
-    my $s1 = $H->{L1D}->{cfg}->{size}*2;
-    $s1 = 98304;
+    my $s1 = $H->{L1D}->{cfg}->{size};
     my $r1 = $s1*5/64;
-    $r1 = 100000;
+    $r1 = 1000000;
 
     my $s2 = $H->{L2}->{cfg}->{size};
     my $r2 = 1;
@@ -251,7 +261,7 @@ $x = sub {
     my $s3 = $H->{L3}->{cfg}->{size};
     my $r3 = 1;
 
-    my $cmd = sprintf "$CWD/bin/$name %d %d %d %d %d %d", $s1, $r1, $s2, $r2, $s3, $r3;
+    my $cmd = sprintf "$CWD/bin/$name2 %d %d %d %d %d %d", $s1, $r1, $s2, $r2, $s3, $r3;
     my $drargs = join(" ", 
         #"-skip_refs 5000000",
         #"-simulator_type basic_counts",
@@ -260,9 +270,14 @@ $x = sub {
     return ($cmd, $drargs);
 };
 
-#run_simulation($x, $name);
+#
+#run_simulation($x2, $name2);
+#cache, miss_analyzer, TLB, histogram, reuse_distance, basic_counts, opcode_mix, view or func_view
+run_analysistool($x1, "-simulator_type reuse_distance");
 #DrCachesim::update_simulations "./results";
-my $dbname = 
-collect_memrefs($x, "./tracer/traces/$name-1.db");
+#my $dbname = 
+#collect_memrefs($x, "./tracer/traces/$name-1.db");
 
+#my $S = LoadFile("results/imagick_r_level.yml");
+#print Dump(DrCachesim::get_best($S));
 exit 0;
