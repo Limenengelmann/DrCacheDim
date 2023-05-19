@@ -9,6 +9,8 @@ use YAML qw/ Load LoadFile Dump DumpFile /;
 use Term::ANSIColor;
 
 our $DRDIR="/home/elimtob/.local/opt/DynamoRIO";
+our $tmpdir = "/tmp/drcachesim";
+system("mkdir $tmpdir") unless(-d $tmpdir);
 
 our @LVLS=("L1I", "L1D", "L2", "L3");
 our $LINE_SIZE=64;
@@ -79,7 +81,7 @@ sub get_cmd {
     #TODO maybe just join
     my $cmd = qq# drrun -root "$DRDIR"
                         -t drcachesim
-                        -ipc_name /tmp/drcachesim_pipe$$
+                        -ipc_name $tmpdir/drcachesim_pipe$$
                         $simcfg
                         $drargs
                         -- $exe#;
@@ -366,9 +368,8 @@ sub load_results {
 
 sub create_cfg {
     my $H      = shift;
-    my $tmpdir = "/tmp";
     #our $KEEP_ALL = 0;  # delete tmpfile at end of run
-    my ($fh, $fname) = tempfile("drcachesim_cfgXXXX", DIR => "/tmp", UNLINK => 1);
+    my ($fh, $fname) = tempfile("drcachesim_cfgXXXX", DIR => $tmpdir, UNLINK => 1);
 
     my @C = ();
     my $params = qq#

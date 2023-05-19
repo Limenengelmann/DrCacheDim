@@ -9,6 +9,7 @@ use DrCachesim;
 use Data::Dumper;
 use Storable qw(dclone);
 use File::Temp qw/ tempfile /;
+use File::Basename;
 use File::Copy qw/ move /;
 use YAML qw/ Load LoadFile Dump DumpFile /;
 use List::Util qw( sample none );
@@ -141,7 +142,7 @@ sub parallel_sweep {
             }
             #FIXME strips object type
             #XXX: Does that really matter? Maybe for loading, but even then maybe scrap OO completely
-            DumpFile("/tmp/drcachesim_$$.yml", \@slice) or die "parallel_sweep: Can't open file: $!";
+            DumpFile("$DrCachesim::tmpdir/drcachesim_$$.yml", \@slice) or die "parallel_sweep: Can't open file: $!";
             close $writer;
             exit 0;
         }
@@ -166,7 +167,7 @@ sub parallel_sweep {
     @$sweep = ();   # empty the sweep
     foreach my $p (@pids) {
         waitpid $p, 0;
-        my $fname = "/tmp/drcachesim_$p.yml";
+        my $fname = "$DrCachesim::tmpdir/drcachesim_$p.yml";
         die "parallel_sweep: Error in process $p: Missing output file '$fname'. Aborting" unless -e $fname;
         #my $s = `cat /tmp/${x}_sim_$p`;
         #$s = eval "my " . $s or die "eval failed: $@";
@@ -243,16 +244,18 @@ sub run_simulation {
     my $tstamp= join("-", @tstamp[-5 .. -1]);
 
     move "$rfile", "$CWD/results/${name}_$tstamp.yml";
-    #print Dump($$sweep[0]->{L1D}->{stats});
+    print Dump($$sweep[0]);
     DrCachesim::beep_when_done();
 }
+
+######################## main ###########################
+my $H = DrCachesim::get_local_hierarchy();
 
 my $name1 = "imagick_r";
 my $x1 = SpecInt::testrun_dispatcher($name1);
 
 my $name2 = "cachetest";
 my $x2 = sub {
-    my $H = DrCachesim::get_local_hierarchy();
     my $s1 = $H->{L1D}->{cfg}->{size};
     my $r1 = $s1*5/64;
     $r1 = 1000000;
@@ -283,11 +286,18 @@ my $x2 = sub {
 
 #my $S = LoadFile("results/imagick_r_level.yml");
 #print Dump(DrCachesim::get_best($S));
-my $fn = RefGen::generate_code 2<<7, 1, 2<<9, 1, 2<<10, 1;
+#my $fn = RefGen::generate_code 2<<7, 1e6, 2<<9, 1, 2<<10, 1;
+my $fn = RefGen::generate_code($H->{L1D}->{cfg}->{size}, $H->{L1D}->{cfg}->{size} / 64 * 2,
+                               $H->{L2}->{cfg}->{size}, $H->{L2}->{cfg}->{size} / 64 * 2,
+                               $H->{L3}->{cfg}->{size}, $H->{L3}->{cfg}->{size} / 64 * 2
+         );
+
 $fn = RefGen::compile_code $fn;
 
 my $x3 = sub { return ($fn, ""); };
-run_analysistool($x3, "-simulator_type reuse_distance");
+#run_analysistool($x3, "-simulator_type basic_counts");
+run_simulation($x3, basename($fn));
+#run_analysistool($x3, "-simulator_type basic_counts");
 
 #system("cat $fn");
 
