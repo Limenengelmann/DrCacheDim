@@ -204,6 +204,8 @@ sub run_simulation {
     #check_fetch_latency
     #XXX: only number of sets per way needs to be power of 2
     my $H = DrCachesim::get_local_hierarchy();
+    #$H->{L1D}->{cfg}->{assoc} = $H->{L1D}->{cfg}->{size} / 64;  # fully associative
+    #$H->{L3}->{cfg}->{size} = 2**30;
 
     my $s1I = DrCachesim::brutef_sweep(H => $H, L1I => [13,17,1,4]);
     my $s1D = DrCachesim::brutef_sweep(H => $H, L1D => [13,17,1,4]);
@@ -234,7 +236,9 @@ sub run_simulation {
     #$H->{L2}->{cfg}->{size} = 2 << 15;
     #$H->{L3}->{cfg}->{assoc} = 8;
     #$H->{L3}->{cfg}->{size} = 2 << 19;
+    #$H->{L3}->{cfg}->{size} = $H->{L3}->{cfg}->{size} / 2;
     @$sweep = ($H);
+    $sweep = DrCachesim::brutef_sweep(H => $H, L3  => [23,23,0,4]);
     #print Dump($$sweep[0]);
 
     my $rfile = parallel_sweep $x, $sweep;
@@ -244,12 +248,24 @@ sub run_simulation {
     my $tstamp= join("-", @tstamp[-5 .. -1]);
 
     move "$rfile", "$CWD/results/${name}_$tstamp.yml";
-    print Dump($$sweep[0]);
+    print Dump($sweep);
     DrCachesim::beep_when_done();
 }
 
 ######################## main ###########################
 my $H = DrCachesim::get_local_hierarchy();
+
+# just testing costs
+# relative cost per bit = **-0.6 latency
+#printf("%f\n%f\n%f\n%f\n", $H->{L1I}->{lat}**-0.6,
+#                           $H->{L1D}->{lat}**-0.6,   
+#                           $H->{L2}->{lat} **-0.6,     
+#                           $H->{L3}->{lat} **-0.6);
+
+#$H->{L1D}->{cfg}->{assoc} = $H->{L1D}->{cfg}->{size} / 64;
+#$H->{L3}->{cfg}->{size} = 2*4*64;
+#$H->{L3}->{cfg}->{assoc} = 4;
+printf("local L3: assoc: %d, sets: %d\n", $H->{L3}->{cfg}->{assoc}, $H->{L3}->{cfg}->{size} / $H->{L3}->{cfg}->{assoc} / 64);
 
 my $name1 = "imagick_r";
 my $x1 = SpecInt::testrun_dispatcher($name1);
@@ -287,15 +303,21 @@ my $x2 = sub {
 #my $S = LoadFile("results/imagick_r_level.yml");
 #print Dump(DrCachesim::get_best($S));
 #my $fn = RefGen::generate_code 2<<7, 1e6, 2<<9, 1, 2<<10, 1;
-my $fn = RefGen::generate_code($H->{L1D}->{cfg}->{size}, $H->{L1D}->{cfg}->{size} / 64 * 2,
-                               $H->{L2}->{cfg}->{size}, $H->{L2}->{cfg}->{size} / 64 * 2,
-                               $H->{L3}->{cfg}->{size}, $H->{L3}->{cfg}->{size} / 64 * 2
-         );
+#my $fn = RefGen::generate_code($H->{L1D}->{cfg}->{size}, 1e3,
+#                               $H->{L2}->{cfg}->{size}, 1,
+#                               $H->{L3}->{cfg}->{size}, 1);
+
+#$fn = RefGen::optimal_code($H->{L1D}->{cfg}->{size},
+#                           $H->{L2}->{cfg}->{size},
+#                           $H->{L3}->{cfg}->{size});
+
+my $fn = RefGen::capway_code($H);
 
 $fn = RefGen::compile_code $fn;
 
 my $x3 = sub { return ($fn, ""); };
-#run_analysistool($x3, "-simulator_type basic_counts");
+#run_analysistool($x3, "-simulator_type histogram");
+#run_analysistool($x3, "-simulator_type reuse_distance -reuse_distance_histogram");
 run_simulation($x3, basename($fn));
 #run_analysistool($x3, "-simulator_type basic_counts");
 
