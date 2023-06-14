@@ -14,6 +14,7 @@ system("mkdir $tmpdir") unless(-d $tmpdir);
 
 our @LVLS=("L1I", "L1D", "L2", "L3");
 our $LINE_SIZE=64;
+#default cost
 our @COST=(
     1000, #998.69,  # L1Isets
     2000, #1998.65, #L1Iassoc 
@@ -181,6 +182,7 @@ sub brutef_sweep {
             $args{$l} = int_log2($HP->{$l}->{cfg}->{size} , $HP->{$l}->{cfg}->{size},
                                  $HP->{$l}->{cfg}->{assoc}, $HP->{$l}->{cfg}->{assoc}); 
         }
+
     }
 
     my ($L1I_smin, $L1I_smax,
@@ -297,6 +299,7 @@ sub get_best {
 }
 
 sub set_val {
+    # TODO: better cost calculations (e.g. assoc cost should not be linear)
     my $H = shift;
     my $L1I = $H->{L1I};
     my $L1D = $H->{L1D};
@@ -323,19 +326,28 @@ sub set_amat {
     my $L2  = $H->{L2};
     my $L3  = $H->{L3};
 
-    my $AMAT = $L1D->{lat}
-               + ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"})
-               / ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"} + $L1D->{stats}->{"Hits"} + $L1I->{stats}->{"Hits"})
-               * ($L2->{lat} +  $L2->{stats}->{"Miss rate"}
-               * ($L3->{lat} +  $L3->{stats}->{"Miss rate"}
-               * $H->{MML}));
-    print 'L1D->{lat}         undefined\n' if not defined $L1D->{lat};
-    print 'L1D->{"Miss rate"} undefined\n' if not defined $L1D->{stats}->{"Miss rate"};
-    print 'L2->{lat}          undefined\n' if not defined $L2->{lat};
-    print 'L3->{lat}          undefined\n' if not defined $L3->{lat};
-    print 'H->{MML}           undefined\n' if not defined $H->{MML};
-    print 'L2->{"Miss rate"}  undefined\n' if not defined $L2->{stats}->{"Miss rate"};
-    print 'L3->{"Miss rate"}  undefined\n' if not defined $L3->{stats}->{"Miss rate"};
+    print "L1D->{lat}         undefined\n" if not defined $L1D->{lat};
+    print "L1D->{'Miss rate'} undefined\n" if not defined $L1D->{stats}->{"Miss rate"};
+    print "L2->{lat}          undefined\n" if not defined $L2->{lat};
+    print "L3->{lat}          undefined\n" if not defined $L3->{lat};
+    print "H->{MML}           undefined\n" if not defined $H->{MML};
+    print "L2->{'Miss rate'}  undefined\n" if not defined $L2->{stats}->{"Miss rate"};
+    print "L3->{'Miss rate'}  undefined\n" if not defined $L3->{stats}->{"Miss rate"};
+
+    # old AMAT code
+    #my $AMAT = $L1D->{lat}
+    #           + ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"})
+    #           / ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"} + $L1D->{stats}->{"Hits"} + $L1I->{stats}->{"Hits"})
+    #           * ($L2->{lat} +  $L2->{stats}->{"Miss rate"}
+    #           * ($L3->{lat} +  $L3->{stats}->{"Miss rate"}
+    #           * $H->{MML}));
+
+    #XXX changed to absolute latency for simplicity
+    my $AMAT = $L1D->{lat}*$L1D->{stats}->{Hits} +
+               $L1I->{lat}*$L1I->{stats}->{Hits} +
+               $L2->{lat}*$L2->{stats}->{Hits} +
+               $L3->{lat}*$L3->{stats}->{Hits} +
+               $H->{MML}*$L3->{stats}->{Misses};
 
     #print Dump($H);
     $H->{AMAT} = $AMAT;

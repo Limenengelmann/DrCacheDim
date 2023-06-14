@@ -11,6 +11,8 @@ system("mkdir $tmpdir") unless(-d $tmpdir);
 sub capway_code {
     my $H = shift;
 
+    my $size0 = $H->{L1I}->{cfg}->{size};
+    my $ways0 = $H->{L1I}->{cfg}->{assoc};
     my $size1 = $H->{L1D}->{cfg}->{size};
     my $ways1 = $H->{L1D}->{cfg}->{assoc};
     my $size2 = $H->{L2}->{cfg}->{size};
@@ -18,97 +20,115 @@ sub capway_code {
     my $size3 = $H->{L3}->{cfg}->{size};
     my $ways3 = $H->{L3}->{cfg}->{assoc};
 
+    my $sets0 = $size0 / $ways0 / 64;
     my $sets1 = $size1 / $ways1 / 64;
     my $sets2 = $size2 / $ways2 / 64;
     my $sets3 = $size3 / $ways3 / 64;
 
-    my $fname = "$tmpdir/capway-$size1-$ways1-$size2-$ways2-$size3-$ways3.asm";
+    my $fname = "$tmpdir/capway-$size0-$ways0-$size1-$ways1-$size2-$ways2-$size3-$ways3.asm";
     print "Generating '$fname'...\n";
     open my $fh, '>', $fname
         or die "[generate_code] Can't open '$fname': $!";
-
-    my $stride1 = 1;
-    my $stride2 = 1;
-    my $stride3 = $size3;
 
     my $code = qq"
                 ; globals
                 GLOBAL _start
 
                 ; constants
+                LINESIZE equ 64
+
+                SIZE0 equ $size0
                 SIZE1 equ $size1
                 SIZE2 equ $size2
                 SIZE3 equ $size3
 
+                SETS0 equ $sets0
                 SETS1 equ $sets1
                 SETS2 equ $sets2
                 SETS3 equ $sets3
 
+                WAYS0 equ $ways0
                 WAYS1 equ $ways1
                 WAYS2 equ $ways2
                 WAYS3 equ $ways3
 
                 ; SIZE3*assoc3 so we can access the same tags in a direct mapped cache of the same capacity
-                GSIZE equ SIZE3*WAYS3   ;TODO: handle non-powers of 2 ways
-
-                STRIDE1 equ $stride1
-                STRIDE2 equ $stride2
-                STRIDE3 equ $stride3
+                ;TODO: handle non-powers of 2 ways
+                GSIZE1 equ SIZE1*WAYS1
+                GSIZE2 equ SIZE2*WAYS2
+                GSIZE3 equ SIZE3*WAYS3
 
                 SECTION .bss
-                    align 64
-                A:  resb    GSIZE
+                    align LINESIZE
+                A:  resb    GSIZE3  ;TODO should be max GSIZE(i)
                     
+                ; TODO: Read in repeats as cmdline params
+                ; arguments: 
+                ; %1: level 0|1|2|3
+                ; %2: #iterations 1|2|3|...
                 SECTION .text
                 _start:
-
-                ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                ;L1:
-                ;.loop:
-                ;    mov r10, [A+eax]
-                ;    add eax, STRIDE1
-                ;    cmp eax, SIZE1
-                ;    jl loop
-                ;    mov eax, 0
-                ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                ;L2_1:
-                ;    mov r10, [A+eax]
-                ;    add eax, STRIDE2
-                ;    cmp eax, SIZE2
-                ;    jl L2_1
-                ;
-                ;    mov eax, 0
-                ;L2_2:
-                ;    mov r10, [A+eax]
-                ;    add eax, STRIDE2
-                ;    cmp eax, SIZE2
-                ;    jl L2_2
-                ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                %macro capway 2
                     mov rdi, 0  ;repeats counter
-                L3:
-                    lea rax, A  ;base
+                    jmp L%1
+                    align 64
+                    %if %1 == 0 ; instruction caches
+                        ; L1I aka L0 'run'
+                        ;%assign REPS SETS0*WAYS0*WAYS0
+                        %assign REPS SETS0*WAYS0*(WAYS0-1)+SETS0
+                        %assign J0 LINESIZE + (WAYS0-1)*SETS0*LINESIZE
+                        %assign i 1
+                L0: 
+                        %rep REPS
+                            ; LINESIZE bytes of instructions
+                            ; $ = current assembly pos, \$ + LINESIZE jump to next block
+                            ; end early, since since loop instructions add one cacheline
+                            %if i == REPS
+                                add rdi, 1
+                                cmp rdi, %2
+                                jl L%1
+                            %elif i % SETS0 == 0
+                                jmp \$ + J0
+                                align LINESIZE    ;fill-up with nop
+                            %else
+                                jmp \$ + LINESIZE
+                                align LINESIZE    ;fill-up with nop
+                            %endif
+                            %assign i i+1
+                        %endrep
+                    %else   ; data caches
+                L%1:
+                        lea rax, A  ;base
                 .loop2:
-                    mov rsi, 0  ;offset
+                        mov rsi, 0  ;offset
                 .loop1:
-                    mov cl, [rax + rsi]
+                        mov cl, [rax + rsi]
 
-                    add rsi, 64
-                    cmp rsi, 64*SETS3
-                    jl .loop1
+                        add rsi, LINESIZE
+                        cmp rsi, LINESIZE*SETS%1
+                        jl .loop1
 
-                    add rax, SIZE3
-                    cmp rax, A+GSIZE
-                    jl .loop2
+                        add rax, SIZE%1
+                        cmp rax, A+GSIZE%1
+                        jl .loop2
 
-                    ; repeat once
-                    add rdi, 1
-                    cmp rdi, 2
-                    jl L3
+                        ; repeat
+                        add rdi, 1
+                        cmp rdi, %2
+                        jl L%1
+                    %endif
+                %endmacro
 
-                    ; exit
+                    capway 0, 2
+
+                    ; exit, new cacheline to avoid weird simulator results when instructions cross cachelines
+                    jmp EXIT
+                    align LINESIZE
+                EXIT:
                     mov rdi, 0
-                    mov	rax, 60	    ; rax = syscall number
-                    syscall         ; exit(rdi)
+                    mov	rax, 60	    ; syscall exit(rdi)
+                    syscall
+                    nop
                     ";
 
     print $fh "$code";
@@ -119,7 +139,7 @@ sub capway_code {
     return $fname;
 }
 
-sub optimal_code {
+sub capacity_code {
     my $size1 = shift;
     my $size2 = shift;
     my $size3 = shift;

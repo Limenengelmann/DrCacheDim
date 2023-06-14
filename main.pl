@@ -121,7 +121,6 @@ sub parallel_sweep {
     pipe(my $reader, my $writer);
 
     #TODO trap SIGINT for graceful shutdown
-    #TODO add logic to just print output for different simulator types
     my @pids = ();
     for(my $p=0; $p<$procs; $p++){
         my ($b1, $b2) = ($p*$share, ($p+1)*$share -1);
@@ -201,9 +200,9 @@ sub run_simulation {
     #run_all();
     #parallel_sweep $x, $sweep;
 
+    my $H = DrCachesim::get_local_hierarchy();
     #check_fetch_latency
     #XXX: only number of sets per way needs to be power of 2
-    my $H = DrCachesim::get_local_hierarchy();
     #$H->{L1D}->{cfg}->{assoc} = $H->{L1D}->{cfg}->{size} / 64;  # fully associative
     #$H->{L3}->{cfg}->{size} = 2**30;
 
@@ -237,8 +236,12 @@ sub run_simulation {
     #$H->{L3}->{cfg}->{assoc} = 8;
     #$H->{L3}->{cfg}->{size} = 2 << 19;
     #$H->{L3}->{cfg}->{size} = $H->{L3}->{cfg}->{size} / 2;
-    @$sweep = ($H);
-    $sweep = DrCachesim::brutef_sweep(H => $H, L3  => [23,23,0,4]);
+    #$H->{L1I}->{cfg}->{assoc} = 2;
+    #$H->{L1I}->{cfg}->{size} = 2*2*64;
+    #$H->{L1D}->{cfg}->{assoc} = 2;
+    #$H->{L1D}->{cfg}->{size} = 2*2*64;
+    #@$sweep = ($H);
+    $sweep = DrCachesim::brutef_sweep(H => $H, L1I  => [15,15,0,4]);
     #print Dump($$sweep[0]);
 
     my $rfile = parallel_sweep $x, $sweep;
@@ -261,11 +264,6 @@ my $H = DrCachesim::get_local_hierarchy();
 #                           $H->{L1D}->{lat}**-0.6,   
 #                           $H->{L2}->{lat} **-0.6,     
 #                           $H->{L3}->{lat} **-0.6);
-
-#$H->{L1D}->{cfg}->{assoc} = $H->{L1D}->{cfg}->{size} / 64;
-#$H->{L3}->{cfg}->{size} = 2*4*64;
-#$H->{L3}->{cfg}->{assoc} = 4;
-printf("local L3: assoc: %d, sets: %d\n", $H->{L3}->{cfg}->{assoc}, $H->{L3}->{cfg}->{size} / $H->{L3}->{cfg}->{assoc} / 64);
 
 my $name1 = "imagick_r";
 my $x1 = SpecInt::testrun_dispatcher($name1);
@@ -311,15 +309,28 @@ my $x2 = sub {
 #                           $H->{L2}->{cfg}->{size},
 #                           $H->{L3}->{cfg}->{size});
 
-my $fn = RefGen::capway_code($H);
+my $r23 = $H->{L2}->{cfg}->{size} / $H->{L3}->{cfg}->{size};
+my $r12 = ($H->{L1D}->{cfg}->{size} + $H->{L1I}->{cfg}->{size}) / $H->{L2}->{cfg}->{size};
 
+printf("[Local Ratios] r12: %.2e, r23: %.2e\n", $r12, $r23);
+
+#$H->{L1I}->{cfg}->{assoc} = 2;
+#$H->{L1I}->{cfg}->{size} = 2*2*64;
+#$H->{L1D}->{cfg}->{assoc} = 2;
+#$H->{L1D}->{cfg}->{size} = 2*2*64;
+
+printf("local L3: assoc: %d, sets: %d. Total sets: %d\n", $H->{L3}->{cfg}->{assoc}, $H->{L3}->{cfg}->{size} / $H->{L3}->{cfg}->{assoc} / 64, $H->{L3}->{cfg}->{size} / 64);
+printf("local L1I: assoc: %d, sets: %d. Total sets: %d\n", $H->{L1I}->{cfg}->{assoc}, $H->{L1I}->{cfg}->{size} / $H->{L1I}->{cfg}->{assoc} / 64, $H->{L1I}->{cfg}->{size} / 64);
+printf("local L1D: assoc: %d, sets: %d. Total sets: %d\n", $H->{L1D}->{cfg}->{assoc}, $H->{L1D}->{cfg}->{size} / $H->{L1D}->{cfg}->{assoc} / 64, $H->{L1D}->{cfg}->{size} / 64);
+
+my $fn = RefGen::capway_code($H);
 $fn = RefGen::compile_code $fn;
 
 my $x3 = sub { return ($fn, ""); };
-#run_analysistool($x3, "-simulator_type histogram");
-#run_analysistool($x3, "-simulator_type reuse_distance -reuse_distance_histogram");
-run_simulation($x3, basename($fn));
 #run_analysistool($x3, "-simulator_type basic_counts");
+run_simulation($x3, basename($fn));
+#run_analysistool($x3, "-simulator_type histogram");
+#run_analysistool($x3, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_distance_threshold 0");
 
 #system("cat $fn");
 
