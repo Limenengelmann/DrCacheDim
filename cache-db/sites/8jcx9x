@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html class="nojs desktop" lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Intel Core i9 13900K @ 8400 MHz - CPU-Z VALIDATOR</title>
+	<meta name="description" content="[8jcx9x] Validated Dump by HiCookie (2022-11-02 06:42:26) - MB: Gigabyte Z790 AORUS TACHYON - RAM: 32768 MB">
+	<meta name="google-site-verification" content="LiXL5JMTqtmrEbnSgTINafT2D13d6ymfu6dOim8MjPc" />
+	<meta http-equiv="Cache-control" content="public">
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+	<link rel="stylesheet" type="text/css" href="http://valid.x86.fr/medias/css/globals-min.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="http://valid.x86.fr/medias/css/globals-desktop-min.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="http://valid.x86.fr/medias/css/validation-details-min.css">
+<!-- FOR PRINTING -->
+    <link rel="stylesheet" type="text/css" href="http://valid.x86.fr/medias/css/print-min.css" media="print" />
+
+	<link rel="stylesheet" type="text/css" href="http://valid.x86.fr/medias/css/widgets.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="http://valid.x86.fr/medias/css/widget-desktop-min.css">
+    <script type="text/javascript" src="http://valid.x86.fr/medias/scripts/tools.js"></script>
+	<script id="validation-details" type="text/javascript" src="http://valid.x86.fr/medias/scripts/default-min.js"></script>
+	<script id="validation-details" type="text/javascript" src="http://valid.x86.fr/medias/scripts/default-desktop-min.js"></script>
+  <link rel="shortcut icon" href="http://valid.x86.fr/medias/images/favicon.ico">
+	<link rel="icon" type="image/png" href="http://valid.x86.fr/medias/images/favicon.png">
+	<link rel="apple-touch-icon-precomposed" href="http://valid.x86.fr/medias/images/apple-touch-icon-precomposed.png">
+	<!-- GPLAT -->
+
+	<!-- FOR WINDOWS PHONE & WINDOWS TABLETS -->
+    <meta name="application-tap-highlight" content="no">
+    <meta name="application-TileColor" content="#a62393">
+    <meta name="application-TileImage" content="https://valid.x86.fr/cache/screenshot/8jcx9x.png">
+    <meta name="application-name" content="Intel Core i9 13900K @ 8400 MHz - CPU-Z VALIDATOR">
+
+	<meta property="og:title" content="Intel Core i9 13900K @ 8400 MHz - CPU-Z VALIDATOR">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="http://valid.x86.fr/8jcx9x">
+	<meta property="og:description" content="[8jcx9x] Validated Dump by HiCookie (2022-11-02 06:42:26) - MB: Gigabyte Z790 AORUS TACHYON - RAM: 32768 MB">
+	<meta property="og:image" content="https://valid.x86.fr/cache/screenshot/8jcx9x.png">
+</head>
+
+<body>
+	<script src="https://consent.cookiefirst.com/banner.js" data-cookiefirst-key="0f7c10be-ccda-49bb-b459-c4273bd1bb56"></script>	
+
+<section id="main__header" role="banner">
+
+    
+    <header class="main-wrapper">
+
+                <a class="logo" href="http://valid.x86.fr/" title="CPU-Z VALIDATOR"><span class="hide">Intel Core i9 13900K @ 8400 MHz - CPU-Z VALIDATOR</span></a>
+
+
+        
+    </header>
+
+</section>
+
+<section id="main__menu" role="menubar">
+
+    
+    <nav class="main-wrapper" role="menu">
+        <ul>
+            <li><a role="menuitem" href="http://valid.x86.fr/statistics.html" title="Statistics" class="">Statistics</a></li>
+            <li><a role="menuitem" href="http://valid.x86.fr/records.html" title="World Records" class="">World Records</a></li>
+            <li><a role="menuitem" href="http://valid.x86.fr/bench/1" title="Benchmark" class="">Benchmark</a></li>
+            <li><a role="menuitem" href="http://www.cpuid.com/softwares/cpu-z.html" title="Download CPU-Z"  target="_blank">Download CPU-Z</a></li>
+        </ul>
+
+        <div id="account">
+
+                        <div id="account__unlogged">
+                <div>
+                    <a href="http://valid.x86.fr/register.html">Create account</a>
+                </div><!--
+
+                --><div>
+                    <a href="http://valid.x86.fr/login.html">Login</a>
+                </div>
+            </div>
+                    </div>
+    </nav>
+</section>
+    <section id="main__content" class="unstable">
+
+        <div class="main-wrapper">
+
+            <div class="block_100"> <!-- validation header -->
+                <div class="block_content">
+                    <div id="header">
+                        <div class="header__text">
+                            <div class="content-text">
+                                <h1 class="valid-title">Intel Core i9 13900K @ 8400 MHz</h1>
+                                <h3 class="valid-informations">Dump [8jcx9x] - Submitted by  <span class="nickname">HiCookie</span>  - 2022-11-02 06:42:26</span></h3>
+                            </div>
+                        </div>
+
+                        <div class="header__label unstable"></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="block_100">
+                <div class="block_66">
+
+                     <!-- advert mobile 100 -->
+                    <div class="block_100 fullwidth">
+                        
+	<div class="widget-block widget-advert-728">
+
+		<div class="widget-advert" style="display:block">
+            <!-- GADS -->
+            <!-- CPU-Z Validator -->
+            <ins id="hhbblrlrba-728-1"
+                 class="adsbygoogle"
+                 style="display:inline-block;width:728px;height:90px"
+                 data-ad-client="ca-pub-1350675259325763"
+                 data-ad-slot="8222391035"></ins>
+
+            <div id="hhbblrlrba-728-1-blocked" style="display:none;width:728px;height:90px;padding:10px 5px;opacity:0;background:#eee;-webkit-transition:opacity 350ms ease-out;transition:opacity 350ms ease-out">
+                <p style="display:inline-block;width:560px;font-size:1.2em;line-height:1.3em;text-align:left;color:#888;padding-left:1em">
+                    Hi! For some reason we can't display an ad here, probably because of an ad blocker.<br>We have full respect if you want to run an ad blocker, but keeping this website and related softwares free depend on ads.<br>We would appreciate if you add us to your white list or consider donating via Paypal.<br>Thank you!
+                </p>
+                <div style="display:inline-block;width:140px;margin-top:15px;text-align:center;vertical-align:top">
+                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="display: inline-block">
+                      <input type="hidden" name="cmd" value="_s-xclick">
+                      <input type="hidden" name="hosted_button_id" value="5NYVVDY9KU9WE">
+                      <input type="image" src="http://valid.x86.fr/medias/images/paypal_us.gif" border="0" alt="Donate via PayPal in $">
+                      <img alt="" border="0" src="https://www.paypalobjects.com/fr_FR/i/scr/pixel.gif" width="1" height="1">
+                    </form>
+
+                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="display: inline-block">
+                      <input type="hidden" name="cmd" value="_s-xclick">
+                      <input type="hidden" name="hosted_button_id" value="S7CUMW7C55NZW">
+                      <input type="image" src="http://valid.x86.fr/medias/images/paypal_eu.gif" border="0" name="submit" alt="Donate via Paypal in €">
+                      <img alt="" border="0" src="https://www.paypalobjects.com/fr_FR/i/scr/pixel.gif" width="1" height="1">
+                    </form>
+                </div>
+                <script>
+                setTimeout(function() {
+                    if(_T.gbi('hhbblrlrba-728-1').childNodes.length==0) {
+                        _T.gbi('hhbblrlrba-728-1').style.display='none';
+                        _T.gbi('hhbblrlrba-728-1-blocked').style.display = 'inline-block';
+                        setTimeout(function() {
+                            _T.gbi('hhbblrlrba-728-1-blocked').style.opacity = '1';
+                        }, 10);
+                    }
+                }, 1000);
+                </script>
+            </div>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+		</div>
+
+	</div>
+                    </div>
+                    
+                    <div id="sys-spec" class="block_content" role="main">
+                        <div class="table-title">Processor (CPU)</div><div class="table">
+                                                            <div class="row">
+                                                                <div class="cell">CPU Name</div>
+                                                                <div class="cell">13th Gen Intel® Core™ i9-13900K</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Threading</div>
+                                                                <div class="cell">1 CPU / 8P + 16E Cores / 24 Threads</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Frequency</div>
+                                                                <div class="cell"><span class="highlight">8400 MHz</span> (84 * 100 MHz) - Uncore: 2000 MHz</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Multiplier</div>
+                                                                <div class="cell">Current: 84 / Min: 8 / Max: 58</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Architecture</div>
+                                                                <div class="cell">Raptor Lake / Stepping: B0 / Technology: 10 nm</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">CPUID / Ext.</div>
+                                                                <div class="cell">6.7.1 / 6.B7</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">IA Extensions</div>
+                                                                <div class="cell">MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, EM64T, VT-x, AES, AVX, AVX2, FMA3, SHA</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">L1 Data Cache</div>
+                                                                <div class="cell">8 x 48 KB (12-way, 64-byte line) + 16 x 32 KB (8-way, 64-byte line)</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">L1 Inst. Cache</div>
+                                                                <div class="cell">8 x 32 KB (8-way, 64-byte line) + 16 x 64 KB (8-way, 64-byte line)</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">L2 Cache</div>
+                                                                <div class="cell">8 x 2 MB (16-way, 64-byte line) + 4 x 4 MB (16-way, 64-byte line)</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">L3 Cache</div>
+                                                                <div class="cell">36 MB (12-way, 64-byte line)</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Microcode</div>
+                                                                <div class="cell">Rev. 0x10E</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">TDP / Vcore</div>
+                                                                <div class="cell">125 Watts / 1.239 Volts</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Type</div>
+                                                                <div class="cell">Engineering Sample</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">P-Cores Freq.</div>
+                                                                <div class="cell">P00: 800.00 MHz&emsp; P01: 800.00 MHz&emsp; P02: 800.00 MHz&emsp; P03: 800.00 MHz&emsp;<BR>P04: 8400.00 MHz&emsp; P05: 800.00 MHz&emsp; P06: 800.00 MHz&emsp; P07: 800.00 MHz&emsp;<BR></div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">E-Cores Freq.</div>
+                                                                <div class="cell">E08: 800.00 MHz&emsp; E09: 800.00 MHz&emsp; E10: 800.00 MHz&emsp; E11: 800.00 MHz&emsp;<BR>E12: 800.00 MHz&emsp; E13: 800.00 MHz&emsp; E14: 800.00 MHz&emsp; E15: 800.00 MHz&emsp;<BR>E16: 800.00 MHz&emsp; E17: 800.00 MHz&emsp; E18: 800.00 MHz&emsp; E19: 800.00 MHz&emsp;<BR>E20: 800.00 MHz&emsp; E21: 800.00 MHz&emsp; E22: 800.00 MHz&emsp; E23: 800.00 MHz&emsp;<BR></div>
+                                                            </div>
+                                                        </div><div class="table-title">Motherboard</div><div class="table">
+                                                            <div class="row">
+                                                                <div class="cell">Model</div>
+                                                                <div class="cell">Gigabyte Z790 AORUS TACHYON</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Socket</div>
+                                                                <div class="cell">Socket 1700 LGA</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">North Bridge</div>
+                                                                <div class="cell">Intel Raptor Lake rev 01</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">South Bridge</div>
+                                                                <div class="cell">Intel Z790 rev 11</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">BIOS</div>
+                                                                <div class="cell">American Megatrends International LLC. C7b (10/12/2022)</div>
+                                                            </div>
+                                                        </div><div class="table-title">Memory (RAM)</div><div class="table">
+                                                            <div class="row">
+                                                                <div class="cell">Total Size</div>
+                                                                <div class="cell">32768 MB</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Type</div>
+                                                                <div class="cell">Quad Channel (256 bit) DDR5-SDRAM</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Frequency</div>
+                                                                <div class="cell">3600 MHz (DDR5-7200) - Ratio 1:36</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Timings</div>
+                                                                <div class="cell">30-40-40-28-68-2 (tCAS-tRCD-tRP-tRAS-tRC-tCR)</div>
+                                                            </div>
+                                                        </div><div class="table-title">Graphic Card (GPU)</div><div class="table"></div><div class="table-title">Storage (HDD/SSD)</div><div class="table">
+                                                            <div class="row">
+                                                                <div class="cell">Model #1 Name</div>
+                                                                <div class="cell">PLEXTOR PX-256S3C (FW: 1.04)</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Model #1 Capacity</div>
+                                                                <div class="cell">238.5 GiB (~260 GB)</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">Model #1 Type</div>
+                                                                <div class="cell">Fixed, SSD - Bus: SATA (11)</div>
+                                                            </div>
+                                                        </div><div class="table-title">Miscellaneous</div><div class="table">
+                                                            <div class="row">
+                                                                <div class="cell">Windows Version</div>
+                                                                <div class="cell">Microsoft Windows 10 (10.0) Professional 64-bit</div>
+                                                            </div>
+                                                        
+                                                            <div class="row">
+                                                                <div class="cell">CPU-Z Version</div>
+                                                                <div class="cell">2.02.0 (64 bit)</div>
+                                                            </div>
+                                                        </div>
+                    </div>
+                </div>
+
+                <div class="block_33" role="contentinfo">
+                    <div class="block_content">
+                        <div class="block_100" role="img"> <!-- cpuz screenshoot -->
+                            <div id="screenshot" class="block_content">
+                                <h4>CPU-Z SCREENSHOT</h4>
+                                <a href="http://valid.x86.fr/top-cpu/313374682047656e20496e74656c28522920436f726528544d292069392d31333930304b2028455329" class="image" title="Top 15 Highest frequencies in the last 12 months for this CPU">
+                                    <img src="/cache/screenshot/8jcx9x.png" alt="screenshot of CPU-Z validation for Dump [8jcx9x] - Submitted by  HiCookie  - 2022-11-02 06:42:26"/>
+                                </a>
+																                            </div>
+                        </div>
+
+                        
+ <!-- forum bannner -->
+                        <div id="forum-banner" class="block_100">
+                            <div class="block_content">
+                                <h4>FORUM BANNER</h4>
+
+                                <img id="banner-preview" src="https://valid.x86.fr/cache/banner/8jcx9x-6.png" alt="banner"/>
+
+                                <input type="text" id="banner-code" onclick="this.focus();this.select();" value="[url=https://valid.x86.fr/8jcx9x][img]https://valid.x86.fr/cache/banner/8jcx9x-6.png[/img][/url]" readonly/>
+
+                                <div class="form-fields">
+                                    <label for="banner-select">Change Banner style :</label>
+                                    <select name="banner-select" id="banner-select" onchange="var url = this.options[this.selectedIndex].value; var bbcode = this.options[this.selectedIndex].getAttribute('data-bbcode'); console.log(bbcode);_T.gbi('banner-code').value = bbcode; _T.gbi('banner-preview').setAttribute('src', url);">
+                                        <option selected data-bbcode='[url=https://valid.x86.fr/8jcx9x][img]https://valid.x86.fr/cache/banner/8jcx9x-6.png[/img][/url]' value='https://valid.x86.fr/cache/banner/8jcx9x-6.png'>01 - Classic NEW - 350 x 22 px</option><option  data-bbcode='[url=https://valid.x86.fr/8jcx9x][img]https://valid.x86.fr/cache/banner/8jcx9x.png[/img][/url]' value='https://valid.x86.fr/cache/banner/8jcx9x.png'>02 - Classic - 350 x 22 px</option><option  data-bbcode='[url=https://valid.x86.fr/8jcx9x][img]https://valid.x86.fr/cache/banner/8jcx9x-2.png[/img][/url]' value='https://valid.x86.fr/cache/banner/8jcx9x-2.png'>03 - Classic 2 - 350 x 22 px</option><option  data-bbcode='[url=https://valid.x86.fr/8jcx9x][img]https://valid.x86.fr/cache/banner/8jcx9x-3.png[/img][/url]' value='https://valid.x86.fr/cache/banner/8jcx9x-3.png'>04 - CPC Hw - 350 x 22 px</option><option  data-bbcode='[url=https://valid.x86.fr/8jcx9x][img]https://valid.x86.fr/cache/banner/8jcx9x-4.png[/img][/url]' value='https://valid.x86.fr/cache/banner/8jcx9x-4.png'>05 - Big Blue - 420 x 40 px</option><option  data-bbcode='[url=https://valid.x86.fr/8jcx9x][img]https://valid.x86.fr/cache/banner/8jcx9x-5.png[/img][/url]' value='https://valid.x86.fr/cache/banner/8jcx9x-5.png'>06 - Big CPU - 420 x 40 px</option>                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                         <!-- share block -->
+                        <div id="social_share" class="block_100">
+                            <div class="block_content">
+                                <h4>SHARE</h4>
+                                <p class="tcenter">Share your validation data on social networks</p>
+								<div class="disp-tab">
+                                    <div class="disp-tabcell tcenter block_25"><a class="share-button share-button-twitter"     data-sharesize="width=550,height=250" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fvalid.x86.fr%2F8jcx9x&ref_src=twsrc%5Etfw&text=I+submitted+my+Intel+Core+i9+13900K+%40+8400+MHz+on+CPUZ+Validator%21&tw_p=tweetbutton&url=http%3A%2F%2Fvalid.x86.fr%2F8jcx9x&via=CPUZ_VALID" target="_blank" title="Tweet"></a></div>
+                                    <div class="disp-tabcell tcenter block_25"><a class="share-button share-button-facebook"    data-sharesize="width=550,height=450" href="https://www.facebook.com/sharer/sharer.php?sdk=joey&u=http%3A%2F%2Fvalid.x86.fr%2F8jcx9x&display=popup&ref=plugin&src=share_button" target="_blank" title="Share On Facebook"></a></div>
+                                    <div class="disp-tabcell tcenter block_25"><a class="share-button share-button-gplus"       data-sharesize="width=550,height=450" href="https://plus.google.com/share?url=http%3A%2F%2Fvalid.x86.fr%2F8jcx9x" target="_blank" title="Share On Google+"></a></div>
+                                    <div class="disp-tabcell tcenter block_25"><a class="share-button share-button-pinterest"   data-sharesize="width=750,height=630" href="https://fr.pinterest.com/pin/create/button/?url=http%3A%2F%2Fvalid.x86.fr%2F8jcx9x&media=%2Fcache%2Fscreenshot%2F8jcx9x.png&title=Intel+Core+i9+13900K+%40+8400+MHz+-+CPU-Z+VALIDATOR&description=Intel+Core+i9+13900K+%40+8400+MHz" target="_blank" title="Share on Pinterest"></a></div>
+                                </div>
+                                <script>
+                                var socialLinks = _T.gbcn('share-button');
+                                for(var i=0;i<socialLinks.length;i++){
+                                    var linkUrl = socialLinks[i].getAttribute('href').toString();
+                                    socialLinks[i].setAttribute('href',linkUrl);
+                                    socialLinks[i].removeAttribute('href');
+                                    socialLinks[i].removeAttribute('target');
+                                    socialLinks[i].setAttribute('onclick','window.open("'+linkUrl+'","sharer","'+socialLinks[i].getAttribute('data-sharesize').toString()+'")');
+                                }
+                                </script>
+							</div>
+                        </div>
+
+                                            </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="block_100">
+ <!-- advert mobile 50 -->
+    </section>
+
+
+		<section id="main__footer">
+
+			<footer class="main-wrapper">
+				<div id="footer-sitemap">
+					<div class="col1">
+						<h6>SITE MAP</h6>
+                        <div>
+                            <ul>
+                                <li><a href="http://valid.x86.fr/statistics.html" target="_blank" title="CPU-Z Validator Statistics">Statistics</a></li>
+                                <li><a href="http://valid.x86.fr/records.html" target="_blank" title="CPU-Z Validation Records">Records</a></li>
+                            </ul>
+
+                            <ul>
+                                <li><a href="http://forum.canardpc.com/forums/74-CPU-Z-Official-forum" target="_blank" title="CPU-Z Validator Forums">Forum</a></li>
+                                <li><a href="http://valid.x86.fr/my-account/validations.html" target="_blank" title="My Account">My account</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+					<div class="col2">
+                        <div>
+                            <ul>
+                                <li><a href="http://www.canardpc.com/" target="_blank" title="Memtest86+ - Advanced Memory Diagnostic Tool">Canard pc</a></li>
+                                <li><a href="http://cpuid.com/" target="_blank" title="IA-KAR: Green IT Solution. Energy saving software, laptop battery saver and optimizer">Cpuid</a></li>
+                            </ul>
+                        </div>
+                    </div>
+				</div>
+
+			</footer>
+
+		</section>
+
+
+		<section id="main__legals">
+
+			<div id="footer-legals" class="main-wrapper">
+				<p><span class="hide">CPUID </span>&COPY;2001-2022 - All website content subjected to copyright Samuel D. & Franck D.</p>
+				<ul>
+					<li><a href="https://www.cpuid.com/privacy-policy.html">privacy policy</a></li>
+				</ul>
+			</div>
+
+		</section>
+
+
+        <div id="preloader" style="visibility:hidden; height:1px;
+            background-image: url(http://valid.x86.fr/medias/images/visibility-loader.gif);">
+        </div>
+
+
+
+</body>
+</html>
