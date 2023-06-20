@@ -1,0 +1,113 @@
+AMD 4700S 8-Core Processor Desktop Kit
+AMD Athlon™ 64 X2 Dual Core Processor 5400+
+AMD Athlon™ 64 X2 Dual Core Processor 6000+
+AMD Athlon™ 64 X2 Dual Core Processor 6400+
+AMD FX-8370 Eight-Core Processor
+AMD FX™-4300 Quad-Core Processor
+AMD FX™-6100 Six-Core Processor
+AMD FX™-6300 Six-Core Processor
+AMD FX™-8300 Eight-Core Processor
+AMD FX™-8320 Eight-Core Processor
+AMD FX™-8350 Eight-Core Processor
+AMD FX™-9370 Eight-Core Processor
+AMD FX™-9590 Eight-Core Processor
+AMD Phenom™ II X2 550 Processor
+AMD Phenom™ II X2 555 Processor
+AMD Phenom™ II X2 570 Processor
+AMD Phenom™ II X3 720 Processor
+AMD Phenom™ II X4 955 Processor
+AMD Phenom™ II X4 965 Processor
+AMD Ryzen 5 3600 6-Core Processor
+AMD Ryzen 5 3600XT 6-Core Processor
+AMD Ryzen 5 5600X 6-Core Processor
+AMD Ryzen 5 7600X 6-Core Processor
+AMD Ryzen 5 PRO 4650G with Radeon Graphics
+AMD Ryzen 7 3800XT 8-Core Processor
+AMD Ryzen 9 3900XT 12-Core Processor
+AMD Ryzen 9 5900HX with Radeon Graphics
+AMD Ryzen 9 5950X 16-Core Processor
+AMD Ryzen 9 7900X 12-Core Processor
+AMD Ryzen 9 7950X 16-Core Processor
+Dual-Core AMD Opteron™ Processor 1224 SE
+Genuine Intel® CPU 0000 @ 3.30GHz
+Genuine Intel® CPU             000  @ 3.07GHz
+Intel® Core™2 Duo CPU     E8600  @ 3.33GHz
+Intel® Core™ i3-3240 CPU @ 3.40GHz
+Intel® Core™ i3-4030U CPU @ 1.90GHz
+Intel® Core™ i3-4160 CPU @ 3.60GHz
+Intel® Core™ i5-10300H CPU @ 2.50GHz
+Intel® Core™ i5-11600K @ 3.90GHz
+Intel® Core™ i5-1240P
+Intel® Core™ i5-12450H
+Intel® Core™ i5-12500H
+Intel® Core™ i5-12600K
+Intel® Core™ i5-13400F
+Intel® Core™ i5-1340P
+Intel® Core™ i5-13500
+Intel® Core™ i5-13600K
+Intel® Core™ i5-13600KF
+Intel® Core™ i5-2500K CPU @ 3.30GHz
+Intel® Core™ i5-3570 CPU @ 3.40GHz
+Intel® Core™ i5-3570K CPU @ 3.40GHz
+Intel® Core™ i5-4460  CPU @ 3.20GHz
+Intel® Core™ i5-4570S CPU @ 2.90GHz
+Intel® Core™ i5-4590 CPU @ 3.30GHz
+Intel® Core™ i5-4670K CPU @ 3.40GHz
+Intel® Core™ i5-4690K CPU @ 3.50GHz
+Intel® Core™ i5-6600K CPU @ 3.50GHz
+Intel® Core™ i5-8600K CPU @ 3.60GHz
+Intel® Core™ i5 CPU         760  @ 2.80GHz
+Intel® Core™ i5 CPU       K 655  @ 3.20GHz
+Intel® Core™ i7-11700K @ 3.60GHz
+Intel® Core™ i7-1260P
+Intel® Core™ i7-12650H
+Intel® Core™ i7-12700
+Intel® Core™ i7-12700F
+Intel® Core™ i7-12700H
+Intel® Core™ i7-12700K
+Intel® Core™ i7-12700KF
+Intel® Core™ i7-13700F
+Intel® Core™ i7-13700H
+Intel® Core™ i7-13700K
+Intel® Core™ i7-13700KF
+Intel® Core™ i7-2600K CPU @ 3.40GHz
+Intel® Core™ i7-2700K CPU @ 3.50GHz
+Intel® Core™ i7-3770 CPU @ 3.40GHz
+Intel® Core™ i7-3770K CPU @ 3.50GHz
+Intel® Core™ i7-3930K CPU @ 3.20GHz
+Intel® Core™ i7-4770 CPU @ 3.40GHz
+Intel® Core™ i7-4770K CPU @ 3.50GHz
+Intel® Core™ i7-4790K CPU @ 4.00GHz
+Intel® Core™ i7-4960X CPU @ 3.60GHz
+Intel® Core™ i7-5775C CPU @ 3.30GHz
+Intel® Core™ i7-5930K CPU @ 3.50GHz
+Intel® Core™ i7-5960X CPU @ 3.00GHz
+Intel® Core™ i7-6700K CPU @ 4.00GHz
+Intel® Core™ i7-6950X CPU @ 3.00GHz
+Intel® Core™ i7-7700K CPU @ 4.20GHz
+Intel® Core™ i7-7740K CPU @ 4.30GHz
+Intel® Core™ i7-7740X CPU @ 4.30GHz
+Intel® Core™ i7-7820X CPU @ 3.60GHz
+Intel® Core™ i7-9700K CPU @ 3.60GHz
+Intel® Core™ i7 CPU         975  @ 3.33GHz
+Intel® Core™ i7 CPU       X 980  @ 3.33GHz
+Intel® Core™ i9-10900K CPU @ 3.70GHz
+Intel® Core™ i9-11900K @ 3.50GHz
+Intel® Core™ i9-11900KF @ 3.50GHz
+Intel® Core™ i9-12900F
+Intel® Core™ i9-12900K
+Intel® Core™ i9-12900KF
+Intel® Core™ i9-12900KS
+Intel® Core™ i9-13900K
+Intel® Core™ i9-13900KF
+Intel® Core™ i9-13900KS
+Intel® Core™ i9-7980XE CPU @ 2.60GHz
+Intel® Core™ i9-9900K CPU @ 3.60GHz
+Intel® Core™ i9-9900KS CPU @ 4.00GHz
+Intel® Core™ i9-9980XE CPU @ 3.00GHz
+Intel® Pentium® CPU G3220 @ 3.00GHz
+Intel® Pentium® CPU G3240 @ 3.10GHz
+Intel® Pentium® CPU G3258 @ 3.20GHz
+Intel® Xeon® CPU E3-1290 V2 @ 3.70GHz
+Intel® Xeon® CPU E5-2697 v3 @ 2.60GHz
+Intel® Xeon® CPU           W3550  @ 3.07GHz

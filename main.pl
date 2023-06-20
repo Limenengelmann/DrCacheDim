@@ -71,134 +71,10 @@ sub run_all {
     print "Successfull cmds: $succ. Failed cmds: " . scalar(@failed) . ".\n@failed\n";
 }
 
-# TODO move to SPECINT module
-sub spec_instrumentation {
-    my $k = shift;
-    my $client = shift;
-    my $exe = %$SpecInt::test_run{$k}->[0];
-
-    SpecInt::chdir $k;
-    print "Executing: $exe\n";
-    my $ret = system(qq# drrun -root "$DrCachesim::DRDIR" -c "$client" -- $exe #);
-    die "Ret $ret. Command failed: $!.\n" unless $ret == 0;
-}
-
-sub run_cachesim {
-    #my $k = shift;
-    my $cb = shift;
-    my $H = shift;
-    #my $simcfg = shift || "/home/elimtob/Workspace/mymemtrace/config/cachesim_single.dr";
-    my $simcfg = DrCachesim::create_cfg($H);
-    #TODO run all parts instead
-    #my $exe = %$SpecInt::test_run{$k}->[0];
-    my ($exe, $drargs) = &$cb();
-    #SpecInt::chdir $k;
-    my $cmd = DrCachesim::get_cmd($exe, $simcfg, $drargs);
-    #print "Executing: $cmd\n";
-    #print "Before: " . Dumper($H);
-    #my $ret = DrCachesim::run_and_parse_output($cmd, $H);
-    my ($ret, $cmdout) = DrCachesim::run_and_parse_output($cmd, $H, $drargs); #print $cmdout;
-    #print "After: " . Dumper($H);
-    if ($ret != 0) {
-        my $msg = "[run_cachesim#$$]: run and parse returned $ret. Command failed: $!";
-        my $h = Dump($H);
-        die "$msg\nCommand output: $cmdout\nCommand: $cmd\nConfig:$h\n";
-    }
-}
-
-sub parallel_sweep {
-    my $cb    = shift;
-    my $sweep = shift;
-    my $procs = shift || `nproc --all`;
-    chomp $procs;
-
-    my $len = @$sweep;
-    $procs = $len if $len < $procs;
-    my $share = $len / $procs;
-
-    print "parallel_sweep with $procs procs and $len configs\n";
-
-    pipe(my $reader, my $writer);
-
-    #TODO trap SIGINT for graceful shutdown
-    my @pids = ();
-    for(my $p=0; $p<$procs; $p++){
-        my ($b1, $b2) = ($p*$share, ($p+1)*$share -1);
-        my @slice = @$sweep[$b1 .. $b2];
-        my $slen = @slice;
-        #print "proc $p: Share from $b1 to $b2 (length slice: $slen, slice: $s)\n";
-        my $pid = fork;
-        if ($pid == 0) {
-            close $reader;
-
-            foreach my $H (@slice) {
-                print "";
-                run_cachesim $cb, $H;
-                DrCachesim::set_amat $H;
-                DrCachesim::set_val $H;
-                #print Dump($H);
-                print $writer "\n"; # comm to pipe
-            }
-            #FIXME strips object type
-            #XXX: Does that really matter? Maybe for loading, but even then maybe scrap OO completely
-            DumpFile("$DrCachesim::tmpdir/drcachesim_$$.yml", \@slice) or die "parallel_sweep: Can't open file: $!";
-            close $writer;
-            exit 0;
-        }
-        push @pids, $pid;
-    }
-
-    close $writer;
-    # check progress
-    my $count = 0;
-    my $tic = time();
-    my $time_left = -1;
-    do {
-        my $toc = time();
-        my $sim_speed = $count / ($toc-$tic);
-        $time_left = ($len-$count) / $sim_speed if $sim_speed > 0;
-        printf "%d/%d simulations done in %.1fs, %.1fs left (%.1f sims/s)\r", $count, $len, $toc-$tic, $time_left, $sim_speed;
-        STDOUT->flush();
-        $count++;
-    } while (my $c = <$reader>);
-    print "\n";
-
-    @$sweep = ();   # empty the sweep
-    foreach my $p (@pids) {
-        waitpid $p, 0;
-        my $fname = "$DrCachesim::tmpdir/drcachesim_$p.yml";
-        die "parallel_sweep: Error in process $p: Missing output file '$fname'. Aborting" unless -e $fname;
-        #my $s = `cat /tmp/${x}_sim_$p`;
-        #$s = eval "my " . $s or die "eval failed: $@";
-        my $s = LoadFile($fname) or die "parallel_sweep: Can't load tmp results: $!";
-        push @$sweep, @$s;
-        `rm $fname`;
-    }
-    # collect results and store in results
-    my $rfile = "$CWD/results/drcachesim_$$.yml";
-    DumpFile($rfile, $sweep) or die "parallel_sweep: Can't load tmp results: $!";
-    return $rfile;
-}
-
-sub run_analysistool {
-    my $cb = shift;
-    my $tool = shift;
-    my ($exe, $drargs) = &$cb();
-    #SpecInt::chdir $k;
-    #TODO handle potential duplicate simulator type
-    $drargs ||= "";
-    $drargs .= " $tool";
-    my $cmd = DrCachesim::get_cmd($exe, "", $drargs);
-    print("Running: $cmd\n");
-    system($cmd);
-}
 
 sub run_simulation {
     my $x = shift;
     my $name = shift;
-    #spec_instrumentation "imagick_r", "$CWD/lib/libbbsize.so";
-    #run_all();
-    #parallel_sweep $x, $sweep;
 
     my $H = DrCachesim::get_local_hierarchy();
     #check_fetch_latency
@@ -244,7 +120,7 @@ sub run_simulation {
     $sweep = DrCachesim::brutef_sweep(H => $H, L1I  => [15,15,0,4]);
     #print Dump($$sweep[0]);
 
-    my $rfile = parallel_sweep $x, $sweep;
+    my $rfile = DrCachesim::parallel_run $x, $sweep;
 
     my @tstamp = reverse localtime;
     $tstamp[-5]++;
@@ -255,7 +131,8 @@ sub run_simulation {
     DrCachesim::beep_when_done();
 }
 
-######################## main ###########################
+################################################ main ###################################################
+
 my $H = DrCachesim::get_local_hierarchy();
 
 # just testing costs
@@ -292,8 +169,8 @@ my $x2 = sub {
 #
 #run_simulation($x2, $name2);
 #cache, miss_analyzer, TLB, histogram, reuse_distance, basic_counts, opcode_mix, view or func_view
-#run_analysistool($x1, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_histogram_bin_multiplier 1.05");
-#run_analysistool($x1, "-simulator_type reuse_distance -reuse_distance_threshold 1");
+#DrCachesim::run_analysistool($x1, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_histogram_bin_multiplier 1.05");
+#DrCachesim::run_analysistool($x1, "-simulator_type reuse_distance -reuse_distance_threshold 1");
 #DrCachesim::update_simulations "./results";
 #my $dbname = 
 #collect_memrefs($x, "./tracer/traces/$name-1.db");
@@ -327,10 +204,10 @@ my $fn = RefGen::capway_code($H);
 $fn = RefGen::compile_code $fn;
 
 my $x3 = sub { return ($fn, ""); };
-#run_analysistool($x3, "-simulator_type basic_counts");
-run_simulation($x3, basename($fn));
-#run_analysistool($x3, "-simulator_type histogram");
-#run_analysistool($x3, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_distance_threshold 0");
+#DrCachesim::run_analysistool($x3, "-simulator_type basic_counts");
+#run_simulation($x3, basename($fn));
+DrCachesim::run_analysistool($x3, "-simulator_type histogram");
+#DrCachesim::run_analysistool($x3, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_distance_threshold 0");
 
 #system("cat $fn");
 

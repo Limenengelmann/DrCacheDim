@@ -100,10 +100,17 @@ foreach my $cpu (@$outp) {
             $size3 = toKB $size3, $unit;
         }
     }
+    # transform to sets
+    defined $size0 and defined $ways0 and $size0 > 0 and $ways0 > 0 ? $size0 = $size0*1024 / 64 / $ways0 : 0;
+    defined $size1 and defined $ways1 and $size1 > 0 and $ways1 > 0 ? $size1 = $size1*1024 / 64 / $ways1 : 0;
+    defined $size2 and defined $ways2 and $size2 > 0 and $ways2 > 0 ? $size2 = $size2*1024 / 64 / $ways2 : 0;
+    defined $size3 and defined $ways3 and $size3 > 0 and $ways3 > 0 ? $size3 = $size3*1024 / 64 / $ways3 : 0;
+    
     #printf "id: %s, L1I: %5d KB, %2d w, L1D: %5d KB, %2d w, L2: %5d KB, %2d w, L3: %6d KB, %2d w\n"
     #    ,$name , $size0, $ways0, $size1, $ways1, $size2, $ways2, $size3, $ways3;
-    $ways3 = 0 unless defined $ways3;
-    $size3 = 0 unless defined $size3;
+    next if not defined $ways3 or not defined $ways2 or not defined $size2 or not defined $size3;
     printf "L1I: %5d KB, %2d w, L1D: %5d KB, %2d w, L2: %5d KB, %2d w, L3: %6d KB, %2d w\n"
         ,$size0, $ways0, $size1, $ways1, $size2, $ways2, $size3, $ways3;
+
+    #print("$name\n");
 }

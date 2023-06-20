@@ -9,8 +9,9 @@ use YAML qw/ Load LoadFile Dump DumpFile /;
 use Term::ANSIColor;
 
 our $DRDIR="/home/elimtob/.local/opt/DynamoRIO";
-our $tmpdir = "/tmp/drcachesim";
-system("mkdir $tmpdir") unless(-d $tmpdir);
+our $TMPDIR = "/tmp/drcachesim";
+our $RESDIR="/home/elimtob/Workspace/mymemtrace/results";
+system("mkdir $TMPDIR") unless(-d $TMPDIR);
 
 our @LVLS=("L1I", "L1D", "L2", "L3");
 our $LINE_SIZE=64;
@@ -82,7 +83,7 @@ sub get_cmd {
     #TODO maybe just join
     my $cmd = qq# drrun -root "$DRDIR"
                         -t drcachesim
-                        -ipc_name $tmpdir/drcachesim_pipe$$
+                        -ipc_name $TMPDIR/drcachesim_pipe$$
                         $simcfg
                         $drargs
                         -- $exe#;
@@ -171,6 +172,122 @@ sub valid_config {
     return not ($weird_size or $bad_size);
 }
 
+sub set_amat {
+    # evaluate "goodness" of a hierarchy by simply weighing off size of the cash and average miss rate
+    my $H = shift;
+    my $L1I = $H->{L1I};
+    my $L1D = $H->{L1D};
+    my $L2  = $H->{L2};
+    my $L3  = $H->{L3};
+
+    print "Warning: L1D->{lat}         undefined\n" if not defined $L1D->{lat};
+    print "Warning: L1D->{'Miss rate'} undefined\n" if not defined $L1D->{stats}->{"Miss rate"};
+    print "Warning: L2->{lat}          undefined\n" if not defined $L2->{lat};
+    print "Warning: L3->{lat}          undefined\n" if not defined $L3->{lat};
+    print "Warning: H->{MML}           undefined\n" if not defined $H->{MML};
+    print "Warning: L2->{'Miss rate'}  undefined\n" if not defined $L2->{stats}->{"Miss rate"};
+    print "Warning: L3->{'Miss rate'}  undefined\n" if not defined $L3->{stats}->{"Miss rate"};
+
+    # old AMAT code
+    #my $AMAT = $L1D->{lat}
+    #           + ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"})
+    #           / ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"} + $L1D->{stats}->{"Hits"} + $L1I->{stats}->{"Hits"})
+    #           * ($L2->{lat} +  $L2->{stats}->{"Miss rate"}
+    #           * ($L3->{lat} +  $L3->{stats}->{"Miss rate"}
+    #           * $H->{MML}));
+
+    #XXX changed to absolute latency for simplicity
+    my $AMAT = $L1D->{lat}*$L1D->{stats}->{Hits} +
+               $L1I->{lat}*$L1I->{stats}->{Hits} +
+               $L2->{lat}*$L2->{stats}->{Hits} +
+               $L3->{lat}*$L3->{stats}->{Hits} +
+               $H->{MML}*$L3->{stats}->{Misses};
+
+    #print Dump($H);
+    $H->{AMAT} = $AMAT;
+    return $AMAT;
+}
+
+sub set_val {
+    # TODO: better cost calculations (e.g. assoc cost should not be linear)
+    my $H = shift;
+    my $L1I = $H->{L1I};
+    my $L1D = $H->{L1D};
+    my $L2  = $H->{L2};
+    my $L3  = $H->{L3};
+    my $val = $L1I->{cfg}->{size}/64/$L1I->{cfg}->{assoc}*$COST[0] +
+              $L1I->{cfg}->{assoc}*$COST[1] +
+              $L1D->{cfg}->{size}/64/$L1D->{cfg}->{assoc}*$COST[2] +
+              $L1D->{cfg}->{assoc}*$COST[3] +
+              $L2->{cfg}->{size}/64/$L2->{cfg}->{assoc}*$COST[4] +
+              $L2->{cfg}->{assoc}*$COST[5] +
+              $L3->{cfg}->{size}/64/$L3->{cfg}->{assoc}*$COST[6] +
+              $L3->{cfg}->{assoc}*$COST[7] +
+              $H->{AMAT}*$COST[8];
+    $H->{VAL} = $val;
+    return $val;
+}
+
+sub get_best {
+    my $S = shift; 
+    my $min = reduce { $a->{VAL} < $b->{VAL} ? $a : $b } @$S;
+    return $min;
+}
+
+sub update_simulations {
+    # Update non-simulated parameters like latency or AMAT
+    # for all simulations in the given folder
+    my $folder = shift;
+    my $fglob = "*.yml";
+    my $all = `find $folder -name "$fglob" -type f`;
+    my @list = split "\n", $all;
+    foreach my $fname (@list) {
+        print "Loading $fname\n";
+        my $s = LoadFile($fname) or die "update_simulations: Can't load '$fname': $!";
+        foreach my $H (@$s) {
+            set_amat $H;
+            set_val $H;
+        }
+        print "Writing back $fname\n";
+        DumpFile($fname, $s) or die "update_simulations: Can't dump '$fname': $!";
+    }
+}
+
+sub create_cfg {
+    my $H      = shift;
+    #our $KEEP_ALL = 0;  # delete tmpfile at end of run
+    my ($fh, $fname) = tempfile("drcachesim_cfgXXXX", DIR => $TMPDIR, UNLINK => 1);
+
+    my @C = ();
+    my $params = qq#
+        num_cores 1
+    #;
+    push @C, $params;
+
+    foreach my $lvl (@LVLS) {
+        my $c  = $H->{$lvl}->{cfg};
+        my $kv = ();
+        foreach my $k (keys(%$c)) {
+            my $v = $c->{$k};
+            # skip keys that map to references
+            next unless defined $v and ref $v eq "";
+            push @$kv, "\t$k $v";
+        }
+        $kv = join "\n", @$kv;
+        my $l = qq#
+            $lvl {
+                $kv
+            }
+        #;
+        push @C, $l;
+    }
+    my $cfg = join "", @C;
+    $cfg =~ s/ {2,}/ /g;    # just for easier debugging
+
+    print $fh "$cfg\n";
+    return $fname;
+}
+
 sub brutef_sweep {
     
     my %args = @_;
@@ -234,6 +351,36 @@ sub brutef_sweep {
     return $S;
 }
 
+sub run_cachesim {
+    #my $k = shift;
+    my $cb = shift;
+    my $H = shift;
+    my $simcfg = create_cfg($H);
+    my ($exe, $drargs) = &$cb();
+    my $cmd = get_cmd($exe, $simcfg, $drargs);
+    #print "Executing: $cmd\n";
+    #print "Before: " . Dumper($H);
+    my ($ret, $cmdout) = run_and_parse_output($cmd, $H, $drargs); #print $cmdout;
+    #print "After: " . Dumper($H);
+    if ($ret != 0) {
+        my $msg = "[run_cachesim#$$]: run and parse returned $ret. Command failed: $!";
+        my $h = Dump($H);
+        die "$msg\nCommand output: $cmdout\nCommand: $cmd\nConfig:$h\n";
+    }
+}
+
+sub run_analysistool {
+    my $cb = shift;
+    my $tool = shift;
+    my ($exe, $drargs) = &$cb();
+    #TODO handle potential duplicate simulator type
+    $drargs ||= "";
+    $drargs .= " $tool";
+    my $cmd = get_cmd($exe, "", $drargs);
+    print("Running: $cmd\n");
+    system($cmd);
+}
+
 sub run_and_parse_output {
     my $cmd = shift;
     my $H   = shift;
@@ -252,6 +399,7 @@ sub run_and_parse_output {
     my $state = 0;
     my $c;
     my $ret = 0;
+    #TODO rename to clarify cmdout vs cmd_out
     my @cmd_out = ();
     while (my $l = <$cmdout>) {
         push @cmd_out, $l if $state == 0;    # only remember cmd out
@@ -292,123 +440,77 @@ sub run_and_parse_output {
     }
 }
 
-sub get_best {
-    my $S = shift; 
-    my $min = reduce { $a->{VAL} < $b->{VAL} ? $a : $b } @$S;
-    return $min;
-}
+sub parallel_run {
+    my $cb    = shift;
+    my $sweep = shift;
+    my $procs = shift || `nproc --all`;
+    chomp $procs;
 
-sub set_val {
-    # TODO: better cost calculations (e.g. assoc cost should not be linear)
-    my $H = shift;
-    my $L1I = $H->{L1I};
-    my $L1D = $H->{L1D};
-    my $L2  = $H->{L2};
-    my $L3  = $H->{L3};
-    my $val = $L1I->{cfg}->{size}/64/$L1I->{cfg}->{assoc}*$COST[0] +
-              $L1I->{cfg}->{assoc}*$COST[1] +
-              $L1D->{cfg}->{size}/64/$L1D->{cfg}->{assoc}*$COST[2] +
-              $L1D->{cfg}->{assoc}*$COST[3] +
-              $L2->{cfg}->{size}/64/$L2->{cfg}->{assoc}*$COST[4] +
-              $L2->{cfg}->{assoc}*$COST[5] +
-              $L3->{cfg}->{size}/64/$L3->{cfg}->{assoc}*$COST[6] +
-              $L3->{cfg}->{assoc}*$COST[7] +
-              $H->{AMAT}*$COST[8];
-    $H->{VAL} = $val;
-    return $val;
-}
+    my $len = @$sweep;
+    $procs = $len if $len < $procs;
+    my $share = $len / $procs;
 
-sub set_amat {
-    # evaluate "goodness" of a hierarchy by simply weighing off size of the cash and average miss rate
-    my $H = shift;
-    my $L1I = $H->{L1I};
-    my $L1D = $H->{L1D};
-    my $L2  = $H->{L2};
-    my $L3  = $H->{L3};
+    print "parallel_sweep with $procs procs and $len configs\n";
 
-    print "L1D->{lat}         undefined\n" if not defined $L1D->{lat};
-    print "L1D->{'Miss rate'} undefined\n" if not defined $L1D->{stats}->{"Miss rate"};
-    print "L2->{lat}          undefined\n" if not defined $L2->{lat};
-    print "L3->{lat}          undefined\n" if not defined $L3->{lat};
-    print "H->{MML}           undefined\n" if not defined $H->{MML};
-    print "L2->{'Miss rate'}  undefined\n" if not defined $L2->{stats}->{"Miss rate"};
-    print "L3->{'Miss rate'}  undefined\n" if not defined $L3->{stats}->{"Miss rate"};
+    pipe(my $reader, my $writer);
 
-    # old AMAT code
-    #my $AMAT = $L1D->{lat}
-    #           + ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"})
-    #           / ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"} + $L1D->{stats}->{"Hits"} + $L1I->{stats}->{"Hits"})
-    #           * ($L2->{lat} +  $L2->{stats}->{"Miss rate"}
-    #           * ($L3->{lat} +  $L3->{stats}->{"Miss rate"}
-    #           * $H->{MML}));
+    #TODO trap SIGINT for graceful shutdown
+    my @pids = ();
+    for(my $p=0; $p<$procs; $p++){
+        my ($b1, $b2) = ($p*$share, ($p+1)*$share -1);
+        my @slice = @$sweep[$b1 .. $b2];
+        my $slen = @slice;
+        #print "proc $p: Share from $b1 to $b2 (length slice: $slen, slice: $s)\n";
+        my $pid = fork;
+        if ($pid == 0) {
+            close $reader;
 
-    #XXX changed to absolute latency for simplicity
-    my $AMAT = $L1D->{lat}*$L1D->{stats}->{Hits} +
-               $L1I->{lat}*$L1I->{stats}->{Hits} +
-               $L2->{lat}*$L2->{stats}->{Hits} +
-               $L3->{lat}*$L3->{stats}->{Hits} +
-               $H->{MML}*$L3->{stats}->{Misses};
-
-    #print Dump($H);
-    $H->{AMAT} = $AMAT;
-    return $AMAT;
-}
-
-sub update_simulations {
-    # Update non-simulated parameters like latency or AMAT
-    # for all simulations in the given folder
-    my $folder = shift;
-    my $fglob = "*.yml";
-    my $all = `find $folder -name "$fglob" -type f`;
-    my @list = split "\n", $all;
-    foreach my $fname (@list) {
-        print "Loading $fname\n";
-        my $s = LoadFile($fname) or die "update_simulations: Can't load '$fname': $!";
-        foreach my $H (@$s) {
-            set_amat $H;
-            set_val $H;
-        }
-        print "Writing back $fname\n";
-        DumpFile($fname, $s) or die "update_simulations: Can't dump '$fname': $!";
-    }
-}
-
-sub load_results {
-#TODO load previous simulations in results folder
-    1;
-}
-
-sub create_cfg {
-    my $H      = shift;
-    #our $KEEP_ALL = 0;  # delete tmpfile at end of run
-    my ($fh, $fname) = tempfile("drcachesim_cfgXXXX", DIR => $tmpdir, UNLINK => 1);
-
-    my @C = ();
-    my $params = qq#
-        num_cores 1
-    #;
-    push @C, $params;
-
-    foreach my $lvl (@LVLS) {
-        my $c  = $H->{$lvl}->{cfg};
-        my $kv = ();
-        foreach my $k (keys(%$c)) {
-            my $v = $c->{$k};
-            # skip keys that map to references
-            next unless defined $v and ref $v eq "";
-            push @$kv, "\t$k $v";
-        }
-        $kv = join "\n", @$kv;
-        my $l = qq#
-            $lvl {
-                $kv
+            foreach my $H (@slice) {
+                run_cachesim $cb, $H;
+                set_amat $H;
+                set_val $H;
+                #print Dump($H);
+                print $writer "\n"; # notify main process
             }
-        #;
-        push @C, $l;
+            #FIXME strips object type
+            #XXX: Does that really matter? Maybe for loading, but even then we dont really care about it
+            DumpFile("$TMPDIR/drcachesim_$$.yml", \@slice) or die "parallel_sweep: Can't open file: $!";
+            close $writer;
+            exit 0;
+        }
+        push @pids, $pid;
     }
-    my $cfg = join "", @C;
-    $cfg =~ s/ {2,}/ /g;    # just for easier debugging
 
-    print $fh "$cfg\n";
-    return $fname;
+    close $writer;
+    # check progress
+    my $count = 0;
+    my $tic = time();
+    my $time_left = -1;
+    do {
+        my $took = max(time() - $tic, 1e-9);    # avoid div by zero
+        my $sim_speed = $count / $took;
+        $time_left = ($len-$count) / $sim_speed if $sim_speed > 0;
+        printf "%d/%d simulations done in %.1fs, %.1fs left (%.1f sims/s)\r", $count, $len, $took, $time_left, $sim_speed;
+        STDOUT->flush();
+        $count++;
+    } while (my $c = <$reader>);
+    print "\n";
+
+    @$sweep = ();   # empty the sweep
+    foreach my $p (@pids) {
+        waitpid $p, 0;
+        my $fname = "$TMPDIR/drcachesim_$p.yml";
+        die "parallel_sweep: Error in process $p: Missing output file '$fname'. Aborting" unless -e $fname;
+        #my $s = `cat /tmp/${x}_sim_$p`;
+        #$s = eval "my " . $s or die "eval failed: $@";
+        my $s = LoadFile($fname) or die "parallel_sweep: Can't load tmp results: $!";
+        push @$sweep, @$s;
+        `rm $fname`;
+    }
+    # collect results and store in RESDIR
+    my $rfile = "$RESDIR/drcachesim_$$.yml";
+    DumpFile($rfile, $sweep) or die "parallel_sweep: Can't load tmp results: $!";
+    return $rfile;
 }
+
+
