@@ -56,16 +56,16 @@ our $test_run = {
 };
 
 sub chdir {
-    # NOTE: needs /usr/bin/sh to point to bash or zsh, dash does not work with "source"
+    # NOTE: needs /usr/bin/sh to point to bash or zsh; dash does not work with "source"
     my $x = shift;
     chdir("$specdir");
     my $rdir=`source shrc; go $x run $rundir`; 
     chomp $rdir;
-    chdir($rdir) or die "[SpecInt::chdir] Can't change into '$rdir': $!\n";
+    chdir($rdir) or die "[SpecInt::chdir] Can't change into '$rdir': $!\nCheck if 'source' shell-builtin availlable\n";
     #print "[SpecInt::chdir] Cwd: ". `pwd`;
 }
 
-sub testrun_dispatcher {
+sub testrun_callback {
     my $k = shift;
     my $cb = sub {
         SpecInt::chdir $k;

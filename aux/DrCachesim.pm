@@ -2,6 +2,7 @@ package DrCachesim;
 
 use strict;
 use warnings;
+
 use File::Temp qw/ tempfile /;
 use List::Util qw( min max reduce );
 use Storable qw(dclone);
@@ -10,13 +11,13 @@ use Term::ANSIColor;
 
 our $DRDIR="/home/elimtob/.local/opt/DynamoRIO";
 our $TMPDIR = "/tmp/drcachesim";
+system("mkdir $TMPDIR") unless -d $TMPDIR;
 our $RESDIR="/home/elimtob/Workspace/mymemtrace/results";
-system("mkdir $TMPDIR") unless(-d $TMPDIR);
 
 our @LVLS=("L1I", "L1D", "L2", "L3");
 our $LINE_SIZE=64;
 #default cost
-our @COST=(
+our @DEFAULT_COST=(
     1000, #998.69,  # L1Isets
     2000, #1998.65, #L1Iassoc 
     1000, #998.69 , # L1Dsets 
@@ -25,7 +26,6 @@ our @COST=(
     200 , #198.98 , # L2assoc 
     10  , #9.35   , #  L3sets 
     20  , #19.48  , # L3assoc 
-    1.00, #    AMAT
 );
 
 #TODO store simulations in sqlite instead of yaml
@@ -172,7 +172,7 @@ sub valid_config {
     return not ($weird_size or $bad_size);
 }
 
-sub set_amat {
+sub default_amat {
     # evaluate "goodness" of a hierarchy by simply weighing off size of the cash and average miss rate
     my $H = shift;
     my $L1I = $H->{L1I};
@@ -203,30 +203,43 @@ sub set_amat {
                $L3->{lat}*$L3->{stats}->{Hits} +
                $H->{MML}*$L3->{stats}->{Misses};
 
-    #print Dump($H);
-    $H->{AMAT} = $AMAT;
     return $AMAT;
 }
 
-sub set_val {
-    # TODO: better cost calculations (e.g. assoc cost should not be linear)
+sub default_cost {
     my $H = shift;
     my $L1I = $H->{L1I};
     my $L1D = $H->{L1D};
     my $L2  = $H->{L2};
     my $L3  = $H->{L3};
-    my $val = $L1I->{cfg}->{size}/64/$L1I->{cfg}->{assoc}*$COST[0] +
-              $L1I->{cfg}->{assoc}*$COST[1] +
-              $L1D->{cfg}->{size}/64/$L1D->{cfg}->{assoc}*$COST[2] +
-              $L1D->{cfg}->{assoc}*$COST[3] +
-              $L2->{cfg}->{size}/64/$L2->{cfg}->{assoc}*$COST[4] +
-              $L2->{cfg}->{assoc}*$COST[5] +
-              $L3->{cfg}->{size}/64/$L3->{cfg}->{assoc}*$COST[6] +
-              $L3->{cfg}->{assoc}*$COST[7] +
-              $H->{AMAT}*$COST[8];
-    $H->{VAL} = $val;
+    my $val = $L1I->{cfg}->{size}/$LINE_SIZE/$L1I->{cfg}->{assoc}*$DEFAULT_COST[0] +
+              $L1I->{cfg}->{assoc}*$DEFAULT_COST[1] +
+              $L1D->{cfg}->{size}/$LINE_SIZE/$L1D->{cfg}->{assoc}*$DEFAULT_COST[2] +
+              $L1D->{cfg}->{assoc}*$DEFAULT_COST[3] +
+              $L2->{cfg}->{size}/$LINE_SIZE/$L2->{cfg}->{assoc}*$DEFAULT_COST[4] +
+              $L2->{cfg}->{assoc}*$DEFAULT_COST[5] +
+              $L3->{cfg}->{size}/$LINE_SIZE/$L3->{cfg}->{assoc}*$DEFAULT_COST[6] +
+              $L3->{cfg}->{assoc}*$DEFAULT_COST[7];
     return $val;
 }
+
+sub default_val {
+    my $H = shift;
+    return default_cost($H) + $H->{AMAT};
+}
+
+sub default_problem {
+    my $exe = shift || "";
+    my $drargs = shift || "";
+    my $defp = {
+        exe  => sub { return ($exe, $drargs); },
+        cost => \&default_cost,
+        amat => \&default_amat,
+        val  => \&default_val,
+    };
+    return $defp;
+}
+
 
 sub get_best {
     my $S = shift; 
@@ -238,6 +251,8 @@ sub update_simulations {
     # Update non-simulated parameters like latency or AMAT
     # for all simulations in the given folder
     my $folder = shift;
+    my $P = shift;
+
     my $fglob = "*.yml";
     my $all = `find $folder -name "$fglob" -type f`;
     my @list = split "\n", $all;
@@ -245,8 +260,8 @@ sub update_simulations {
         print "Loading $fname\n";
         my $s = LoadFile($fname) or die "update_simulations: Can't load '$fname': $!";
         foreach my $H (@$s) {
-            set_amat $H;
-            set_val $H;
+            $H->{AMAT} = $P->{amat}->($H);
+            $H->{VAL}  = $P->{val}->($H);
         }
         print "Writing back $fname\n";
         DumpFile($fname, $s) or die "update_simulations: Can't dump '$fname': $!";
@@ -353,10 +368,10 @@ sub brutef_sweep {
 
 sub run_cachesim {
     #my $k = shift;
-    my $cb = shift;
+    my $P = shift;
     my $H = shift;
     my $simcfg = create_cfg($H);
-    my ($exe, $drargs) = &$cb();
+    my ($exe, $drargs) = $P->{exe}->();
     my $cmd = get_cmd($exe, $simcfg, $drargs);
     #print "Executing: $cmd\n";
     #print "Before: " . Dumper($H);
@@ -370,9 +385,9 @@ sub run_cachesim {
 }
 
 sub run_analysistool {
-    my $cb = shift;
+    my $P = shift;
     my $tool = shift;
-    my ($exe, $drargs) = &$cb();
+    my ($exe, $drargs) = $P->{exe}->();
     #TODO handle potential duplicate simulator type
     $drargs ||= "";
     $drargs .= " $tool";
@@ -441,7 +456,7 @@ sub run_and_parse_output {
 }
 
 sub parallel_run {
-    my $cb    = shift;
+    my $P    = shift;
     my $sweep = shift;
     my $procs = shift || `nproc --all`;
     chomp $procs;
@@ -466,9 +481,9 @@ sub parallel_run {
             close $reader;
 
             foreach my $H (@slice) {
-                run_cachesim $cb, $H;
-                set_amat $H;
-                set_val $H;
+                run_cachesim $P, $H;
+                $H->{AMAT} = $P->{amat}->($H);
+                $H->{VAL}  = $P->{val}->($H);
                 #print Dump($H);
                 print $writer "\n"; # notify main process
             }

@@ -71,8 +71,15 @@ sub run_all {
     print "Successfull cmds: $succ. Failed cmds: " . scalar(@failed) . ".\n@failed\n";
 }
 
+#TODO add costfunction as a callback
+sub find_optimum {
+    my $x = shift;
 
-sub run_simulation {
+    #TODO fork sim.pl
+    #TODO fork optim.jl
+}
+
+sub bruteforce_sim {
     my $x = shift;
     my $name = shift;
 
@@ -143,31 +150,33 @@ my $H = DrCachesim::get_local_hierarchy();
 #                           $H->{L3}->{lat} **-0.6);
 
 my $name1 = "imagick_r";
-my $x1 = SpecInt::testrun_dispatcher($name1);
+my $p1 = DrCachesim::default_problem();
+$p1->{exe} = SpecInt::testrun_callback($name1);
 
 my $name2 = "cachetest";
-my $x2 = sub {
-    my $s1 = $H->{L1D}->{cfg}->{size};
-    my $r1 = $s1*5/64;
-    $r1 = 1000000;
+my $p2 = DrCachesim::default_problem();
+$p2->{exe} = sub {
+        my $s1 = $H->{L1D}->{cfg}->{size};
+        my $r1 = $s1*5/64;
+        $r1 = 1000000;
 
-    my $s2 = $H->{L2}->{cfg}->{size};
-    my $r2 = 1;
+        my $s2 = $H->{L2}->{cfg}->{size};
+        my $r2 = 1;
 
-    my $s3 = $H->{L3}->{cfg}->{size};
-    my $r3 = 1;
+        my $s3 = $H->{L3}->{cfg}->{size};
+        my $r3 = 1;
 
-    my $cmd = sprintf "$CWD/bin/$name2 %d %d %d %d %d %d", $s1, $r1, $s2, $r2, $s3, $r3;
-    my $drargs = join(" ", 
-        #"-skip_refs 5000000",
-        #"-simulator_type basic_counts",
-    );
+        my $cmd = sprintf "$CWD/bin/$name2 %d %d %d %d %d %d", $s1, $r1, $s2, $r2, $s3, $r3;
+        my $drargs = join(" ", 
+            #"-skip_refs 5000000",
+            #"-simulator_type basic_counts",
+        );
 
-    return ($cmd, $drargs);
+        return ($cmd, $drargs);
 };
 
 #
-#run_simulation($x2, $name2);
+#bruteforce_sim($p2, $name2);
 #cache, miss_analyzer, TLB, histogram, reuse_distance, basic_counts, opcode_mix, view or func_view
 #DrCachesim::run_analysistool($x1, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_histogram_bin_multiplier 1.05");
 #DrCachesim::run_analysistool($x1, "-simulator_type reuse_distance -reuse_distance_threshold 1");
@@ -203,11 +212,11 @@ printf("local L1D: assoc: %d, sets: %d. Total sets: %d\n", $H->{L1D}->{cfg}->{as
 my $fn = RefGen::capway_code($H);
 $fn = RefGen::compile_code $fn;
 
-my $x3 = sub { return ($fn, ""); };
-#DrCachesim::run_analysistool($x3, "-simulator_type basic_counts");
-#run_simulation($x3, basename($fn));
-DrCachesim::run_analysistool($x3, "-simulator_type histogram");
-#DrCachesim::run_analysistool($x3, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_distance_threshold 0");
+my $p3 = DrCachesim::default_problem($fn);
+#DrCachesim::run_analysistool($p3, "-simulator_type basic_counts");
+#bruteforce_sim($p3, basename($fn));
+DrCachesim::run_analysistool($p3, "-simulator_type histogram");
+#DrCachesim::run_analysistool($p3, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_distance_threshold 0");
 
 #system("cat $fn");
 
