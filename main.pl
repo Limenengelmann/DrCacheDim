@@ -5,6 +5,7 @@ use lib qw#./aux#;
 use RefGen;
 use SpecInt;
 use DrCachesim;
+use Optim;
 
 use Data::Dumper;
 use Storable qw(dclone);
@@ -21,10 +22,10 @@ my $CWD="/home/elimtob/Workspace/mymemtrace";
 my $dbdir="/home/elimtob/Workspace/mymemtrace/traces";
 
 sub collect_memrefs {
-    my $x = shift;
+    my $P = shift;
     my $db = shift;
     
-    my ($cmd, $drargs) = &$x();
+    my ($cmd, $drargs) = $P->{exe}->();
 
     my $pid = fork();
     if ($pid == 0) {
@@ -71,16 +72,8 @@ sub run_all {
     print "Successfull cmds: $succ. Failed cmds: " . scalar(@failed) . ".\n@failed\n";
 }
 
-#TODO add costfunction as a callback
-sub find_optimum {
-    my $x = shift;
-
-    #TODO fork sim.pl
-    #TODO fork optim.jl
-}
-
 sub bruteforce_sim {
-    my $x = shift;
+    my $P = shift;
     my $name = shift;
 
     my $H = DrCachesim::get_local_hierarchy();
@@ -127,7 +120,7 @@ sub bruteforce_sim {
     $sweep = DrCachesim::brutef_sweep(H => $H, L1I  => [15,15,0,4]);
     #print Dump($$sweep[0]);
 
-    my $rfile = DrCachesim::parallel_run $x, $sweep;
+    my $rfile = DrCachesim::parallel_run $P, $sweep;
 
     my @tstamp = reverse localtime;
     $tstamp[-5]++;
@@ -150,12 +143,12 @@ my $H = DrCachesim::get_local_hierarchy();
 #                           $H->{L3}->{lat} **-0.6);
 
 my $name1 = "imagick_r";
-my $p1 = DrCachesim::default_problem();
-$p1->{exe} = SpecInt::testrun_callback($name1);
+my $P1 = DrCachesim::default_problem();
+$P1->{exe} = SpecInt::testrun_callback($name1);
 
 my $name2 = "cachetest";
-my $p2 = DrCachesim::default_problem();
-$p2->{exe} = sub {
+my $P2 = DrCachesim::default_problem();
+$P2->{exe} = sub {
         my $s1 = $H->{L1D}->{cfg}->{size};
         my $r1 = $s1*5/64;
         $r1 = 1000000;
@@ -176,7 +169,7 @@ $p2->{exe} = sub {
 };
 
 #
-#bruteforce_sim($p2, $name2);
+#bruteforce_sim($P2, $name2);
 #cache, miss_analyzer, TLB, histogram, reuse_distance, basic_counts, opcode_mix, view or func_view
 #DrCachesim::run_analysistool($x1, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_histogram_bin_multiplier 1.05");
 #DrCachesim::run_analysistool($x1, "-simulator_type reuse_distance -reuse_distance_threshold 1");
@@ -212,12 +205,13 @@ printf("local L1D: assoc: %d, sets: %d. Total sets: %d\n", $H->{L1D}->{cfg}->{as
 my $fn = RefGen::capway_code($H);
 $fn = RefGen::compile_code $fn;
 
-my $p3 = DrCachesim::default_problem($fn);
-#DrCachesim::run_analysistool($p3, "-simulator_type basic_counts");
-#bruteforce_sim($p3, basename($fn));
-DrCachesim::run_analysistool($p3, "-simulator_type histogram");
-#DrCachesim::run_analysistool($p3, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_distance_threshold 0");
+my $P3 = DrCachesim::default_problem($fn);
+#DrCachesim::run_analysistool($P3, "-simulator_type basic_counts");
+#bruteforce_sim($P3, basename($fn));
+#DrCachesim::run_analysistool($P3, "-simulator_type histogram");
+#DrCachesim::run_analysistool($P3, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_distance_threshold 0");
 
 #system("cat $fn");
+Optim::solve($P3);
 
 exit 0;

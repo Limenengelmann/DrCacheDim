@@ -16,6 +16,7 @@ scaleAMAT = 1e-3
 LVLS = ["L1I", "L1D", "L2", "L3"]
 header = ("L1Isets", "L1Iassoc", "L1Dsets", "L1Dassoc", "L2sets", "L2assoc", "L3sets", "L3assoc", "AMAT")
 # Indices for code readability
+
 s1I = 1; a1I = 2;
 s1D = 3; a1D = 4;
 s2  = 5; a2  = 6;

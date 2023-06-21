@@ -527,5 +527,3 @@ sub parallel_run {
     DumpFile($rfile, $sweep) or die "parallel_sweep: Can't load tmp results: $!";
     return $rfile;
 }
-
-
