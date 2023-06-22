@@ -212,6 +212,8 @@ my $P3 = DrCachesim::default_problem($fn);
 #DrCachesim::run_analysistool($P3, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_distance_threshold 0");
 
 #system("cat $fn");
-Optim::solve($P3);
+#Optim::comm_test($P3) == 0 or die "Optim::comm_test failed!";
+my $res3 = Optim::solve($P3);
+print(Dump($res3));
 
 exit 0;

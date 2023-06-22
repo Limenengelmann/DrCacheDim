@@ -457,11 +457,12 @@ sub run_and_parse_output {
 
 sub parallel_run {
     my $P    = shift;
-    my $sweep = shift;
+    my $sweep = shift or die "[parallel_run] Missing sweep arg!";
     my $procs = shift || `nproc --all`;
     chomp $procs;
 
     my $len = @$sweep;
+    die "[parallel_run] Empty sweep!" if $len == 0;
     $procs = $len if $len < $procs;
     my $share = $len / $procs;
 
@@ -522,8 +523,13 @@ sub parallel_run {
         push @$sweep, @$s;
         `rm $fname`;
     }
-    # collect results and store in RESDIR
-    my $rfile = "$RESDIR/drcachesim_$$.yml";
-    DumpFile($rfile, $sweep) or die "parallel_sweep: Can't load tmp results: $!";
-    return $rfile;
+
+    if (wantarray()) { # return sweep in list context
+        return @$sweep; # potentially unnecessary deep copy
+    } else {  # return filename in scalar context
+        # collect results and store in RESDIR
+        my $rfile = "$RESDIR/drcachesim_$$.yml";
+        DumpFile($rfile, $sweep) or die "parallel_sweep: Can't load tmp results: $!";
+        return $rfile;
+    }
 }

@@ -19,7 +19,7 @@ my $outp = [];
 #open my $outf, ">", "output.txt";
 # collect relevant lines of the html
 foreach my $file (@files) {
-    print $file . "\n";
+    #print $file . "\n";
     open my $fh, "<", $file;
     my $state = 0;
     my $cpus = [];
