@@ -19,28 +19,6 @@ using Printf
 #
 #m = Model(alpine)
 
-@enum LEVELS L1I L1D L2 L3
-@enum HIERARCHY SETS0=1 WAYS0 SETS1 WAYS1 SETS2 WAYS2 SETS3 WAYS3    # arrays start at 1
-
-#XXX Maybe formulate a small class around the datastructure H, for easier printing
-# equality checks if necessary
-struct H_T
-    D::Dict{String, Any}
-    H_T(H::NTuple{8,Int}) = new(
-                                Dict("AMAT"=>nothing,
-                                     "VAL"=>nothing,
-                                     "H"=>H
-                                    )
-                               )
-    H_T(AMAT::Float64, VAL::Float64, H::NTuple{8,Int}) = new(
-                                                             Dict(
-                                                                  "AMAT"=>AMAT, 
-                                                                  "VAL"=>VAL, 
-                                                                  "H"=>H
-                                                                 )
-                                                            )
-end
-
 @printf("[julia] Got %d args\n", length(ARGS))
 for a in ARGS
     println("[julia] ", a)
@@ -50,89 +28,145 @@ end
 const pSIM = ARGS[1]
 const pRES  = ARGS[2]
 
-function comm_test()
-    @printf("[julia] Sending requests to %s and receiving results from %s\n", pSIM, pRES)
-    runs = 10
-    for i=1:runs
-        println("[julia] reading from pRES")
-        #XXX read opens the pipe, reads until EOF, and closes it
-        s = read(pRES, String)
-        println("[julia] Done reading from pRES")
-        #@printf("[julia] Got Yaml: %s\n", s)
-        S = YAML.load(s)    # slow
-        for i=1:0
-            push!(S, S[1])
-        end
-        yS = YAML.write(S)
-        @printf("[julia] Writing %d bytes to pSIM\n", length(yS))
-        sleep(rand());
-        wrote = write(pSIM, YAML.write(S))
-        @printf("[julia] Done writing to pSIM. Wrote %d bytes.\n", wrote)
-    end
 
-    println("[julia] Done looping. Sending donezo")
-    write(pSIM, "DONE")
-    println("[julia] Donezo")
-    return 0
+const L1I = "L1I"
+const L1D = "L1D"
+const L2 = "L2"
+const L3 = "L3"
+const LEVELS = [L1I L1D L2 L3]
+const SETS0 = 1 
+const WAYS0 = 2
+const SETS1 = 3
+const WAYS1 = 4
+const SETS2 = 5
+const WAYS2 = 6
+const SETS3 = 7
+const WAYS3 = 8
+
+function get_sets(H, lvl)
+    return H[lvl]["cfg"]["size"] / H[lvl]["cfg"]["assoc"]
+end
+
+function set_sets(H, lvl, s)
+    H[lvl]["cfg"]["size"] = s * H[lvl]["cfg"]["assoc"]
+end
+
+function get_ways(H, lvl)
+    return H[lvl]["cfg"]["assoc"]
+end
+
+function set_ways(H, lvl, w)
+    H[lvl]["cfg"]["assoc"] = w
+end
+
+function get_vec(H)
+    h = []
+    for lvl in LEVELS
+        append!(h, get_sets(H, lvl), get_ways(H, lvl))
+    end
+    return h
+end
+
+function set_vec(H, h)
+    set_sets(H, L1I, h[SETS0])
+    set_ways(H, L1I, h[WAYS0])
+    set_sets(H, L1D, h[SETS1])
+    set_ways(H, L1D, h[WAYS1])
+    set_sets(H, L2, h[SETS2])
+    set_ways(H, L2, h[WAYS2])
+    set_sets(H, L3, h[SETS3])
+    set_ways(H, L3, h[WAYS3])
+end
+
+function get_full_associativity(H)
+    H_fa = deepcopy(H)
+    for lvl in LEVELS
+        set_ways(H_fa, lvl, get_sets(H_fa, lvl)*get_ways(H_fa, lvl))
+        set_sets(H_fa, lvl, 1)
+    end
+    return H_fa
+end
+
+function get_direct_mapped(H)
+    H_dm = deepcopy(H)
+    for lvl in LEVELS
+        set_sets(H_dm, lvl, get_sets(H_dm, lvl)*get_ways(H_dm, lvl))
+        set_ways(H_dm, lvl, 1)
+    end
+    return H_dm
 end
 
 function run_cachesim(S)
     # expects list of hierarchies
     s = YAML.write(S)
     #println(s)
-    #@printf("[julia] sending '%s'\n", s)
+    #@printf("[julia] sending \n>%s<\n", s)
+    #@printf("[julia] Writing to pSIM.\n")
     write(pSIM, s)
+    #@printf("[julia] Reading from pRES.\n")
     r = read(pRES, String)
+    #@printf("[julia] Read \n>%s<\n", r)
+    #println("[julia] Parsing..")
     R = YAML.load(r)
-    for i in enumerate(S)
-        @assert(S[i]["H"] == R[i]["H"], "Batch order got mixed up!")
+    #println("[julia] Reading done.")
+    #@printf("[julia] s:\n>%s<\nr:\n>%s<\n", s, r)
+    @assert(length(S) == length(R), "Result length not equal to batch length!")
+    #@printf("[julia] typeof(S): '%s', length: %d, typeof(R): '%s', length: %d\n", typeof(S), length(S), typeof(R), length(R))
+    #println("[julia] S: $S\nR: $R")
+    #println("[julia] S[1]: $S1\nR[1]: $R1}")
+    #@assert(typeof(S) == typeof(R), "Types mismatch!")
+    for (i,v) in enumerate(S)
+        @assert(get_vec(S[i]) == get_vec(R[i]), "Batch order got mixed up!")
     end
     return R
 end
 
 function solve()
-    H0 = Dict("AMAT"=>nothing,
-              "VAL"=>nothing,
-              "H"=>[
-                    64,
-                    8,
-                    64,
-                    12,
-                    256,
-                    20,
-                    1024,
-                    8,
-                ]
-             )
-    #FIXME: This does not modify Hmin, Hmax at all?
-    Hmin = copy(H0)
-    Hmin["H"][Int(SETS1)] /= 2
-    Hmax = copy(H0)
-    Hmax["H"][Int(SETS1)] *= 2
+    println("[julia] Reading H protype.")
+    r = read(pRES, String)
+    println("[julia] Parsing..")
+    H = YAML.load(r)
+
+    H0 = H
+
+    Hmin = deepcopy(H0)
+    set_sets(Hmin, L1D, get_sets(H0, L1D)/2)
+    Hmax = deepcopy(H0)
+    set_sets(Hmax, L1D, get_sets(H0, L1D)*2)
     P0 = [Hmin, Hmax]   # TODO how to add constraints
+    #println(Hmin, Hmax)
 
     Problems = [P0]
     Simulated = []
 
     while length(Problems) > 0
+        println("[julia] Checking new problem")
         P = pop!(Problems)
         #TODO pick direction (simulate fully associative/direct mapped pendant)
         #TODO split into new problems (add new constraints)
         #TODO find new Hmin, Hmax, H0
-        batch = P
+        batch = []
+        #TODO only run problems, that have not been simulated yet (maybe use some lookup table)
+        append!(batch, P)
         R = run_cachesim(batch)
         append!(Simulated, R)
     end
 
-    #TODO send DONE, read, and THEN send the final results..
+    println("[julia] No more problems, sending DONE")
+    #send DONE, read to sync, and THEN send the final results..
+    write(pSIM, "DONE")
+    println("[julia] Waiting for returned DONE...")
+    r = read(pRES, String)
+    @assert(r == "DONE", "Expected 'DONE', got >$r< instead!");
     # Return all results
     s = YAML.write(Simulated)
-    println(s)
+    #println("[julia] Sending results: >$s<")
+    println("[julia] Sending results.")
     write(pSIM, s)
+    println("[julia] Finished.")
     return true
 end
 
-#@assert(comm_test() == 0, "comm_test failed?")
 solve()
 
 println("[julia] Exiting.")

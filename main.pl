@@ -215,5 +215,7 @@ my $P3 = DrCachesim::default_problem($fn);
 #Optim::comm_test($P3) == 0 or die "Optim::comm_test failed!";
 my $res3 = Optim::solve($P3);
 print(Dump($res3));
+my $len3 = @$res3;
+print("[main] Length result: $len3\n");
 
 exit 0;

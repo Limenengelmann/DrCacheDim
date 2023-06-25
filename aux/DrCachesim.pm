@@ -54,7 +54,8 @@ sub new_cache {
            "Child hits"        => undef,
        }
    };
-   bless $self, $class;
+   #XXX: Julia YAML package cannot deserialize this
+   #bless $self, $class;
    return $self;
 }
 
@@ -71,7 +72,8 @@ sub new_hierarchy {
         cmd  => undef,
         "Total miss rate" => undef,
    };
-   bless $self, $class;
+   #XXX: Julia YAML package cannot deserialize this
+   #bless $self, $class;
    return $self;
 }
 
