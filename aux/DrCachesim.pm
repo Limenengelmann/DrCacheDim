@@ -46,12 +46,12 @@ sub new_cache {
            replace_policy => "LRU",
        },
        stats => {
-           "Hits"              => undef,
-           "Misses"            => undef,
-           "Compulsory misses" => undef,
-           "Invalidations"     => undef,
-           "Miss rate"         => undef,
-           "Child hits"        => undef,
+           "Hits"              => 0, #undef,
+           "Misses"            => 0, #undef,
+           "Compulsory misses" => 0, #undef,
+           "Invalidations"     => 0, #undef,
+           "Miss rate"         => 0, #undef,
+           "Child hits"        => 0, #undef,
        }
    };
    #XXX: Julia YAML package cannot deserialize this
@@ -67,8 +67,9 @@ sub new_hierarchy {
         L2   => new_cache(type => "unified", parent => "L3", inclusive => "true"),
         L3   => new_cache(type => "unified", parent => "memory", inclusive => "true"),
         MML  => 1000,    # TODO main memory latency
-        AMAT => undef,
+        LAT  => undef,
         VAL  => undef,
+        COST => undef,
         cmd  => undef,
         "Total miss rate" => undef,
    };
@@ -174,7 +175,7 @@ sub valid_config {
     return not ($weird_size or $bad_size);
 }
 
-sub default_amat {
+sub default_lat {
     # evaluate "goodness" of a hierarchy by simply weighing off size of the cash and average miss rate
     my $H = shift;
     my $L1I = $H->{L1I};
@@ -182,13 +183,13 @@ sub default_amat {
     my $L2  = $H->{L2};
     my $L3  = $H->{L3};
 
-    print "Warning: L1D->{lat}         undefined\n" if not defined $L1D->{lat};
-    print "Warning: L1D->{'Miss rate'} undefined\n" if not defined $L1D->{stats}->{"Miss rate"};
-    print "Warning: L2->{lat}          undefined\n" if not defined $L2->{lat};
-    print "Warning: L3->{lat}          undefined\n" if not defined $L3->{lat};
-    print "Warning: H->{MML}           undefined\n" if not defined $H->{MML};
-    print "Warning: L2->{'Miss rate'}  undefined\n" if not defined $L2->{stats}->{"Miss rate"};
-    print "Warning: L3->{'Miss rate'}  undefined\n" if not defined $L3->{stats}->{"Miss rate"};
+    print "Warning: L1D->{lat}    undefined\n" if not defined $L1D->{lat};
+    print "Warning: L1D->{'Hits'} undefined\n" if not defined $L1D->{stats}->{Hits};
+    print "Warning: L2->{lat}     undefined\n" if not defined $L2->{lat};
+    print "Warning: L3->{lat}     undefined\n" if not defined $L3->{lat};
+    print "Warning: H->{MML}      undefined\n" if not defined $H->{MML};
+    print "Warning: L2->{'Hits'}  undefined\n" if not defined $L2->{stats}->{Hits};
+    print "Warning: L3->{'Hits'}  undefined\n" if not defined $L3->{stats}->{Hits};
 
     # old AMAT code
     #my $AMAT = $L1D->{lat}
@@ -199,13 +200,13 @@ sub default_amat {
     #           * $H->{MML}));
 
     #XXX changed to absolute latency for simplicity
-    my $AMAT = $L1D->{lat}*$L1D->{stats}->{Hits} +
+    my $lat = $L1D->{lat}*$L1D->{stats}->{Hits} +
                $L1I->{lat}*$L1I->{stats}->{Hits} +
                $L2->{lat}*$L2->{stats}->{Hits} +
                $L3->{lat}*$L3->{stats}->{Hits} +
                $H->{MML}*$L3->{stats}->{Misses};
 
-    return $AMAT;
+    return $lat;
 }
 
 sub default_cost {
@@ -227,7 +228,7 @@ sub default_cost {
 
 sub default_val {
     my $H = shift;
-    return default_cost($H) + $H->{AMAT};
+    return default_cost($H) + $H->{LAT};
 }
 
 sub default_problem {
@@ -236,7 +237,7 @@ sub default_problem {
     my $defp = {
         exe  => sub { return ($exe, $drargs); },
         cost => \&default_cost,
-        amat => \&default_amat,
+        lat => \&default_lat,
         val  => \&default_val,
     };
     return $defp;
@@ -262,7 +263,7 @@ sub update_simulations {
         print "Loading $fname\n";
         my $s = LoadFile($fname) or die "update_simulations: Can't load '$fname': $!";
         foreach my $H (@$s) {
-            $H->{AMAT} = $P->{amat}->($H);
+            $H->{LAT} = $P->{lat}->($H);
             $H->{VAL}  = $P->{val}->($H);
         }
         print "Writing back $fname\n";
@@ -289,6 +290,10 @@ sub create_cfg {
             # skip keys that map to references
             next unless defined $v and ref $v eq "";
             push @$kv, "\t$k $v";
+        }
+        if (not defined $kv){
+            print(Dump($H));
+            die "Cannot create config, hierarchy likely malformed";
         }
         $kv = join "\n", @$kv;
         my $l = qq#
@@ -415,7 +420,7 @@ sub run_and_parse_output {
     
     my $state = 0;
     my $c;
-    my $ret = 0;
+    my $ret = 1;
     #TODO rename to clarify cmdout vs cmd_out
     my @cmd_out = ();
     while (my $l = <$cmdout>) {
@@ -447,7 +452,7 @@ sub run_and_parse_output {
         }
     }
     $H->{cmd} = $cmd;
-    #$ret = 1 if $state == 0;    # something definetely went wrong
+    $ret = 1 if $state == 0;    # something definetely went wrong
 
     if (wantarray()) { # list context
         return ($ret, join("\n", @cmd_out));
@@ -485,7 +490,8 @@ sub parallel_run {
 
             foreach my $H (@slice) {
                 run_cachesim $P, $H;
-                $H->{AMAT} = $P->{amat}->($H);
+                $H->{LAT} = $P->{lat}->($H);
+                $H->{COST} = $P->{cost}->($H);
                 $H->{VAL}  = $P->{val}->($H);
                 #print Dump($H);
                 print $writer "\n"; # notify main process

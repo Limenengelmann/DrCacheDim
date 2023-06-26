@@ -4,9 +4,12 @@ using Printf
 
 using LinearAlgebra
 using JuMP
+using Juniper
 using Alpine
 using Ipopt
 using HiGHS
+using Pavito
+using AmplNLWriter, Bonmin_jll
 
 @printf("[julia] Got %d args\n", length(ARGS))
 for a in ARGS
@@ -31,46 +34,79 @@ const WAYS2 = 6
 const SETS3 = 7
 const WAYS3 = 8
 
-function get_sets(H, lvl)
-    return Int(log2(H[lvl]["cfg"]["size"] / H[lvl]["cfg"]["assoc"]))
-end
+const IPOPT = MOI.OptimizerWithAttributes(
+    Ipopt.Optimizer,
+    MOI.Silent() => true,
+    #"sb" => "yes",
+    "max_iter" => 9999,
+)
 
-function set_sets(H, lvl, s)
-    H[lvl]["cfg"]["size"] = 2^s * H[lvl]["cfg"]["assoc"]
+const HIGHS = MOI.OptimizerWithAttributes(
+    HiGHS.Optimizer,
+    "presolve" => "on",
+    "log_to_console" => false,
+    MOI.Silent() => true,
+    # "small_matrix_value" => 1e-12,
+    # "allow_unbounded_or_infeasible" => true,
+)
+
+const JUNIPER = MOI.OptimizerWithAttributes(
+    Juniper.Optimizer,
+    MOI.Silent() => true,
+    "feasibility_pump" => true,
+    "mip_solver" => HIGHS,
+    "nl_solver" => IPOPT,
+)
+
+const PAVITO = MOI.OptimizerWithAttributes(
+    Pavito.Optimizer,
+    MOI.Silent() => true,
+    "mip_solver" => HIGHS,
+    "cont_solver" => IPOPT,
+    "mip_solver_drives" => false,
+)
+
+#XXX we assume 64 byte linesize
+function get_sets(H, lvl)
+    return Int(log2(H[lvl]["cfg"]["size"] / 64 / H[lvl]["cfg"]["assoc"]))
 end
 
 function get_ways(H, lvl)
-    return H[lvl]["cfg"]["assoc"]
+    return Int(H[lvl]["cfg"]["assoc"])
 end
 
-function set_ways(H, lvl, w)
-    H[lvl]["cfg"]["assoc"] = w
+function set_ways_and_sets!(H, lvl, w, s)
+    # only set sets and ways, since sets depends on the correct associativity
+    @assert(w > 0, "Cannot have assoc 0!")
+    H[lvl]["cfg"]["assoc"] = Int(w)
+    @assert(0 <= s && s < 64, "s must be between 0 and 64 [2^0 <= sets <= 2^63]")
+    size = 2^s * w * 64
+    @assert(size > 0, "Cannot have size 0!")
+    H[lvl]["cfg"]["size"] = Int(size)
 end
 
 function get_vec(H)
-    h = []
+    h = Int[]
     for lvl in LEVELS
         append!(h, get_sets(H, lvl), get_ways(H, lvl))
     end
     return h
 end
 
-function set_vec(H, h)
-    set_sets(H, L1I, h[SETS0])
-    set_ways(H, L1I, h[WAYS0])
-    set_sets(H, L1D, h[SETS1])
-    set_ways(H, L1D, h[WAYS1])
-    set_sets(H, L2, h[SETS2])
-    set_ways(H, L2, h[WAYS2])
-    set_sets(H, L3, h[SETS3])
-    set_ways(H, L3, h[WAYS3])
+function set_vec!(H, h)
+    #XXX set_ways first
+    set_ways_and_sets!(H, L1I, h[WAYS0], h[SETS0])
+    set_ways_and_sets!(H, L1D, h[WAYS1], h[SETS1])
+    set_ways_and_sets!(H, L2, h[WAYS2], h[SETS2])
+    set_ways_and_sets!(H, L3, h[WAYS3], h[SETS3])
 end
 
 function get_full_associativity(H)
     H_fa = deepcopy(H)
     for lvl in LEVELS
-        set_ways(H_fa, lvl, get_sets(H_fa, lvl)*get_ways(H_fa, lvl))
-        set_sets(H_fa, lvl, 1)
+        w = get_sets(H_fa, lvl)*get_ways(H_fa, lvl)
+        s = 1
+        set_ways_and_sets!(H_fa, lvl, w, s)
     end
     return H_fa
 end
@@ -78,8 +114,9 @@ end
 function get_direct_mapped(H)
     H_dm = deepcopy(H)
     for lvl in LEVELS
-        set_sets(H_dm, lvl, get_sets(H_dm, lvl)*get_ways(H_dm, lvl))
-        set_ways(H_dm, lvl, 1)
+        w = 1
+        s = get_sets(H_dm, lvl)*get_ways(H_dm, lvl)
+        set_ways_and_sets!(H_dm, lvl, w, s)
     end
     return H_dm
 end
@@ -109,39 +146,145 @@ function run_cachesim(S)
     return R
 end
 
-function new_model(H0, Hmin, Hmax)
-    h0 = get_vec(H0)
+function add_constraints!(M, h, Hmin, Hmax, A, b)
+    #Base constraints
     hmin = get_vec(Hmin)
     hmax = get_vec(Hmax)
-    # NLP optimizer
-    #ipopt = optimizer_with_attributes(Ipopt.Optimizer,
-    #                                    MOI.Silent() => true,
-    #                                    "sb" => "yes",
-    #                                    "max_iter"   => 9999)
-
-    ## Global optimizer
-    #alpine = optimizer_with_attributes(Alpine.Optimizer,
-    #                                     "nlp_solver" => ipopt)
-
-    M = Model(HiGHS.Optimizer)
-    #set_silent(M)
-    @variable(M, h[i=1:length(h0)], Int, start=h0[i])
-    # base constraints
-    @constraint(M, [i=1:length(h0)], hmin[i] <= h[i] <= hmax[i])
+    @constraint(M, [i=1:length(hmin)], hmin[i] <= h[i] <= hmax[i])
     @constraint(M, h[SETS0] <= h[SETS1])
     @constraint(M, h[SETS1] <= h[SETS2])
     @constraint(M, h[SETS2] <= h[SETS3])
-    return M, h
+
+    if (length(b) > 0)
+        @constraint(M, A*h .<= b)
+    end
 end
 
-function split(H, H_fa, H_dm)
-    #TODO simulate fully associative, direct mapped pendant to H
+function get_new_min_max(Hcen, Hmin, Hmax, A_minus, b_minus, A_plus, b_plus)
+    #TODO determine when we should not split further (maybe solution becomes infeasible?)
+    hcen = get_vec(Hcen)
+    hmin = get_vec(Hmin)
+    hmax = get_vec(Hmax)
+    Hmin_new = deepcopy(Hcen)
+    Hmax_new = deepcopy(Hcen)
+
+    #println(hmin)
+    #println(hcen)
+    #println(hmax)
+    M = Model(HIGHS)
+    #set_silent(M)
+    @variable(M, h[i=1:length(hcen)], Int, start=hcen[i])
+    add_constraints!(M, h, Hmin, Hmax, A_plus, b_plus)
+    @objective(M, Min, sum(h))
+    #set_start_value(h, hcen)
+    #set_start_value(all_variables(M), hcen)
+    optimize!(M)
+    ts = termination_status(M)
+    if(ts == OPTIMAL)
+        hmin_new = value.(h)
+        set_vec!(Hmin_new, hmin_new)
+    elseif(ts == INFEASIBLE)
+        Hmin_new = nothing 
+    else
+        println(M)
+        solution_summary(M)
+        @assert(false, "Unexpected termination status '$ts' while searching Hmin!")
+    end
+    #println(Hmax_new)
+                                                                      
+    M = Model(HIGHS)
+    #set_silent(M)
+    @variable(M, h[i=1:length(hcen)], Int, start=hcen[i])
+    add_constraints!(M, h, Hmin, Hmax, A_minus, b_minus)
+    @objective(M, Max, sum(h))
+    #set_start_value(h, hcen)
+    #set_start_value(all_variables(M), hcen)
+    optimize!(M)
+    ts = termination_status(M)
+    if(ts == OPTIMAL)
+        hmax_new = value.(h)
+        set_vec!(Hmax_new, hmax_new)
+    elseif(ts == INFEASIBLE)
+        Hmax_new = nothing 
+    else
+        println(M)
+        solution_summary(M)
+        @assert(false, "Unexpected termination status '$ts' while searching Hmax!")
+    end
+    #println(Hmin_new)
+
+    return Hmin_new, Hmax_new
+end
+
+function get_center(Hmin, Hmax, A, b)
+    hmin = get_vec(Hmin)
+    hmax = get_vec(Hmax)
+    c = (hmax .+ hmin)./2
+
+    #M = Model(
+    #    optimizer_with_attributes(
+    #        Pavito.Optimizer,
+    #        #"nlp_solver" => IPOPT,
+    #        "cont_solver" => IPOPT,
+    #        "mip_solver" => HIGHS,
+    #    ),
+    #)
+    #M = Model(
+    #      optimizer_with_attributes(
+    #        Juniper.Optimizer,
+    #        "nl_solver" => IPOPT,
+    #        "mip_solver" => HIGHS,
+    #       ),
+    #)
+    #M = Model(optimizer_with_attributes(Juniper.Optimizer, "nl_solver"=>ipopt))
+    #M = Model(() -> AmplNLWriter.Optimizer(Bonmin_jll.amplexe))
+    M = Model(JUNIPER)
+    #set_silent(M)
+    @variable(M, h[i=1:length(hmin)], Int, start=round(c[i]))
+    add_constraints!(M, h, Hmin, Hmax, A, b)
+
+    #TODO calculate proper center of mass (max slack to constraints)
+    @objective(M, Min, sum((h[i]- c[i])^2 for i in 1:length(c)))
+    #set_start_value(h, hmin)
+    #set_start_value(all_variables(M), hmin)
+    optimize!(M)
+    ts = termination_status(M)
+    # Here the exact optimum is not necessary
+    if(ts == OPTIMAL || ts == LOCALLY_SOLVED || ts == ALMOST_OPTIMAL)
+        Hcen = deepcopy(Hmin)
+        set_vec!(Hcen, round.(value.(h)))
+    else
+        println(M)
+        solution_summary(M)
+        println(c)
+        println(hmin)
+        println(hmax)
+        println(value.(h))
+        Hcen = nothing
+        @assert(false, "Could not find H_cen! '$ts'")
+    end
+
+    return Hcen
+end
+
+function split(H, H_fa, H_dm, A, b)
     h = get_vec(H)
-    A = zeros(Int, 1, length(h))
-    # constraint H_i[SETS1] .>= H[SETS1]
-    A[SETS1] = 1
-    b = h[SETS1]    # TODO
-    return A, b
+    h_fa = get_vec(H_fa)
+    h_dm = get_vec(H_dm)
+
+    split_on = SETS1    #TODO proper split
+
+    # constraint H_i[split_on] .<= H[split_on]
+    A_minus = vcat(A, zeros(1, length(h)))
+    A_minus[end, split_on] = 1
+    b_minus = vcat(b, h[split_on])
+
+    # constraint H_i[split_on] .> H[split_on] <=> -H_i[split_on] .<= -H[split_on]-1
+    A_plus = vcat(A, zeros(1, length(h)))
+    A_plus[end, split_on] = -1
+    b_plus = vcat(b, -h[split_on]-1)
+
+    return A_minus, b_minus, A_plus, b_plus
 end
 
 function solve()
@@ -149,56 +292,77 @@ function solve()
     r = read(pRES, String)
     H0 = YAML.load(r)
 
+    #XXX Maybe send Hmin, Hmax together with H0?
     Hmin = deepcopy(H0)
-    #FIXME realistic bounds
-    set_vec(Hmin, [4,1,4,1,4,1,4,1])
+    #FIXME more realistic bounds
+    set_vec!(Hmin, [4,1,4,1,4,1,4,1])
     Hmax = deepcopy(H0)
-    #FIXME realistic bounds
-    set_vec(Hmax, [2^29,16,2^29,16,2^29,16,2^29,16])
+    #FIXME more realistic bounds
+    #XXX number of sets are exponents
+    set_vec!(Hmax, [16,16,16,16,16,20,16,64])
     # Define constraints as (A, b) s.t. A*h <= b
-    P0 = [Hmin, Hmax, [], []]   # TODO how to add constraints
+    A0 = []
+    b0 = []
+    P0 = [Hmin, Hmax, A0, b0]
 
-    Problems = [P0]
-    Simulated = []
+    first_iter = true
+    H0["VAL"]  = Inf
+    Best_H     = H0
+    Problems   = [P0]
+    Simulated  = []
 
+    #TODO Dont add the same constraints over and over
+    #TODO Graceful termination on SIGINT
     while length(Problems) > 0
         println("[julia] Checking new problem")
-        h_min, h_max, A, b = popfirst!(Problems) #TODO FIFO
+        Hmin_cur, Hmax_cur, A, b = popfirst!(Problems)    # breadth first search
+        # calculate lower bound
+        #TODO get COST without simulating, e.g. add extra boolean field SIMULATE, which can be read by Optim.pm
+        R = run_cachesim([Hmin_cur, Hmax_cur])
+        Hmin_cur, Hmax_cur = R
+        #XXX: bound only correct if objective fun is the sum of cost and latency!
+        Bound = Hmin_cur["COST"] + Hmax_cur["LAT"]
+        #Some logging
+        @printf("%d problems in queue. Checking:\n", length(Problems))
+        hmin_cur = get_vec(Hmin_cur)
+        hmax_cur = get_vec(Hmax_cur)
+        display(vcat(hmin_cur', hmax_cur'))
+        display(Matrix(hcat(A, b)))
+        if Bound >= Best_H["VAL"]
+            # discard
+            println("Purged")
+            continue
+        end
+        H = first_iter ? H0 : get_center(Hmin_cur, Hmax_cur, A, b)
+        first_iter = false
+        append!(R, run_cachesim([H]))
+        H = R[end]
+
+        if H["VAL"] < Best_H["VAL"]
+            Best_H = H
+        end
         #TODO pick direction (simulate fully associative/direct mapped pendant)
+        A_minus, b_minus, A_plus, b_plus = split(H, H, H, A, b)
+        Hmin_new, Hmax_new = get_new_min_max(H, Hmin_cur, Hmax_cur, A_minus, b_minus, A_plus, b_plus)
+        if (Hmax_new != nothing)
+            push!(Problems, [Hmin_cur, Hmax_new, A_minus, b_minus])
+        end
+        if (Hmin_new != nothing)
+            push!(Problems, [Hmin_new, Hmax_cur, A_plus, b_plus])
+        end
 
-        M, h = new_model(H0, Hmin, Hmax)
-        @objective(M, Max, sum(h))
-        optimize!(M)
-        @assert(termination_status(M) == OPTIMAL, "Could not find H_max")
-        solution_summary(M)
-        Hmax_new = value.(h)
-        #println(Hmax_new)
-
-        M, h = new_model(H0, Hmin, Hmax)
-        @objective(M, Min, sum(h))
-        optimize!(M)
-        @assert(termination_status(M) == OPTIMAL, "Could not find H_min")
-        solution_summary(M)
-        Hmin_new = value.(h)
-        #println(Hmin_new)
-
-        A_new, b_new = split(H, H, H)
-
-        #TODO split into new problems (add new constraints)
-        #TODO find new Hmin, Hmax, H0
-        batch = []
-        #TODO only run problems, that have not been simulated yet (maybe use some lookup table)
-        append!(batch, P)
-        R = run_cachesim(batch)
+        #TODO lookup table for hierarchies in Simulated (e.g. memoize run_cachesim)
         append!(Simulated, R)
     end
+
+    append!(Simulated, Best_H)
 
     println("[julia] No more problems, sending DONE")
     #send DONE, read to sync, and THEN send the final results..
     write(pSIM, "DONE")
     println("[julia] Waiting for returned DONE...")
     r = read(pRES, String)
-    @assert(r == "DONE", "Expected 'DONE', got >$r< instead!");
+    @assert(r == "DONE", "Expected 'DONE', got >$r< instead!")
     # Return all results
     s = YAML.write(Simulated)
     #println("[julia] Sending results: >$s<")
