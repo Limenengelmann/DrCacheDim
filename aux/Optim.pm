@@ -23,6 +23,9 @@ sub solve {
         exec $cmd or die "Exec failed: $!";
     }
 
+    #XXX trapping SIGINT does not work properly here unfortunately (too easy to interupt one of the many syscalls)
+    #$SIG{INT} = sub { print "[Optim::solve] Caught a sigint $!"};
+
     my $done = 0;
     my $pipe_RES;
     my $pipe_SIM;

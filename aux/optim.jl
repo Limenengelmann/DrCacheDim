@@ -66,6 +66,14 @@ const PAVITO = MOI.OptimizerWithAttributes(
     "mip_solver_drives" => false,
 )
 
+function print_problem(P)
+    Hmin, Hmax, A, b = P
+    println("[julia] Hmin, Hmax:")
+    display(transpose(Matrix(hcat(get_vec.([Hmin, Hmax])...))))
+    println("[julia] Constraints: A|b")
+    display(Matrix(hcat(A, b)))
+end
+
 #XXX we assume 64 byte linesize
 function get_sets(H, lvl)
     return Int(log2(H[lvl]["cfg"]["size"] / 64 / H[lvl]["cfg"]["assoc"]))
@@ -165,53 +173,62 @@ function get_new_min_max(Hcen, Hmin, Hmax, A_minus, b_minus, A_plus, b_plus)
     hcen = get_vec(Hcen)
     hmin = get_vec(Hmin)
     hmax = get_vec(Hmax)
-    Hmin_new = deepcopy(Hcen)
-    Hmax_new = deepcopy(Hcen)
 
-    #println(hmin)
-    #println(hcen)
-    #println(hmax)
-    M = Model(HIGHS)
-    #set_silent(M)
-    @variable(M, h[i=1:length(hcen)], Int, start=hcen[i])
-    add_constraints!(M, h, Hmin, Hmax, A_plus, b_plus)
-    @objective(M, Min, sum(h))
-    #set_start_value(h, hcen)
-    #set_start_value(all_variables(M), hcen)
-    optimize!(M)
-    ts = termination_status(M)
-    if(ts == OPTIMAL)
-        hmin_new = value.(h)
-        set_vec!(Hmin_new, hmin_new)
-    elseif(ts == INFEASIBLE)
-        Hmin_new = nothing 
-    else
-        println(M)
-        solution_summary(M)
-        @assert(false, "Unexpected termination status '$ts' while searching Hmin!")
+    Hmin_new = nothing
+    Hmax_new = nothing
+
+    if A_plus != nothing && b_plus != nothing
+        #println(hmin)
+        #println(hcen)
+        #println(hmax)
+        M = Model(HIGHS)
+        #set_silent(M)
+        @variable(M, h[i=1:length(hcen)], Int, start=hcen[i])
+        add_constraints!(M, h, Hmin, Hmax, A_plus, b_plus)
+        @objective(M, Min, sum(h))
+        #set_start_value(h, hcen)
+        #set_start_value(all_variables(M), hcen)
+        optimize!(M)
+        ts = termination_status(M)
+        if(ts == OPTIMAL)
+            hmin_new = value.(h)
+            Hmin_new = deepcopy(Hcen)
+            set_vec!(Hmin_new, hmin_new)
+        elseif ts == INFEASIBLE
+            Hmin_new = nothing
+        else
+            Hmin_new = nothing
+            println(M)
+            solution_summary(M)
+            @assert(false, "Unexpected termination status '$ts' while searching Hmin!")
+        end
     end
     #println(Hmax_new)
                                                                       
-    M = Model(HIGHS)
-    #set_silent(M)
-    @variable(M, h[i=1:length(hcen)], Int, start=hcen[i])
-    add_constraints!(M, h, Hmin, Hmax, A_minus, b_minus)
-    @objective(M, Max, sum(h))
-    #set_start_value(h, hcen)
-    #set_start_value(all_variables(M), hcen)
-    optimize!(M)
-    ts = termination_status(M)
-    if(ts == OPTIMAL)
-        hmax_new = value.(h)
-        set_vec!(Hmax_new, hmax_new)
-    elseif(ts == INFEASIBLE)
-        Hmax_new = nothing 
-    else
-        println(M)
-        solution_summary(M)
-        @assert(false, "Unexpected termination status '$ts' while searching Hmax!")
+    if A_minus != nothing && b_minus != nothing
+        M = Model(HIGHS)
+        #set_silent(M)
+        @variable(M, h[i=1:length(hcen)], Int, start=hcen[i])
+        add_constraints!(M, h, Hmin, Hmax, A_minus, b_minus)
+        @objective(M, Max, sum(h))
+        #set_start_value(h, hcen)
+        #set_start_value(all_variables(M), hcen)
+        optimize!(M)
+        ts = termination_status(M)
+        if(ts == OPTIMAL)
+            hmax_new = value.(h)
+            Hmax_new = deepcopy(Hcen)
+            set_vec!(Hmax_new, hmax_new)
+        elseif ts == INFEASIBLE
+            Hmax_new = nothing
+        else
+            Hmax_new = nothing
+            println(M)
+            solution_summary(M)
+            @assert(false, "Unexpected termination status '$ts' while searching Hmax!")
+        end
+        #println(Hmin_new)
     end
-    #println(Hmin_new)
 
     return Hmin_new, Hmax_new
 end
@@ -271,18 +288,50 @@ function split(H, H_fa, H_dm, A, b)
     h = get_vec(H)
     h_fa = get_vec(H_fa)
     h_dm = get_vec(H_dm)
+    A_minus, b_minus = nothing, nothing
+    A_plus, b_plus = nothing, nothing
 
+    #TODO proper split
+    # Consider: 
+    # - The present types of misses
+    # - Which components can be moved actually (e.g. are not fixed by constraints)
     split_on = SETS1    #TODO proper split
+    #split_on = rand(1:length(h))    #TODO proper split
 
     # constraint H_i[split_on] .<= H[split_on]
-    A_minus = vcat(A, zeros(1, length(h)))
-    A_minus[end, split_on] = 1
-    b_minus = vcat(b, h[split_on])
+    a_minus = zeros(Int, 1, length(h))
+    a_minus[split_on] = 1
+    # check if the new constraint is redundant
+    r = findfirst(all(A .== a_minus, dims=2))
+    if r != nothing
+        # Don't create a problem, if constraints stay the same
+        # and ensure upper bounds only shrink
+        if b[r[1]] > h[split_on]
+            A_minus = copy(A)
+            b_minus = copy(b)
+            b_minus[r[1]] = h[split_on]
+        end
+    else
+        A_minus = vcat(A, a_minus)
+        b_minus = vcat(b, h[split_on])
+    end
 
     # constraint H_i[split_on] .> H[split_on] <=> -H_i[split_on] .<= -H[split_on]-1
-    A_plus = vcat(A, zeros(1, length(h)))
-    A_plus[end, split_on] = -1
-    b_plus = vcat(b, -h[split_on]-1)
+    a_plus = zeros(Int, 1, length(h))
+    a_plus[split_on] = -1
+    # check if the new constraint is redundant
+    # and ensure lower bounds only grow
+    r = findfirst(all(A .== a_plus, dims=2))
+    if r != nothing
+        if b[r[1]] < -h[split_on]-1
+            A_plus = copy(A)
+            b_plus = copy(b)
+            b_plus[r[1]] = -h[split_on]-1
+        end
+    else
+        A_plus = vcat(A, a_plus)
+        b_plus = vcat(b, -h[split_on]-1)
+    end
 
     return A_minus, b_minus, A_plus, b_plus
 end
@@ -301,8 +350,8 @@ function solve()
     #XXX number of sets are exponents
     set_vec!(Hmax, [16,16,16,16,16,20,16,64])
     # Define constraints as (A, b) s.t. A*h <= b
-    A0 = []
-    b0 = []
+    A0 = zeros(Int, 0, 8)
+    b0 = zeros(Int, 0, 1)
     P0 = [Hmin, Hmax, A0, b0]
 
     first_iter = true
@@ -310,54 +359,76 @@ function solve()
     Best_H     = H0
     Problems   = [P0]
     Simulated  = []
+    max_iter = 20
+    purged = 0
 
     #TODO Dont add the same constraints over and over
-    #TODO Graceful termination on SIGINT
-    while length(Problems) > 0
+    #XXX Graceful termination on SIGINT seems impossible
+    while length(Problems) > 0 && max_iter > 0
         println("[julia] Checking new problem")
-        Hmin_cur, Hmax_cur, A, b = popfirst!(Problems)    # breadth first search
+        R = []
+        P_cur = popfirst!(Problems)    # breadth first search
+        Hmin_cur, Hmax_cur, A, b = P_cur
         # calculate lower bound
         #TODO get COST without simulating, e.g. add extra boolean field SIMULATE, which can be read by Optim.pm
-        R = run_cachesim([Hmin_cur, Hmax_cur])
-        Hmin_cur, Hmax_cur = R
+        Hmin_cur, Hmax_cur = run_cachesim([Hmin_cur, Hmax_cur])
+
+        #Some logging
+        @printf("[julia] %d problems in queue. Checking:\n", length(Problems))
+        print_problem(P_cur)
+
         #XXX: bound only correct if objective fun is the sum of cost and latency!
         Bound = Hmin_cur["COST"] + Hmax_cur["LAT"]
-        #Some logging
-        @printf("%d problems in queue. Checking:\n", length(Problems))
-        hmin_cur = get_vec(Hmin_cur)
-        hmax_cur = get_vec(Hmax_cur)
-        display(vcat(hmin_cur', hmax_cur'))
-        display(Matrix(hcat(A, b)))
         if Bound >= Best_H["VAL"]
             # discard
-            println("Purged")
+            purged += 1
+            println("[julia] Purged")
             continue
         end
-        H = first_iter ? H0 : get_center(Hmin_cur, Hmax_cur, A, b)
+        H_cen = first_iter ? H0 : get_center(Hmin_cur, Hmax_cur, A, b)
         first_iter = false
-        append!(R, run_cachesim([H]))
-        H = R[end]
+        H_cen, = run_cachesim([H_cen])
+        if H_cen["VAL"] < Best_H["VAL"]
+            Best_H = H_cen
+        end
+        println("[julia] Checked hierarchy:")
+        display(transpose(get_vec(H_cen)))
 
-        if H["VAL"] < Best_H["VAL"]
-            Best_H = H
-        end
         #TODO pick direction (simulate fully associative/direct mapped pendant)
-        A_minus, b_minus, A_plus, b_plus = split(H, H, H, A, b)
-        Hmin_new, Hmax_new = get_new_min_max(H, Hmin_cur, Hmax_cur, A_minus, b_minus, A_plus, b_plus)
-        if (Hmax_new != nothing)
-            push!(Problems, [Hmin_cur, Hmax_new, A_minus, b_minus])
+        A_minus, b_minus, A_plus, b_plus = split(H_cen, H_cen, H_cen, A, b)
+        Hmin_new, Hmax_new = get_new_min_max(H_cen, Hmin_cur, Hmax_cur, A_minus, b_minus, A_plus, b_plus)
+        P_minus, P_plus = nothing, nothing
+        if (Hmax_new != nothing && A_minus != nothing)
+            P_minus = [Hmin_cur, Hmax_new, A_minus, b_minus]
+            push!(Problems, P_minus)
         end
-        if (Hmin_new != nothing)
-            push!(Problems, [Hmin_new, Hmax_cur, A_plus, b_plus])
+        if (Hmin_new != nothing && A_plus != nothing)
+            P_plus = [Hmin_new, Hmax_cur, A_plus, b_plus]
+            push!(Problems, P_plus)
         end
+
+        println("[julia] Adding new problem[s]:")
+        P_minus != nothing ? print_problem(P_minus) : ()
+        P_plus != nothing ? print_problem(P_plus) : ()
 
         #TODO lookup table for hierarchies in Simulated (e.g. memoize run_cachesim)
-        append!(Simulated, R)
+        append!(Simulated, [Hmin_cur, H_cen, Hmax_cur])
+        max_iter -= 1
     end
-
-    append!(Simulated, Best_H)
+    #XXX push for Dicts, append for Lists of Dicts!
+    push!(Simulated, Best_H)
 
     println("[julia] No more problems, sending DONE")
+    println("[julia] Purged $purged subproblems")
+    println("[julia] Checked hierarchies:")
+    i=1
+    while i<length(Simulated)-3
+        display(transpose(Matrix(hcat(get_vec.(Simulated[i:i+2])...))))
+        i+=3
+    end
+    println("[julia] Best hierarchy:")
+    display(transpose(get_vec(Best_H)))
+
     #send DONE, read to sync, and THEN send the final results..
     write(pSIM, "DONE")
     println("[julia] Waiting for returned DONE...")
