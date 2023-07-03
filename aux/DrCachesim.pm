@@ -176,6 +176,18 @@ sub get_local_hierarchy {
     return $H;
 }
 
+#TODO refactor math sub into another module
+sub gcd2p {
+    # returns largest power of 2 that divides $v
+    use integer;
+    my $v = shift;
+    my $k = 1;
+    while ($v % (2*$k) == 0) {
+        $k*=2;
+    };
+    return $k;
+}
+
 sub log2 {
     if (wantarray()) { # list context
         my @N = @_;
@@ -406,8 +418,8 @@ sub brutef_sweep {
     # set default values
     foreach my $l (@LVLS) {
         unless (defined $args{$l}) {
-            $args{$l} = int_log2($HP->{$l}->{cfg}->{size} , $HP->{$l}->{cfg}->{size},
-                                 $HP->{$l}->{cfg}->{assoc}, $HP->{$l}->{cfg}->{assoc}); 
+            $args{$l} = log2($HP->{$l}->{cfg}->{size} , $HP->{$l}->{cfg}->{size},
+                             $HP->{$l}->{cfg}->{assoc}, $HP->{$l}->{cfg}->{assoc}); 
         }
 
     }

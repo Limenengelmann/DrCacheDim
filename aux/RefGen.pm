@@ -8,6 +8,18 @@ use File::Basename;
 our $tmpdir = "/tmp/refgen";
 system("mkdir $tmpdir") unless(-d $tmpdir);
 
+#TODO refactor math sub into another module
+sub gcd2p {
+    # returns largest power of 2 that divides $v
+    use integer;
+    my $v = shift;
+    my $k = 1;
+    while ($v % (2*$k) == 0) {
+        $k*=2;
+    };
+    return $k;
+}
+
 #TODO refactor and name file properly, e.g. depending on which capway macro it actually calls
 sub capway_code {
     my $H = shift;
@@ -25,6 +37,11 @@ sub capway_code {
     my $sets1 = $size1 / $ways1 / 64;
     my $sets2 = $size2 / $ways2 / 64;
     my $sets3 = $size3 / $ways3 / 64;
+
+    my $gcd0 = gcd2p($ways0);
+    my $gcd1 = gcd2p($ways1);
+    my $gcd2 = gcd2p($ways2);
+    my $gcd3 = gcd2p($ways3);
 
     my $fname = "$tmpdir/capway-$size0-$ways0-$size1-$ways1-$size2-$ways2-$size3-$ways3.asm";
     print "Generating '$fname'...\n";
@@ -53,11 +70,21 @@ sub capway_code {
                 WAYS2 equ $ways2
                 WAYS3 equ $ways3
 
+                GCD0 equ $gcd0
+                GCD1 equ $gcd1
+                GCD2 equ $gcd2
+                GCD3 equ $gcd3
+
+                ; TODO properly handle non-powers of 2 ways for L1I
+                OFFS0 equ LINESIZE + (WAYS0-1)*SETS0*LINESIZE
+                OFFS1 equ LINESIZE*SETS1*GCD1
+                OFFS2 equ LINESIZE*SETS2*GCD2
+                OFFS3 equ LINESIZE*SETS3*GCD3
+
                 ; SIZE3*assoc3 so we can access the same tags in a direct mapped cache of the same capacity
-                ;TODO: handle non-powers of 2 ways
-                GSIZE1 equ SIZE1*WAYS1
-                GSIZE2 equ SIZE2*WAYS2
-                GSIZE3 equ SIZE3*WAYS3
+                GSIZE1 equ SIZE1*GCD1
+                GSIZE2 equ SIZE2*GCD2
+                GSIZE3 equ SIZE3*GCD3
 
                 SECTION .bss
                     align LINESIZE
@@ -82,9 +109,9 @@ sub capway_code {
                         ; L1I aka L0 'run'
                         ;%assign REPS SETS0*WAYS0*WAYS0
                         %assign REPS SETS0*WAYS0*(WAYS0-1)+SETS0
-                        %assign J0 LINESIZE + (WAYS0-1)*SETS0*LINESIZE
+                        ;%assign J0 LINESIZE + (WAYS0-1)*SETS0*LINESIZE
                         %assign i 1
-                L0%3: 
+                L0%3:
                         %rep REPS
                             ; LINESIZE bytes of instructions
                             ; $ = current assembly pos, \$ + LINESIZE jump to next block
@@ -94,7 +121,7 @@ sub capway_code {
                                 cmp rdi, %2
                                 jl L%1%3
                             %elif i % SETS0 == 0
-                                jmp \$ + J0
+                                jmp \$ + OFFS0
                                 align LINESIZE    ;fill-up with nop
                             %else
                                 jmp \$ + LINESIZE
@@ -114,7 +141,8 @@ sub capway_code {
                         cmp rsi, LINESIZE*SETS%1
                         jl .loop1
 
-                        add rax, SIZE%1
+                        ;add rax, SIZE%1
+                        add rax, OFFS%1
                         cmp rax, %3 + GSIZE%1
                         jl .loop2
 
