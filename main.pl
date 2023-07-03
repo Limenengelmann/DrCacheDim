@@ -198,24 +198,74 @@ printf("[Local Ratios] r12: %.2e, r23: %.2e\n", $r12, $r23);
 #$H->{L1D}->{cfg}->{assoc} = 2;
 #$H->{L1D}->{cfg}->{size} = 2*2*64;
 
-printf("local L3: assoc: %d, sets: %d. Total sets: %d\n", $H->{L3}->{cfg}->{assoc}, $H->{L3}->{cfg}->{size} / $H->{L3}->{cfg}->{assoc} / 64, $H->{L3}->{cfg}->{size} / 64);
-printf("local L1I: assoc: %d, sets: %d. Total sets: %d\n", $H->{L1I}->{cfg}->{assoc}, $H->{L1I}->{cfg}->{size} / $H->{L1I}->{cfg}->{assoc} / 64, $H->{L1I}->{cfg}->{size} / 64);
-printf("local L1D: assoc: %d, sets: %d. Total sets: %d\n", $H->{L1D}->{cfg}->{assoc}, $H->{L1D}->{cfg}->{size} / $H->{L1D}->{cfg}->{assoc} / 64, $H->{L1D}->{cfg}->{size} / 64);
 
+#my @h_opt = (64, 8, 64, 16, 1024, 16, 16384, 8);   # local size rounded to powers of 2
+#DrCachesim::set_sets_ways($H, @h_opt);
+#my $h0 = (@$h_opt);   # local size
 my $fn = RefGen::capway_code($H);
 $fn = RefGen::compile_code $fn;
 
 my $P3 = DrCachesim::default_problem($fn);
 #DrCachesim::run_analysistool($P3, "-simulator_type basic_counts");
+#DrCachesim::run_cachesim($P3, $H);
 #bruteforce_sim($P3, basename($fn));
 #DrCachesim::run_analysistool($P3, "-simulator_type histogram");
 #DrCachesim::run_analysistool($P3, "-simulator_type reuse_distance -reuse_distance_histogram -reuse_distance_threshold 0");
 
 #system("cat $fn");
 #Optim::comm_test($P3) == 0 or die "Optim::comm_test failed!";
-my $res3 = Optim::solve($P3);
+my @cost1 = (1, 1, 1, 1, 1, 1, 1, 1);
+my @cost2 = (10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000);
+my @cost3 = (0.01) x 8;
+my @cost4 = map {0.001 * $_} reverse((1..8));
+$P3->{cost} = DrCachesim::get_lin_cost_fun(\@cost4);
+#$P3->{val} = DrCachesim::get_max_lat_val(34630732);
+
+my $H0 = DrCachesim::get_local_hierarchy();
+#$H0->{L1I}->{cfg}->{size} /= 2;
+#$H0->{L1I}->{cfg}->{assoc} = 2;
+#$H0->{L1D}->{cfg}->{size} /= 2;
+#$H0->{L1D}->{cfg}->{assoc} = 3;
+#$H0->{L2}->{cfg}->{assoc} = 16;
+#$H0->{L2}->{cfg}->{size} = 32 * $H0->{L2}->{cfg}->{assoc}*64;
+#$H0->{L3}->{cfg}->{size} *= 4;
+#$H0->{L3}->{cfg}->{assoc} = 4;
+
+#DrCachesim::set_sets_ways($H0, (64, 8, 128, 12, 1024, 20, 4096, 64));
+#DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 1024, 20, 4096, 51));
+DrCachesim::set_sets_ways($H0, (64, 8, 64, 12, 1024, 20, 16384, 8));   # local size
+DrCachesim::set_sets_ways($H0, (64, 8, 64, 12, 1024, 20, 16384/8, 8));
+#DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 16, 16384*2, 8));
+#TODO this does not find the optimum.
+#check why the problem containing the opt got purged
+DrCachesim::set_sets_ways($H0, (64, 8, 128, 16, 512, 4, 2048, 8));
+DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 512, 4, 2048, 9)); # theoretical minimum
+DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 20, 4096, 32));
+DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 17, 4096, 32));
+DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 16, 4096, 32));
+DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 1024, 20, 16384, 12));
+DrCachesim::set_sets_ways($H0, (64, 8, 256, 12, 1024, 20, 16384, 8));
+#DrCachesim::set_sets_ways($H0,  (64, 8, 512, 16, 512, 16, 16384, 32));
+
+# Simulate optimum and start value for better overview afterwards
+($H, $H0) = DrCachesim::parallel_run($P3, [$H, $H0]);
+#print(Dump($H));
+#print(Dump($H0));
+
+print("Start hierarchy:\n");
+DrCachesim::print_hierarchy($H0);
+
+my $res3;
+$res3 = Optim::solve($P3, $H0);
 #print(Dump($res3));
 my $len3 = @$res3;
 print("[main] Length result: $len3\n");
+print("[main] Solved: $fn\n");
+print("[main] Start value\n");
+DrCachesim::print_hierarchy($H0);
+print("[main] Found solution:\n");
+DrCachesim::print_hierarchy(@{$res3}[-1]);
+print("[main] Theoretical Optimum: $fn\n");
+DrCachesim::print_hierarchy($H);
 
 exit 0;

@@ -41,7 +41,7 @@ sub solve {
     close($pipe_RES);
 
     while (not $done) {
-        print("[Optim::solve] Reading pipe_SIM\n");
+        #print("[Optim::solve] Reading pipe_SIM\n");
         open($pipe_SIM, "<", $pname_SIM) or die "[Optim::solve] Could not open $pname_SIM: $!";
         $s = join("", <$pipe_SIM>);  # reads until EOF
         close($pipe_SIM);
@@ -55,17 +55,17 @@ sub solve {
             #print("[Optim::solve] Parsing '$s'\n");
             #$S = julia2H($s);   #FIXME slow if length($s) is large (either bc of get_local_hierarchy or YAML::load)
             $S = Load($s);
-            print("[Optim::solve] Starting simulation.\n");
+            #print("[Optim::solve] Starting simulation.\n");
             @R = DrCachesim::parallel_run $P, $S;
-            print("[Optim::solve] Serializing results.\n");
+            #print("[Optim::solve] Serializing results.\n");
             #$r = H2julia(\@R);
             $r = Dump(\@R);
-            print("[Optim::solve] Sending results to pipe_RES\n");
+            #print("[Optim::solve] Sending results to pipe_RES\n");
         }
         #Opening "normally" blocks until read pipe end is opened too (barrier)
         open($pipe_RES, ">", $pname_RES) or die "[Optim::solve] Could not open $pname_RES: $!";
         print($pipe_RES $r);
-        print("[Optim::solve] Done. Closing pipe_RES\n");
+        #print("[Optim::solve] Done. Closing pipe_RES\n");
         #We need to close $pipe_RES after writing, so julia's 'read' receives EOF
         close($pipe_RES);
     }

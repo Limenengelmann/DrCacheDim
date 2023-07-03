@@ -8,6 +8,7 @@ use File::Basename;
 our $tmpdir = "/tmp/refgen";
 system("mkdir $tmpdir") unless(-d $tmpdir);
 
+#TODO refactor and name file properly, e.g. depending on which capway macro it actually calls
 sub capway_code {
     my $H = shift;
 
@@ -60,25 +61,30 @@ sub capway_code {
 
                 SECTION .bss
                     align LINESIZE
-                A:  resb    GSIZE3  ;TODO should be max GSIZE(i)
+                A:  resb    GSIZE1
+                    align LINESIZE
+                B:  resb    GSIZE2
+                    align LINESIZE
+                C:  resb    GSIZE3
                     
                 ; TODO: Read in repeats as cmdline params
                 ; arguments: 
                 ; %1: level 0|1|2|3
                 ; %2: #iterations 1|2|3|...
+                ; %3: Memory label
                 SECTION .text
                 _start:
-                %macro capway 2
+                %macro capway 3
                     mov rdi, 0  ;repeats counter
-                    jmp L%1
+                    jmp L%1%3
                     align 64
-                    %if %1 == 0 ; instruction caches
+                    %if %1 == 0 ; instruction cache
                         ; L1I aka L0 'run'
                         ;%assign REPS SETS0*WAYS0*WAYS0
                         %assign REPS SETS0*WAYS0*(WAYS0-1)+SETS0
                         %assign J0 LINESIZE + (WAYS0-1)*SETS0*LINESIZE
                         %assign i 1
-                L0: 
+                L0%3: 
                         %rep REPS
                             ; LINESIZE bytes of instructions
                             ; $ = current assembly pos, \$ + LINESIZE jump to next block
@@ -86,7 +92,7 @@ sub capway_code {
                             %if i == REPS
                                 add rdi, 1
                                 cmp rdi, %2
-                                jl L%1
+                                jl L%1%3
                             %elif i % SETS0 == 0
                                 jmp \$ + J0
                                 align LINESIZE    ;fill-up with nop
@@ -97,8 +103,8 @@ sub capway_code {
                             %assign i i+1
                         %endrep
                     %else   ; data caches
-                L%1:
-                        lea rax, A  ;base
+                L%1%3:
+                        lea rax, %3  ;base
                 .loop2:
                         mov rsi, 0  ;offset
                 .loop1:
@@ -109,17 +115,22 @@ sub capway_code {
                         jl .loop1
 
                         add rax, SIZE%1
-                        cmp rax, A+GSIZE%1
+                        cmp rax, %3 + GSIZE%1
                         jl .loop2
 
                         ; repeat
                         add rdi, 1
                         cmp rdi, %2
-                        jl L%1
+                        jl L%1%3
                     %endif
                 %endmacro
 
-                    capway 0, 2
+                    ; TODO adjust reruns so overall contributions to latency are roughly equal
+                    ; TODO flush between adjacent capways
+                    capway 0, 2, A
+                    capway 1, 2, A
+                    capway 2, 2, B
+                    capway 3, 2, C
 
                     ; exit, new cacheline to avoid weird simulator results when instructions cross cachelines
                     jmp EXIT

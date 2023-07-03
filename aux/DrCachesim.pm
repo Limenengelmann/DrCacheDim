@@ -8,6 +8,7 @@ use List::Util qw( min max reduce );
 use Storable qw(dclone);
 use YAML qw/ Load LoadFile Dump DumpFile /;
 use Term::ANSIColor;
+use POSIX;
 
 our $DRDIR="/home/elimtob/.local/opt/DynamoRIO";
 our $TMPDIR = "/tmp/drcachesim";
@@ -64,8 +65,8 @@ sub new_hierarchy {
    my $self = {
         L1I  => new_cache(type => "instruction", core => 0, parent => "L2"),
         L1D  => new_cache(type => "data", core => 0, parent => "L2"),
-        L2   => new_cache(type => "unified", parent => "L3", inclusive => "true"),
-        L3   => new_cache(type => "unified", parent => "memory", inclusive => "true"),
+        L2   => new_cache(type => "unified", parent => "L3", inclusive => "false"),
+        L3   => new_cache(type => "unified", parent => "memory", inclusive => "false"),
         MML  => 1000,    # TODO main memory latency
         LAT  => undef,
         VAL  => undef,
@@ -76,6 +77,49 @@ sub new_hierarchy {
    #XXX: Julia YAML package cannot deserialize this
    #bless $self, $class;
    return $self;
+}
+
+sub print_hierarchy {
+    my $H = shift;
+
+    my $size0 = $H->{L1I}->{cfg}->{size};
+    my $ways0 = $H->{L1I}->{cfg}->{assoc};
+    my $size1 = $H->{L1D}->{cfg}->{size};
+    my $ways1 = $H->{L1D}->{cfg}->{assoc};
+    my $size2 = $H->{L2}->{cfg}->{size};
+    my $ways2 = $H->{L2}->{cfg}->{assoc};
+    my $size3 = $H->{L3}->{cfg}->{size};
+    my $ways3 = $H->{L3}->{cfg}->{assoc};
+                                           
+    my $sets0 = $size0 / $ways0 / $LINE_SIZE;
+    my $sets1 = $size1 / $ways1 / $LINE_SIZE;
+    my $sets2 = $size2 / $ways2 / $LINE_SIZE;
+    my $sets3 = $size3 / $ways3 / $LINE_SIZE;
+
+    my $cost = $H->{COST} || 0;
+    my $lat  = $H->{LAT} || 0;
+    my $val  = $H->{VAL} || 0;
+
+    printf("%4d %2d %4d %2d %5d %2d %5d %2d | %9d %9d %9d\n",
+        $sets0, $ways0,
+        $sets1, $ways1,
+        $sets2, $ways2,
+        $sets3, $ways3,
+        $cost, $lat, $val
+    );
+}
+
+sub set_sets_ways {
+    my $H = shift;
+    my @V = (@_);
+
+    foreach my $l (@LVLS) {
+        my $s = shift @V || die "[set_sets_ways] Not enough args.";
+        my $w = shift @V || die "[set_sets_ways] Not enough args.";
+
+        $H->{$l}->{cfg}->{size} = $s*$w*$LINE_SIZE;
+        $H->{$l}->{cfg}->{assoc} = $w;
+    }
 }
 
 sub get_cmd {
@@ -130,6 +174,16 @@ sub get_local_hierarchy {
     # TODO is this accurate
     $H->{MML} = $T[-1];
     return $H;
+}
+
+sub log2 {
+    if (wantarray()) { # list context
+        my @N = @_;
+        my @res = map {log2($_)} @N;
+    } else {
+        my $n = shift;
+        return floor(log($n)/log(2));
+    }
 }
 
 sub int_log2 {
@@ -209,6 +263,27 @@ sub default_lat {
     return $lat;
 }
 
+sub get_lin_cost_fun {
+    my $cost = shift;
+    my $cost_fun = sub {
+        my $H = shift;
+        my $L1I = $H->{L1I};
+        my $L1D = $H->{L1D};
+        my $L2  = $H->{L2};
+        my $L3  = $H->{L3};
+        my $val = $L1I->{cfg}->{size}/$LINE_SIZE/$L1I->{cfg}->{assoc}*$cost->[0] +
+                  $L1I->{cfg}->{assoc}*$cost->[1] +
+                  $L1D->{cfg}->{size}/$LINE_SIZE/$L1D->{cfg}->{assoc}*$cost->[2] +
+                  $L1D->{cfg}->{assoc}*$cost->[3] +
+                  $L2->{cfg}->{size}/$LINE_SIZE/$L2->{cfg}->{assoc}*$cost->[4] +
+                  $L2->{cfg}->{assoc}*$cost->[5] +
+                  $L3->{cfg}->{size}/$LINE_SIZE/$L3->{cfg}->{assoc}*$cost->[6] +
+                  $L3->{cfg}->{assoc}*$cost->[7];
+        return $val;
+    };
+    return $cost_fun;
+}
+
 sub default_cost {
     my $H = shift;
     my $L1I = $H->{L1I};
@@ -228,7 +303,20 @@ sub default_cost {
 
 sub default_val {
     my $H = shift;
-    return default_cost($H) + $H->{LAT};
+    die "[default_val] Cannot calc objective val. Uninitialized cost or lat!" if not defined $H->{COST} or not defined $H->{LAT};
+    return $H->{COST} + $H->{LAT};
+}
+
+sub get_max_lat_val {
+    my $max_lat = shift;
+    my $val_fun = sub {
+        my $H = shift;
+        die "[max_lat_val] Cannot calc objective val. Uninitialized cost or lat!" if not defined $H->{COST} or not defined $H->{LAT};
+        #TODO some max cost or max lat value should be obtainable from a worst case scenario (100% miss rate)
+        my $penalty = $H->{LAT} > $max_lat ? 1e9 : 0;
+        return $H->{COST} + $H->{LAT} + $penalty;
+    };
+    return $val_fun;
 }
 
 sub default_problem {
@@ -389,6 +477,9 @@ sub run_cachesim {
         my $h = Dump($H);
         die "$msg\nCommand output: $cmdout\nCommand: $cmd\nConfig:$h\n";
     }
+    $H->{LAT} = $P->{lat}->($H);
+    $H->{COST} = $P->{cost}->($H);
+    $H->{VAL}  = $P->{val}->($H);
 }
 
 sub run_analysistool {
@@ -490,9 +581,6 @@ sub parallel_run {
 
             foreach my $H (@slice) {
                 run_cachesim $P, $H;
-                $H->{LAT} = $P->{lat}->($H);
-                $H->{COST} = $P->{cost}->($H);
-                $H->{VAL}  = $P->{val}->($H);
                 #print Dump($H);
                 print $writer "\n"; # notify main process
             }

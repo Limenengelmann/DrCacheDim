@@ -1,7 +1,14 @@
 #!/usr/bin/perl -w
 
+use List::Util qw( min max );
+use POSIX;
 use strict;
 use warnings;
+
+sub log2 {
+    my $n = shift;
+    return floor(log($n)/log(2));
+}
 
 sub toKB {
     my $s = shift || return 0;
@@ -47,16 +54,22 @@ foreach my $file (@files) {
 #open my $outf, "<", "output.txt";
 #close $outf;
 
+(my $min_sets0, my $min_ways0) = (1e9, 1e9);
+(my $min_sets1, my $min_ways1) = (1e9, 1e9);
+(my $min_sets2, my $min_ways2) = (1e9, 1e9);
+(my $min_sets3, my $min_ways3) = (1e9, 1e9);
+
+(my $max_sets0, my $max_ways0) = (0, 0);
+(my $max_sets1, my $max_ways1) = (0, 0);
+(my $max_sets2, my $max_ways2) = (0, 0);
+(my $max_sets3, my $max_ways3) = (0, 0);
+
 foreach my $cpu (@$outp) {
     my $name = "";
-    my $size0 = 0;
-    my $ways0 = 0;
-    my $size1 = 0;
-    my $ways1 = 0;
-    my $size2 = 0;
-    my $ways2 = 0;
-    my $size3 = 0;
-    my $ways3 = 0;
+    (my $size0, my $sets0, my $ways0) = (0, 0, 0);
+    (my $size1, my $sets1, my $ways1) = (0, 0, 0);
+    (my $size2, my $sets2, my $ways2) = (0, 0, 0);
+    (my $size3, my $sets3, my $ways3) = (0, 0, 0);
 
     my $state = 0;
     my $unit = "";
@@ -100,11 +113,14 @@ foreach my $cpu (@$outp) {
             $size3 = toKB $size3, $unit;
         }
     }
+
+    #skip non 3-level hierarchies
+
     # transform to sets
-    defined $size0 and defined $ways0 and $size0 > 0 and $ways0 > 0 ? $size0 = $size0*1024 / 64 / $ways0 : 0;
-    defined $size1 and defined $ways1 and $size1 > 0 and $ways1 > 0 ? $size1 = $size1*1024 / 64 / $ways1 : 0;
-    defined $size2 and defined $ways2 and $size2 > 0 and $ways2 > 0 ? $size2 = $size2*1024 / 64 / $ways2 : 0;
-    defined $size3 and defined $ways3 and $size3 > 0 and $ways3 > 0 ? $size3 = $size3*1024 / 64 / $ways3 : 0;
+    defined $size0 and defined $ways0 and $size0 > 0 and $ways0 > 0 ? $sets0 = $size0*1024 / 64 / $ways0 : 0;
+    defined $size1 and defined $ways1 and $size1 > 0 and $ways1 > 0 ? $sets1 = $size1*1024 / 64 / $ways1 : 0;
+    defined $size2 and defined $ways2 and $size2 > 0 and $ways2 > 0 ? $sets2 = $size2*1024 / 64 / $ways2 : 0;
+    defined $size3 and defined $ways3 and $size3 > 0 and $ways3 > 0 ? $sets3 = $size3*1024 / 64 / $ways3 : 0;
     
     #printf "id: %s, L1I: %5d KB, %2d w, L1D: %5d KB, %2d w, L2: %5d KB, %2d w, L3: %6d KB, %2d w\n"
     #    ,$name , $size0, $ways0, $size1, $ways1, $size2, $ways2, $size3, $ways3;
@@ -112,5 +128,37 @@ foreach my $cpu (@$outp) {
     printf "L1I: %5d KB, %2d w, L1D: %5d KB, %2d w, L2: %5d KB, %2d w, L3: %6d KB, %2d w\n"
         ,$size0, $ways0, $size1, $ways1, $size2, $ways2, $size3, $ways3;
 
+    $min_sets0 = min($sets0, $min_sets0) if $sets0 > 0;
+    $min_ways0 = min($ways0, $min_ways0) if $ways0 > 0;
+    $min_sets1 = min($sets1, $min_sets1) if $sets1 > 0;
+    $min_ways1 = min($ways1, $min_ways1) if $ways1 > 0;
+    $min_sets2 = min($sets2, $min_sets2) if $sets2 > 0;
+    $min_ways2 = min($ways2, $min_ways2) if $ways2 > 0;
+    $min_sets3 = min($sets3, $min_sets3) if $sets3 > 0;
+    $min_ways3 = min($ways3, $min_ways3) if $ways3 > 0;
+
+    $max_sets0 = max($sets0, $max_sets0);
+    $max_ways0 = max($ways0, $max_ways0);
+    $max_sets1 = max($sets1, $max_sets1);
+    $max_ways1 = max($ways1, $max_ways1);
+    $max_sets2 = max($sets2, $max_sets2);
+    $max_ways2 = max($ways2, $max_ways2);
+    $max_sets3 = max($sets3, $max_sets3);
+    $max_ways3 = max($ways3, $max_ways3);
     #print("$name\n");
 }
+
+
+printf "Lower Bounds:\n";
+printf("%4d %2d %4d %2d %5d %2d %5d %2d\n",
+        log2($min_sets0), $min_ways0,
+        log2($min_sets1), $min_ways1,
+        log2($min_sets2), $min_ways2,
+        log2($min_sets3), $min_ways3);
+
+printf "Upper Bounds:\n";
+printf("%4d %2d %4d %2d %5d %2d %5d %2d\n",
+        log2($max_sets0), $max_ways0,
+        log2($max_sets1), $max_ways1,
+        log2($max_sets2), $max_ways2,
+        log2($max_sets3), $max_ways3);
