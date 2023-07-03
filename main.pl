@@ -146,28 +146,6 @@ my $name1 = "imagick_r";
 my $P1 = DrCachesim::default_problem();
 $P1->{exe} = SpecInt::testrun_callback($name1);
 
-my $name2 = "cachetest";
-my $P2 = DrCachesim::default_problem();
-$P2->{exe} = sub {
-        my $s1 = $H->{L1D}->{cfg}->{size};
-        my $r1 = $s1*5/64;
-        $r1 = 1000000;
-
-        my $s2 = $H->{L2}->{cfg}->{size};
-        my $r2 = 1;
-
-        my $s3 = $H->{L3}->{cfg}->{size};
-        my $r3 = 1;
-
-        my $cmd = sprintf "$CWD/bin/$name2 %d %d %d %d %d %d", $s1, $r1, $s2, $r2, $s3, $r3;
-        my $drargs = join(" ", 
-            #"-skip_refs 5000000",
-            #"-simulator_type basic_counts",
-        );
-
-        return ($cmd, $drargs);
-};
-
 #
 #bruteforce_sim($P2, $name2);
 #cache, miss_analyzer, TLB, histogram, reuse_distance, basic_counts, opcode_mix, view or func_view
@@ -219,6 +197,7 @@ my @cost2 = (10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000);
 my @cost3 = (0.01) x 8;
 my @cost4 = map {0.001 * $_} reverse((1..8));
 $P3->{cost} = DrCachesim::get_lin_cost_fun(\@cost4);
+$P3->{cost} = DrCachesim::get_real_cost_fun(\@cost4);
 #$P3->{val} = DrCachesim::get_max_lat_val(34630732);
 
 my $H0 = DrCachesim::get_local_hierarchy();
@@ -238,13 +217,13 @@ DrCachesim::set_sets_ways($H0, (64, 8, 64, 12, 1024, 20, 16384/8, 8));
 #DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 16, 16384*2, 8));
 #TODO this does not find the optimum.
 #check why the problem containing the opt got purged
-DrCachesim::set_sets_ways($H0, (64, 8, 128, 16, 512, 4, 2048, 8));
 DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 512, 4, 2048, 9)); # theoretical minimum
 DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 20, 4096, 32));
 DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 17, 4096, 32));
 DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 16, 4096, 32));
 DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 1024, 20, 16384, 12));
-DrCachesim::set_sets_ways($H0, (64, 8, 256, 12, 1024, 20, 16384, 8));
+DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 2048, 3, 16384, 15));
+DrCachesim::set_sets_ways($H0, (64, 8, 128, 64, 512, 64, 2048, 64));
 #DrCachesim::set_sets_ways($H0,  (64, 8, 512, 16, 512, 16, 16384, 32));
 
 # Simulate optimum and start value for better overview afterwards

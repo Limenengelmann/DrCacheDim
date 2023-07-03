@@ -177,17 +177,6 @@ sub get_local_hierarchy {
 }
 
 #TODO refactor math sub into another module
-sub gcd2p {
-    # returns largest power of 2 that divides $v
-    use integer;
-    my $v = shift;
-    my $k = 1;
-    while ($v % (2*$k) == 0) {
-        $k*=2;
-    };
-    return $k;
-}
-
 sub log2 {
     if (wantarray()) { # list context
         my @N = @_;
@@ -292,6 +281,23 @@ sub get_lin_cost_fun {
                   $L3->{cfg}->{size}/$LINE_SIZE/$L3->{cfg}->{assoc}*$cost->[6] +
                   $L3->{cfg}->{assoc}*$cost->[7];
         return $val;
+    };
+    return $cost_fun;
+}
+
+sub get_real_cost_fun {
+    my $cost = shift;
+    my $cost_fun = sub {
+        my $H = shift;
+        my $L1I = $H->{L1I};
+        my $L1D = $H->{L1D};
+        my $L2  = $H->{L2};
+        my $L3  = $H->{L3};
+        my $c = $L1I->{cfg}->{size}*$L1I->{cfg}->{assoc}*$cost->[0] +
+                $L1D->{cfg}->{size}*$L1D->{cfg}->{assoc}*$cost->[2] +
+                $L2->{cfg}->{size}*$L2->{cfg}->{assoc}*$cost->[4] +
+                $L3->{cfg}->{size}*$L3->{cfg}->{assoc}*$cost->[6];
+        return $c;
     };
     return $cost_fun;
 }
@@ -610,15 +616,17 @@ sub parallel_run {
     my $count = 0;
     my $tic = time();
     my $time_left = -1;
+    my $sim_speed;
+    my $took;
     do {
-        my $took = max(time() - $tic, 1e-9);    # avoid div by zero
-        my $sim_speed = $count / $took;
+        $took = max(time() - $tic, 1e-9);    # avoid div by zero
+        $sim_speed = $count / $took;
         $time_left = ($len-$count) / $sim_speed if $sim_speed > 0;
         printf "%d/%d simulations done in %.1fs, %.1fs left (%.1f sims/s)\r", $count, $len, $took, $time_left, $sim_speed;
         STDOUT->flush();
         $count++;
     } while (my $c = <$reader>);
-    print "\n";
+    printf "All %d simulations done in %.1fs, left (%.1f sims/s)                  \n", $len, $took, $sim_speed;
 
     @$sweep = ();   # empty the sweep
     foreach my $p (@pids) {

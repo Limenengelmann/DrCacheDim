@@ -142,19 +142,22 @@ function get_vec(H)
     return h
 end
 
+function clean_copy(H)
+    H_ = deepcopy(H)
+    # Reset Cost Val and Lat, since H_ will mostly represent a different hierarchy
+    H_["COST"], H_["VAL"], H_["LAT"] = nothing, nothing, nothing
+    return H_
+end
+
 function set_vec!(H, h)
-    #XXX set_ways first
     set_ways_and_sets!(H, L1I, h[WAYS0], h[SETS0])
     set_ways_and_sets!(H, L1D, h[WAYS1], h[SETS1])
     set_ways_and_sets!(H, L2, h[WAYS2], h[SETS2])
     set_ways_and_sets!(H, L3, h[WAYS3], h[SETS3])
-
-    # Reset Cost Val and Lat, since they will most likely be outdated
-    H["COST"], H["VAL"], H["LAT"] = nothing, nothing, nothing
 end
 
 function get_full_associativity(H)
-    H_fa = deepcopy(H)
+    H_fa = clean_copy(H)
     for lvl in LEVELS
         w = get_sets(H_fa, lvl)*get_ways(H_fa, lvl)
         s = 1
@@ -164,7 +167,7 @@ function get_full_associativity(H)
 end
 
 function get_direct_mapped(H)
-    H_dm = deepcopy(H)
+    H_dm = clean_copy(H)
     for lvl in LEVELS
         w = 1
         s = get_sets(H_dm, lvl)*get_ways(H_dm, lvl)
@@ -283,7 +286,7 @@ function get_new_min_max(Hcen, Hmin, Hmax, b_minus, b_plus)
         ts = termination_status(M)
         if(ts == OPTIMAL)
             hmin_new = value.(h)
-            Hmin_new = deepcopy(Hcen)
+            Hmin_new = clean_copy(Hcen)
             set_vec!(Hmin_new, hmin_new)
         elseif ts == INFEASIBLE
             Hmin_new = nothing
@@ -308,7 +311,7 @@ function get_new_min_max(Hcen, Hmin, Hmax, b_minus, b_plus)
         ts = termination_status(M)
         if(ts == OPTIMAL)
             hmax_new = value.(h)
-            Hmax_new = deepcopy(Hcen)
+            Hmax_new = clean_copy(Hcen)
             set_vec!(Hmax_new, hmax_new)
         elseif ts == INFEASIBLE
             Hmax_new = nothing
@@ -357,7 +360,7 @@ function get_center(Hmin, Hmax, b)
     ts = termination_status(M)
     # Here the exact optimum is not necessary
     if(ts == OPTIMAL || ts == LOCALLY_SOLVED || ts == ALMOST_OPTIMAL)
-        Hcen = deepcopy(Hmin)
+        Hcen = clean_copy(Hmin)
         set_vec!(Hcen, round.(value.(h)))
     else
         println(M)
@@ -373,22 +376,54 @@ function get_center(Hmin, Hmax, b)
     return Hcen
 end
 
-function split(H, H_fa, H_dm, b)
+function get_split_dirs(H, H_fa)
+    # analyse misses in H and suggest split directions accordingly
+    all_m  = [0,0,0,0]  # all misses
+    comp_m = [0,0,0,0]  # compulsory misses
+    cap_m  = [0,0,0,0]  # capacity misses
+    conf_m = [0,0,0,0]  # conflict misses
+    for (i, lvl) in enumerate(LEVELS)
+        all_m[i]  = H[lvl]["stats"]["Misses"]
+        comp_m[i] = H[lvl]["stats"]["Compulsory misses"]
+        conf_m[i] = all_m[i] - H_fa[lvl]["stats"]["Misses"]
+        cap_m[i] = all_m[i] - comp_m[i] - conf_m[i]
+    end
+    
+    cap_m  = cap_m ./ all_m
+    conf_m  = conf_m ./ all_m
+    
+    # sort prio: L1D > L2 > L3 > L1I, SETS > WAYS (e.g. cap_m > conf_m)
+    # switch L1I and L3 prio
+    # TODO this swap is useless rn
+    cap_m[1], cap_m[end] = cap_m[end], cap_m[1]
+    conf_m[1], conf_m[end] = conf_m[end], conf_m[1]
+
+    #TODO this order is basically constant..
+    #TODO maybe normalise differently, but how ?
+    I_cap = sortperm(cap_m)
+    I_cap = I_cap .* 2 .- 1
+    I_conf = sortperm(conf_m)
+    I_conf = I_conf .* 2
+    
+    append!(I_cap, I_conf)
+    # zip both arrays into one list of length length(PARAMS)
+    #return PARAMS[collect(Iterators.flatten(zip(I_conf, I_cap)))]
+    return PARAMS[I_cap]
+end
+
+function split(H, H_fa, b)
     h = get_vec(H)
     h_fa = get_vec(H_fa)
-    h_dm = get_vec(H_dm)
+    #h_dm = get_vec(H_dm)    # unused
     b_minus, b_plus = copy(b), copy(b)
     found = false
 
-    #FIXME some splits getting dropped although they contained the global optimum?
-    #TODO proper split
-    # Consider: 
-    # - The present types of misses
-    # - Which components can be moved actually (e.g. are not fixed by constraints)
-    #split_on = SETS1    #TODO proper split
+    #TODO get_split_dirs could also be hardcoded because it never really changes order
     split_dirs = [WAYS1, SETS1]
-    split_dirs = shuffle(PARAMS)
     split_dirs = PARAMS
+    split_dirs = shuffle(PARAMS)
+    split_dirs = get_split_dirs(H, H_fa)
+    display(split_dirs)
     for split_on in split_dirs
         h_s = h[split_on]
         b_l, b_u = get_lower_upper_b(b, split_on)
@@ -396,6 +431,7 @@ function split(H, H_fa, H_dm, b)
         b_l_new, b_u_new = nothing, nothing
         if d >= 2
             # normal split on H_cen[split_on]
+            # the assert doesn't make sense for H0
             #@assert(b_l < h_s < b_u, "Unexpected H_cen while splitting!")
             found = true
             # constraint H_i[split_on] <= H[split_on]
@@ -438,16 +474,16 @@ function solve()
     H0 = YAML.load(r)
 
     #XXX Maybe send Hmin, Hmax together with H0?
-    Hmin = deepcopy(H0)
+    Hmin = clean_copy(H0)
     real_lower = [6, 8, 6, 2, 9, 4, 11, 8]
     set_vec!(Hmin, real_lower)
-    Hmax = deepcopy(H0)
+    Hmax = clean_copy(H0)
     #XXX number of sets are exponents
     #Upper Bounds:
     real_upper = [6, 8, 9, 16, 10, 20, 14, 64]
     set_vec!(Hmax, real_upper)
     # Solution (for testing)
-    H_opt = deepcopy(H0)
+    H_opt = clean_copy(H0)
     #set_vec!(H_opt, [6, 8, 6, 16, 10, 16, 12, 32])
     set_vec!(H_opt, [6, 8, 6, 16, 10, 16, 12, 64])
 
@@ -466,7 +502,6 @@ function solve()
     b0 = get_b(Hmin, Hmax)
     P0 = [Hmin, Hmax, b0]
 
-    #TODO duplicate problems visited
 
     first_iter = true
     #H0["VAL"]  = Inf
@@ -487,10 +522,11 @@ function solve()
         # calculate lower bound
 
         H_cen = first_iter ? H0 : get_center(Hmin_cur, Hmax_cur, b)
+        H_fa = get_full_associativity(H_cen)
         first_iter = false
         #TODO get COST without simulating, e.g. add extra boolean field SIMULATE, which can be read by Optim.pm
-        Hmin_cur, H_cen, Hmax_cur = run_cachesim!([Hmin_cur, H_cen, Hmax_cur])
-        batch = [Hmin_cur, H_cen, Hmax_cur] # cannot assign directly to batch (run_cachesim replaces its elements)
+        Hmin_cur, H_cen, Hmax_cur, H_fa = run_cachesim!([Hmin_cur, H_cen, Hmax_cur, H_fa])
+        batch = [Hmin_cur, H_cen, Hmax_cur, H_fa] # cannot assign directly to batch (run_cachesim replaces its elements)
 
         #Some logging
         if is_in_P(P_cur, H_opt)
@@ -519,8 +555,7 @@ function solve()
             println("[julia] Purged")
         else
 
-            #TODO pick direction (simulate fully associative/direct mapped pendant)
-            b_minus, b_plus = split(H_cen, H_cen, H_cen, b)
+            b_minus, b_plus = split(H_cen, H_fa, b)
             Hmin_new, Hmax_new = get_new_min_max(H_cen, Hmin_cur, Hmax_cur, b_minus, b_plus)
             P_minus, P_plus = nothing, nothing
             if (Hmax_new != nothing && b_minus != nothing)
@@ -556,7 +591,7 @@ function solve()
     while i<length(Simulated)-3
         @printf("-----------------------------Iter %d-----------------------------------------\n", round(i / 3)+1)
         print_hierarchy.(Simulated[i:i+2])
-        i+=3
+        i+=4    # skip fully associative run
     end
     println("[julia] Best hierarchy:")
     print_hierarchy(Best_H)
