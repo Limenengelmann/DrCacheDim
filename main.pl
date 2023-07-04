@@ -134,6 +134,13 @@ sub bruteforce_sim {
 ################################################ main ###################################################
 
 my $H = DrCachesim::get_local_hierarchy();
+my @cost1 = (1, 1, 1, 1, 1, 1, 1, 1);
+my @cost2 = (10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000);
+my @cost3 = (0.01) x 8;
+my @cost4 = map {0.001 * $_} reverse((1..8));
+my @cost5 = (1, 1, 1, 1, 0.1, 0.1, 0.01, 0.01);
+my @cost6 = map {0.01 * $_} @cost5;
+my $H0 = DrCachesim::get_local_hierarchy();
 
 # just testing costs
 # relative cost per bit = **-0.6 latency
@@ -142,9 +149,19 @@ my $H = DrCachesim::get_local_hierarchy();
 #                           $H->{L2}->{lat} **-0.6,     
 #                           $H->{L3}->{lat} **-0.6);
 
-my $name1 = "imagick_r";
+my $name1; 
+$name1 = "mcf_r";
+$name1 = "x264_r";
+$name1 = "xz_r";
+$name1 = "perlbench_r";
+$name1 = "xalancbmk_r";
+$name1 = "omnetpp_r";
+$name1 = "imagick_r";
+
 my $P1 = DrCachesim::default_problem();
 $P1->{exe} = SpecInt::testrun_callback($name1);
+$P1->{cost} = DrCachesim::get_real_cost_fun(\@cost5);
+#$P1->{cost} = DrCachesim::get_real_cost_fun(\@cost4);
 
 #
 #bruteforce_sim($P2, $name2);
@@ -192,15 +209,11 @@ my $P3 = DrCachesim::default_problem($fn);
 
 #system("cat $fn");
 #Optim::comm_test($P3) == 0 or die "Optim::comm_test failed!";
-my @cost1 = (1, 1, 1, 1, 1, 1, 1, 1);
-my @cost2 = (10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000);
-my @cost3 = (0.01) x 8;
-my @cost4 = map {0.001 * $_} reverse((1..8));
 $P3->{cost} = DrCachesim::get_lin_cost_fun(\@cost4);
-$P3->{cost} = DrCachesim::get_real_cost_fun(\@cost4);
+$P3->{cost} = DrCachesim::get_real_cost_fun(\@cost5);
+$P3->{cost} = DrCachesim::get_real_cost_fun(\@cost6);
 #$P3->{val} = DrCachesim::get_max_lat_val(34630732);
 
-my $H0 = DrCachesim::get_local_hierarchy();
 #$H0->{L1I}->{cfg}->{size} /= 2;
 #$H0->{L1I}->{cfg}->{assoc} = 2;
 #$H0->{L1D}->{cfg}->{size} /= 2;
@@ -212,22 +225,21 @@ my $H0 = DrCachesim::get_local_hierarchy();
 
 #DrCachesim::set_sets_ways($H0, (64, 8, 128, 12, 1024, 20, 4096, 64));
 #DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 1024, 20, 4096, 51));
-DrCachesim::set_sets_ways($H0, (64, 8, 64, 12, 1024, 20, 16384, 8));   # local size
-DrCachesim::set_sets_ways($H0, (64, 8, 64, 12, 1024, 20, 16384/8, 8));
+#DrCachesim::set_sets_ways($H0, (64, 8, 64, 12, 1024, 20, 16384, 8));   # local size
+#DrCachesim::set_sets_ways($H0, (64, 8, 64, 12, 1024, 20, 16384/8, 8));
 #DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 16, 16384*2, 8));
-#TODO this does not find the optimum.
-#check why the problem containing the opt got purged
-DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 512, 4, 2048, 9)); # theoretical minimum
-DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 20, 4096, 32));
-DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 17, 4096, 32));
-DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 16, 4096, 32));
-DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 1024, 20, 16384, 12));
-DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 2048, 3, 16384, 15));
-DrCachesim::set_sets_ways($H0, (64, 8, 128, 64, 512, 64, 2048, 64));
+#DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 512, 4, 2048, 9)); # theoretical minimum
+#DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 20, 4096, 32));
+#DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 17, 4096, 32));
+#DrCachesim::set_sets_ways($H0, (64, 8, 64, 16, 1024, 16, 4096, 32));
+#DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 1024, 20, 16384, 12));
+#DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 2048, 3, 16384, 15));
+#DrCachesim::set_sets_ways($H0, (64, 8, 128, 64, 512, 64, 2048, 64));
 #DrCachesim::set_sets_ways($H0,  (64, 8, 512, 16, 512, 16, 16384, 32));
 
 # Simulate optimum and start value for better overview afterwards
-($H, $H0) = DrCachesim::parallel_run($P3, [$H, $H0]);
+#($H, $H0) = DrCachesim::parallel_run($P3, [$H, $H0]);
+($H, $H0) = DrCachesim::parallel_run($P1, [$H, $H0]);
 #print(Dump($H));
 #print(Dump($H0));
 
@@ -235,7 +247,7 @@ print("Start hierarchy:\n");
 DrCachesim::print_hierarchy($H0);
 
 my $res3;
-$res3 = Optim::solve($P3, $H0);
+$res3 = Optim::solve($P1, $H0);
 #print(Dump($res3));
 my $len3 = @$res3;
 print("[main] Length result: $len3\n");
@@ -243,7 +255,7 @@ print("[main] Solved: $fn\n");
 print("[main] Start value\n");
 DrCachesim::print_hierarchy($H0);
 print("[main] Found solution:\n");
-DrCachesim::print_hierarchy(@{$res3}[-1]);
+DrCachesim::print_hierarchy($res3->[-1]->[0]);
 print("[main] Theoretical Optimum: $fn\n");
 DrCachesim::print_hierarchy($H);
 

@@ -63,10 +63,13 @@ sub solve {
             #print("[Optim::solve] Sending results to pipe_RES\n");
         }
         #Opening "normally" blocks until read pipe end is opened too (barrier)
+        my $len = length($r);
+        #print("[Optim::solve] Sending $len bytes:\n$r\n");
         open($pipe_RES, ">", $pname_RES) or die "[Optim::solve] Could not open $pname_RES: $!";
-        print($pipe_RES $r);
+        print($pipe_RES $r) or die "[Optim::solve] Could not write to pipe_RES!";
         #print("[Optim::solve] Done. Closing pipe_RES\n");
         #We need to close $pipe_RES after writing, so julia's 'read' receives EOF
+        #sleep 1;
         close($pipe_RES);
     }
 

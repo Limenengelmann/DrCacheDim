@@ -616,17 +616,17 @@ sub parallel_run {
     my $count = 0;
     my $tic = time();
     my $time_left = -1;
-    my $sim_speed;
+    my $sim_speed = -1;
     my $took;
     do {
         $took = max(time() - $tic, 1e-9);    # avoid div by zero
-        $sim_speed = $count / $took;
-        $time_left = ($len-$count) / $sim_speed if $sim_speed > 0;
-        printf "%d/%d simulations done in %.1fs, %.1fs left (%.1f sims/s)\r", $count, $len, $took, $time_left, $sim_speed;
+        $sim_speed = $took / $count if $count > 0;
+        $time_left = ($len-$count) * $sim_speed;
+        printf "%d/%d simulations done in %.1fs, %.1fs left (%.1f s/sim)\r", $count, $len, $took, $time_left, $sim_speed;
         STDOUT->flush();
         $count++;
     } while (my $c = <$reader>);
-    printf "All %d simulations done in %.1fs, left (%.1f sims/s)                  \n", $len, $took, $sim_speed;
+    printf "All %d simulations done in %.1fs, left (%.1f s/sim)                  \n", $len, $took, $sim_speed;
 
     @$sweep = ();   # empty the sweep
     foreach my $p (@pids) {

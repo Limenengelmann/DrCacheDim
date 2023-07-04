@@ -100,10 +100,13 @@ function print_constraints(b)
 end
 
 function print_problem(P)
-    Hmin, Hmax, b = P
-    println("Hmin, Hmax [vec, COST, LAT, VAL]:")
+    Hmin, Hmax, H_cen, _, b = P
+    println("Hmin, Hmax, H_cen [vec, COST, LAT, VAL]:")
     print_hierarchy(Hmin)
     print_hierarchy(Hmax)
+    if H_cen != nothing
+        print_hierarchy(H_cen)
+    end
     println("Constraints: -h <= -b_l & h <= b_u")
     print_constraints(b)
 end
@@ -204,7 +207,7 @@ function get_problem_size(P)
 end
 
 function is_in_P(P, H)
-    Hmin, Hmax, b = P
+    Hmin, Hmax, _, _, b = P
     return prod(get_vec(Hmin) .<= get_vec(H) .<= get_vec(Hmax))
 end
 
@@ -232,7 +235,12 @@ function run_cachesim!(batch)
         #@printf("[julia] sending \n>%s<\n", s)
         write(pSIM, s)
         #@printf("[julia] Reading from pRES.\n")
-        r = read(pRES, String)
+        fRES = open(pRES, "r")
+        r = ""
+        while (! eof(fRES))
+            r = r * read(fRES, String)
+        end
+        close(fRES)
         #@printf("[julia] Read \n>%s<\n", r)
         #println("[julia] Parsing..")
         R = YAML.load(r)
@@ -254,6 +262,22 @@ function run_cachesim!(batch)
     return batch
 end
 
+function sim_problems!(PList)
+    batch = []
+    for (i, P) in enumerate(PList)
+        Hmin, Hmax, H_cen, H_fa, b = P
+        @assert(Hmin != nothing && Hmax != nothing && H_cen != nothing && H_fa != nothing, "Incomplete Problem found!")
+        push!(batch, Hmin, Hmax, H_cen, H_fa)
+    end
+    run_cachesim!(batch)
+    i = 1
+    while length(batch) > 0
+        Hmin, Hmax, H_cen, H_fa = popfirst!(batch), popfirst!(batch), popfirst!(batch), popfirst!(batch)
+        PList[i][1:end-1] .= Hmin, Hmax, H_cen, H_fa
+        i+=1
+    end
+end
+
 function add_constraints!(M, h, b)
     #Base constraints
     @constraint(M, h[SETS0] <= h[SETS1])
@@ -264,11 +288,11 @@ function add_constraints!(M, h, b)
     @constraint(M, A*h .<= b)
 end
 
-function get_new_min_max(Hcen, Hmin, Hmax, b_minus, b_plus)
+function get_new_min_max(Hmin, Hmax, H_cen, b_minus, b_plus)
     #TODO determine when we should not split further (maybe solution becomes infeasible?)
-    hcen = get_vec(Hcen)
     hmin = get_vec(Hmin)    # unused
     hmax = get_vec(Hmax)    # unused
+    hcen = get_vec(H_cen)
 
     Hmin_new = nothing
     Hmax_new = nothing
@@ -286,7 +310,7 @@ function get_new_min_max(Hcen, Hmin, Hmax, b_minus, b_plus)
         ts = termination_status(M)
         if(ts == OPTIMAL)
             hmin_new = value.(h)
-            Hmin_new = clean_copy(Hcen)
+            Hmin_new = clean_copy(H_cen)
             set_vec!(Hmin_new, hmin_new)
         elseif ts == INFEASIBLE
             Hmin_new = nothing
@@ -311,7 +335,7 @@ function get_new_min_max(Hcen, Hmin, Hmax, b_minus, b_plus)
         ts = termination_status(M)
         if(ts == OPTIMAL)
             hmax_new = value.(h)
-            Hmax_new = clean_copy(Hcen)
+            Hmax_new = clean_copy(H_cen)
             set_vec!(Hmax_new, hmax_new)
         elseif ts == INFEASIBLE
             Hmax_new = nothing
@@ -360,8 +384,8 @@ function get_center(Hmin, Hmax, b)
     ts = termination_status(M)
     # Here the exact optimum is not necessary
     if(ts == OPTIMAL || ts == LOCALLY_SOLVED || ts == ALMOST_OPTIMAL)
-        Hcen = clean_copy(Hmin)
-        set_vec!(Hcen, round.(value.(h)))
+        H_cen = clean_copy(Hmin)
+        set_vec!(H_cen, round.(value.(h)))
     else
         println(M)
         solution_summary(M)
@@ -369,11 +393,11 @@ function get_center(Hmin, Hmax, b)
         println(hmin)
         println(hmax)
         println(value.(h))
-        Hcen = nothing
+        H_cen = nothing
         @assert(false, "Could not find H_cen! '$ts'")
     end
 
-    return Hcen
+    return H_cen
 end
 
 function get_split_dirs(H, H_fa)
@@ -421,9 +445,10 @@ function split(H, H_fa, b)
     #TODO get_split_dirs could also be hardcoded because it never really changes order
     split_dirs = [WAYS1, SETS1]
     split_dirs = PARAMS
-    split_dirs = shuffle(PARAMS)
     split_dirs = get_split_dirs(H, H_fa)
-    display(split_dirs)
+    split_dirs = shuffle(PARAMS)
+    split_dirs = [SETS1, SETS2, SETS3, WAYS1, WAYS2, WAYS3, SETS0, WAYS0]
+    #display(split_dirs)
     for split_on in split_dirs
         h_s = h[split_on]
         b_l, b_u = get_lower_upper_b(b, split_on)
@@ -500,99 +525,112 @@ function solve()
 
     # Define constraints as b s.t. A*h <= b, A is a global constant
     b0 = get_b(Hmin, Hmax)
-    P0 = [Hmin, Hmax, b0]
-
+    P0 = [Hmin, Hmax, nothing, nothing, b0]
 
     first_iter = true
     #H0["VAL"]  = Inf
     Best_H     = H0
+    P_best = P0
     Problems   = [P0]
     Simulated  = []
     max_iter = 1000
     iter = 1
     purged = 0
+    parallel_sim = 10  # number of parallel problem sims
+    P_buffer = []
 
     #XXX Graceful termination on SIGINT seems impossible
     while length(Problems) > 0 && iter < max_iter
         println("-------------------------------------Starting Iter $iter-----------------------------------")
         @printf("[julia] Starting new iteration. %d problems and at most %d iterations left.\n", length(Problems), max_iter-iter)
-        R = []
-        P_cur = popfirst!(Problems)    # breadth first search
-        Hmin_cur, Hmax_cur, b = P_cur
-        # calculate lower bound
-
-        H_cen = first_iter ? H0 : get_center(Hmin_cur, Hmax_cur, b)
-        H_fa = get_full_associativity(H_cen)
-        first_iter = false
-        #TODO get COST without simulating, e.g. add extra boolean field SIMULATE, which can be read by Optim.pm
-        Hmin_cur, H_cen, Hmax_cur, H_fa = run_cachesim!([Hmin_cur, H_cen, Hmax_cur, H_fa])
-        batch = [Hmin_cur, H_cen, Hmax_cur, H_fa] # cannot assign directly to batch (run_cachesim replaces its elements)
-
-        #Some logging
-        if is_in_P(P_cur, H_opt)
-            println("[julia] Current Problem: ******************************************************** contains optimum!")
-        else
-            println("[julia] Current Problem:")
-        end
-        print_problem(P_cur)
-        println("[julia] Current H center:")
-        print_hierarchy(H_cen)
-
-        Vals = [Hmin_cur["VAL"], H_cen["VAL"], Hmax_cur["VAL"]]
-        H_Best_P = batch[argmin(Vals)]
-
-        if H_Best_P["VAL"] < Best_H["VAL"]
-            #TODO: If H0 is invalid, it could stay the optimum
-            print_hierarchy(H_Best_P)
-            println("[julia] ^^^^^ New optimum!")
-            Best_H = H_Best_P
+        @printf("[julia] Current best:\n");
+        print_hierarchy(Best_H)
+        while length(P_buffer) < parallel_sim && length(Problems) > 0
+            P_cur = popfirst!(Problems)
+            Hmin_cur, Hmax_cur, H_cen, H_fa, b = P_cur
+            H_cen = first_iter ? H0 : get_center(Hmin_cur, Hmax_cur, b)
+            H_fa = get_full_associativity(H_cen)
+            first_iter = false
+            P_cur[1:end-1] .= Hmin_cur, Hmax_cur, H_cen, H_fa
+            push!(P_buffer, P_cur)    # breadth first search
         end
 
-        #XXX: bound only correct if objective fun is the sum of cost and latency!
-        if bound(Hmin_cur, Hmax_cur) >= Best_H["VAL"]
-            # discard
-            purged += 1
-            println("[julia] Purged")
-        else
+        #TODO lookup table for hierarchies in Simulated (e.g. memoize run_cachesim)
+        sim_problems!(P_buffer)
+        append!(Simulated, P_buffer)
 
-            b_minus, b_plus = split(H_cen, H_fa, b)
-            Hmin_new, Hmax_new = get_new_min_max(H_cen, Hmin_cur, Hmax_cur, b_minus, b_plus)
-            P_minus, P_plus = nothing, nothing
-            if (Hmax_new != nothing && b_minus != nothing)
-                P_minus = [Hmin_cur, Hmax_new, b_minus]
-                push!(Problems, P_minus)
+        while length(P_buffer) > 0
+            P_cur = popfirst!(P_buffer)
+            # calculate lower bound
+            Hmin_cur, Hmax_cur, H_cen, H_fa, b = P_cur
+            #Some logging
+            if is_in_P(P_cur, H_opt)
+                println("[julia] Current Problem: ******************************************************** contains optimum!")
+            else
+                println("[julia] Current Problem:")
             end
-            if (Hmin_new != nothing && b_plus != nothing)
-                P_plus = [Hmin_new, Hmax_cur, b_plus]
-                push!(Problems, P_plus)
+            print_problem(P_cur)
+
+            batch = [Hmin_cur, Hmax_cur, H_cen, H_fa] # cannot assign directly to batch (run_cachesim replaces its elements)
+            Vals = [Hmin_cur["VAL"], Hmax_cur["VAL"], H_cen["VAL"], H_fa["VAL"]]
+            H_Best_P = batch[argmin(Vals)]
+
+            if H_Best_P["VAL"] < Best_H["VAL"]
+                #TODO: If H0 is invalid, it could stay the optimum
+                println("[julia] vvvvv New optimum!")
+                print_hierarchy(H_Best_P)
+                println("[julia] ^^^^^ New optimum!")
+                Best_H = H_Best_P
+                P_best = P_cur
             end
 
-            println("[julia] Adding new problem[s]:")
-            if P_minus != nothing
-                is_in_P(P_minus, H_opt) ? println("****Contains opt****") : ()
-                print_problem(P_minus)
-            end
-            if P_plus != nothing
-                is_in_P(P_plus, H_opt) ? println("****Contains opt****") : ()
-                print_problem(P_plus)
-            end
+            #XXX: bound only correct if objective fun is the sum of cost and latency!
+            if bound(Hmin_cur, Hmax_cur) >= Best_H["VAL"]
+                # discard
+                purged += 1
+                println("[julia] Purged")
+            else
+                b_minus, b_plus = split(H_cen, H_fa, b)
+                Hmin_new, Hmax_new = get_new_min_max(Hmin_cur, Hmax_cur, H_cen, b_minus, b_plus)
+                P_minus, P_plus = nothing, nothing
+                if (Hmax_new != nothing && b_minus != nothing)
+                    P_minus = [Hmin_cur, Hmax_new, nothing, nothing, b_minus]
+                    push!(Problems, P_minus)
+                end
+                if (Hmin_new != nothing && b_plus != nothing)
+                    P_plus = [Hmin_new, Hmax_cur, nothing, nothing, b_plus]
+                    push!(Problems, P_plus)
+                end
 
-            #TODO lookup table for hierarchies in Simulated (e.g. memoize run_cachesim)
-            append!(Simulated, batch)
+                println("[julia] Adding new problem[s]:")
+                if P_minus != nothing
+                    is_in_P(P_minus, H_opt) ? println("****Contains opt****") : ()
+                    print_problem(P_minus)
+                end
+                if P_plus != nothing
+                    is_in_P(P_plus, H_opt) ? println("****Contains opt****") : ()
+                    print_problem(P_plus)
+                end
+            end
         end
         iter += 1
     end
     #XXX push for Dicts, append for Lists of Dicts!
-    push!(Simulated, Best_H)
+    push!(Simulated, P_best)
+    push!(Simulated, [Best_H, Best_H, Best_H, Best_H, P_best[end]])
 
     #TODO checked hierarchies printing seems weird, optimum sometimes not inside?
     println("[julia] Checked hierarchies:")
-    i=1
-    while i<length(Simulated)-3
-        @printf("-----------------------------Iter %d-----------------------------------------\n", round(i / 3)+1)
-        print_hierarchy.(Simulated[i:i+2])
-        i+=4    # skip fully associative run
+    for (i, P) in enumerate(Simulated)
+        @printf("--------------------------Problem %d-----------------------------------------\n", i)
+        print_problem(P)
     end
+    #i=1
+    #while i<=length(Simulated)-4
+    #    @printf("-----------------------------Iter %d-----------------------------------------\n", round(i / 3)+1)
+    #    print_hierarchy.(Simulated[i:i+2])
+    #    i+=4    # skip fully associative run
+    #end
     println("[julia] Best hierarchy:")
     print_hierarchy(Best_H)
     @printf("[julia] Exited loop with %d queued problems after %d/%d iters.\n", length(Problems), iter, max_iter)
