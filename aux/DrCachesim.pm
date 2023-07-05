@@ -10,10 +10,11 @@ use YAML qw/ Load LoadFile Dump DumpFile /;
 use Term::ANSIColor;
 use POSIX;
 
+our $ROOT="/home/elimtob/Workspace/mymemtrace";
 our $DRDIR="/home/elimtob/.local/opt/DynamoRIO";
 our $TMPDIR = "/tmp/drcachesim";
 system("mkdir $TMPDIR") unless -d $TMPDIR;
-our $RESDIR="/home/elimtob/Workspace/mymemtrace/results";
+our $RESDIR="$ROOT/results";
 
 our @LVLS=("L1I", "L1D", "L2", "L3");
 our $LINE_SIZE=64;
@@ -159,9 +160,14 @@ sub get_local_hierarchy {
 
     # WIP accurate latency calculation using range of sizes
     my $Lat;
-    $Lat = `aux/random-chase` unless -e "config/random-chase.out";
-    `echo '$Lat' > config/random-chase.out` unless -e "config/random-chase.out";
-    $Lat = `cat config/random-chase.out` if -e "config/random-chase.out";
+    my $rchase = "$ROOT/aux/random-chase";
+    my $rchase_out = "$ROOT/config/random-chase.out";
+    if (-e "$rchase_out") {
+        $Lat = `cat $rchase_out`;
+    } else {
+        $Lat = `$rchase`;
+        `echo '$Lat' > $rchase_out`;
+    }
     my @S = ($Lat =~ /\s*(\d+)\s+[\d.]+/g);
     my @T = ($Lat =~ /\s*\d+\s+([\d.]+)/g);
     my @I = (0..$#S-1);

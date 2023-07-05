@@ -235,7 +235,7 @@ $P3->{cost} = DrCachesim::get_real_cost_fun(\@cost6);
 #DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 1024, 20, 16384, 12));
 #DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 2048, 3, 16384, 15));
 #DrCachesim::set_sets_ways($H0, (64, 8, 128, 64, 512, 64, 2048, 64));
-#DrCachesim::set_sets_ways($H0,  (64, 8, 512, 16, 512, 16, 16384, 32));
+#DrCachesim::set_sets_ways($H0, (64, 8, 512, 16, 512, 16, 16384, 32));
 
 # Simulate optimum and start value for better overview afterwards
 #($H, $H0) = DrCachesim::parallel_run($P3, [$H, $H0]);
@@ -250,13 +250,20 @@ my $res3;
 $res3 = Optim::solve($P1, $H0);
 #print(Dump($res3));
 my $len3 = @$res3;
+my $opt3 = $res3->[-1];
 print("[main] Length result: $len3\n");
 print("[main] Solved: $fn\n");
 print("[main] Start value\n");
 DrCachesim::print_hierarchy($H0);
 print("[main] Found solution:\n");
-DrCachesim::print_hierarchy($res3->[-1]->[0]);
+DrCachesim::print_hierarchy($opt3);
 print("[main] Theoretical Optimum: $fn\n");
 DrCachesim::print_hierarchy($H);
+# TODO Result file name
+#my $out3 = "";
+#DumpFile($rfile, $sweep) or die "parallel_sweep: Can't load tmp results: $!";
+#  64  8  256  2  1024  4  2048  8 |    516423  11277206  11793630
+#  64  8   64  2   512  4  2048  8 |    414842   2682846   3097689
+
 
 exit 0;

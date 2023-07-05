@@ -67,10 +67,13 @@ sub chdir {
 
 sub testrun_callback {
     my $k = shift;
+    my $drargs = shift || "";
+
+    #my $drargs = "-warmup_refs $warmup -trace_for_instrs $trace_for -retrace_every_instrs $retrace ";
+
     my $cb = sub {
         SpecInt::chdir $k;
         my $cmd = %$test_run{$k}->[0];
-        my $drargs = "";
         return ($cmd, $drargs);
     };
     return $cb;
