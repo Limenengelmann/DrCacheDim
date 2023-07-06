@@ -5,20 +5,9 @@ use warnings;
 use File::Temp qw/ tempfile /;
 use File::Basename;
 
-our $tmpdir = "/tmp/refgen";
-system("mkdir $tmpdir") unless(-d $tmpdir);
-
-#TODO refactor math sub into another module
-sub gcd2p {
-    # returns largest power of 2 that divides $v
-    use integer;
-    my $v = shift;
-    my $k = 1;
-    while ($v % (2*$k) == 0) {
-        $k*=2;
-    };
-    return $k;
-}
+use lib "/home/elimtob/Workspace/mymemtrace/aux";
+use Aux;
+#TODO centralized paths setup
 
 #TODO refactor and name file properly, e.g. depending on which capway macro it actually calls
 sub capway_code {
@@ -38,12 +27,12 @@ sub capway_code {
     my $sets2 = $size2 / $ways2 / 64;
     my $sets3 = $size3 / $ways3 / 64;
 
-    my $gcd0 = gcd2p($ways0);
-    my $gcd1 = gcd2p($ways1);
-    my $gcd2 = gcd2p($ways2);
-    my $gcd3 = gcd2p($ways3);
+    my $gcd0 = Aux::gcd2p($ways0);
+    my $gcd1 = Aux::gcd2p($ways1);
+    my $gcd2 = Aux::gcd2p($ways2);
+    my $gcd3 = Aux::gcd2p($ways3);
 
-    my $fname = "$tmpdir/capway-$size0-$ways0-$size1-$ways1-$size2-$ways2-$size3-$ways3.asm";
+    my $fname = "$Aux::TMPDIR/capway-$size0-$ways0-$size1-$ways1-$size2-$ways2-$size3-$ways3.asm";
     print "Generating '$fname'...\n";
     open my $fh, '>', $fname
         or die "[generate_code] Can't open '$fname': $!";
@@ -182,7 +171,7 @@ sub capacity_code {
     my $size1 = shift;
     my $size2 = shift;
     my $size3 = shift;
-    my $fname = "$tmpdir/optgen-$size1-$size2-$size3.asm";
+    my $fname = "$Aux::TMPDIR/optgen-$size1-$size2-$size3.asm";
     print "Generating '$fname'...\n";
     open my $fh, '>', $fname
         or die "[generate_code] Can't open '$fname': $!";
@@ -251,7 +240,7 @@ sub generate_code {
     my $size3 = shift;
     my $reps3 = shift;
 
-    my $fname = "$tmpdir/refgen-$size1-$reps1-$size2-$reps2-$size3-$reps3.asm";
+    my $fname = "$Aux::TMPDIR/refgen-$size1-$reps1-$size2-$reps2-$size3-$reps3.asm";
     print "Generating '$fname'...\n";
 
     open my $fh, '>', $fname
@@ -308,8 +297,8 @@ sub compile_code {
     my $fname = shift;
     my $outf = basename($fname);
     $outf =~ s/\.asm$//;
-    my $objf = "$tmpdir/" . $outf . ".o";
-    $outf = "bin/" . $outf;
+    my $objf = "$Aux::TMPDIR/" . $outf . ".o";
+    $outf = $Aux::ROOT . "/bin/" . $outf;
 
     print "Compiling '$fname'\n";
     system("nasm -Wall -felf64 -o $objf $fname") == 0 or die "[compile_code] Compililation failed: $!";

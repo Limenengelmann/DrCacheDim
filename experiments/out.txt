@@ -1,0 +1,22 @@
+[Optim::solve] Forking child
+[Optim::solve][child] Calling exec..
+[julia] Got 3 args
+[julia] /tmp/drcachesim/pipeSIM-125762
+[julia] /tmp/drcachesim/pipeRES-125762
+[julia] /home/elimtob/Workspace/mymemtrace/experiments/charact.jl
+[julia] Reading Start Hierarchy
+[julia] Start Hierarchy:
+ 6  8 |  6 12 | 10 20 | 14  8 |         0         0         0
+[julia] Lower bound:
+ 5  1 |  5  1 |  6  1 |  7  1 |         0         0         0
+[julia] Upper bound:
+ 9 16 | 10 16 | 13 16 | 15 16 |         0         0         0
+[julia] Counting ca. 141557760 feasible hierarchies! (Excluding base constraints)
+-------------------------------------Starting Iter 1-----------------------------------
+[julia] Starting new iteration. 1 problems and at most 19 iterations left.
+[julia] Current best:
+ 6  8 |  6 12 | 10 20 | 14  8 |         0         0       Inf
+[julia] Writing 3/3 hierarchies to pSIM.
+[Optim::solve] Sending starting problem
+parallel_sweep with 3 procs and 3 configs
+0/3 simulations done in 0.0s, -3.0s left (-1.0 s/sim)All 3 simulations done in 0.0s, left (-1.0 s/sim)                  

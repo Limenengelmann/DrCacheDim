@@ -217,7 +217,7 @@ function is_in_P(P, H)
     if P == nothing || H == nothing
         return false
     end
-    Hmin, Hmax, _, _, b = P
+    Hmin, Hmax = P[1:2]
     if Hmin == nothing || Hmax == nothing
         return false
     end
@@ -310,8 +310,22 @@ function add_constraints!(M, h, b)
     @constraint(M, A*h .<= b)
 end
 
+# sometimes Hmin and Hmax are much more accurate bounds, since b does not reflect our other constraints
+# so we essentially use Hmin <= H <=  Hmax as bounds instead
+function tighten_bounds!(Hmin, Hmax, b)
+    if Hmin == nothing || Hmax == nothing || b == nothing
+        return nothing
+    end
+
+    b[1:2:end] = -get_vec(Hmin)
+    b[2:2:end] =  get_vec(Hmax)
+    return b
+end
+
+#XXX approximation, correct would be to search for the smallest cost and the lowest latency hierarchy
+#XXX but given the way we split and our constraints, we are still guaranteed the unique existence of this min and max
+#XXX If that was not the case, we could add lexical ordering to the objective, to have a better approximation
 function get_new_min_max(Hmin, Hmax, H_cen, b_minus, b_plus)
-    #TODO determine when we should not split further (maybe solution becomes infeasible?)
     hmin = get_vec(Hmin)    # unused
     hmax = get_vec(Hmax)    # unused
     hcen = get_vec(H_cen)
@@ -440,15 +454,14 @@ function get_split_dirs(H, H_fa)
     
     # sort prio: L1D > L2 > L3 > L1I, SETS > WAYS (e.g. cap_m > conf_m)
     # switch L1I and L3 prio
-    # TODO this swap is useless rn
-    cap_m[1], cap_m[end] = cap_m[end], cap_m[1]
-    conf_m[1], conf_m[end] = conf_m[end], conf_m[1]
+    #cap_m[1], cap_m[end] = cap_m[end], cap_m[1]
+    #conf_m[1], conf_m[end] = conf_m[end], conf_m[1]
 
     #TODO this order is basically constant..
     #TODO maybe normalise differently, but how ?
-    I_cap = sortperm(cap_m)
+    I_cap = sortperm(cap_m, rev=true)
     I_cap = I_cap .* 2 .- 1
-    I_conf = sortperm(conf_m)
+    I_conf = sortperm(conf_m, rev=true)
     I_conf = I_conf .* 2
     
     append!(I_cap, I_conf)
@@ -458,7 +471,10 @@ function get_split_dirs(H, H_fa)
 end
 
 #TODO split not on constraint difference, but on HMIN HMAX diff, since both can be largely different!
-function split(H, H_fa, b)
+#TODO split on the largest gap
+function split(Hmin, Hmax, H, H_fa, b)
+    hmin = get_vec(Hmin)
+    hmax = get_vec(Hmax)
     h = get_vec(H)
     h_fa = get_vec(H_fa)
     #h_dm = get_vec(H_dm)    # unused
@@ -470,7 +486,12 @@ function split(H, H_fa, b)
         split_dirs = get_split_dirs(H, H_fa)
     else
         #split_dirs = shuffle(PARAMS)
-        split_dirs = [SETS1, SETS2, SETS3, WAYS1, WAYS2, WAYS3, SETS0, WAYS0]
+        #split_dirs = [SETS1, SETS2, SETS3, WAYS1, WAYS2, WAYS3, SETS0, WAYS0]
+        # greedy problem size split: find largest difference to split on (keeps problems roughly equal?
+        #split_dirs = PARAMS[sortperm(hmax .- hmin, rev=true)]
+        # greedy bound accuracy split: find smallest difference to split on
+        split_dirs = PARAMS[sortperm(hmax .- hmin)]
+        #split_dirs = PARAMS
     end
     #display(split_dirs)
     for split_on in split_dirs
@@ -528,7 +549,7 @@ function solve()
     # for debugging
     H_opt = length(Start) > 3 ? Start[4] : nothing
 
-    #cfg params
+    #jcfg params
     global lower_bound  = (lower_bound != nothing)  ? lower_bound  : default_bound
     global max_iter     = (max_iter != nothing)     ? max_iter     : 10
     global parallel_sim = (parallel_sim != nothing) ? parallel_sim : 1
@@ -540,6 +561,11 @@ function solve()
     print_hierarchy(Hmin)
     println("[julia] Upper bound:")
     print_hierarchy(Hmax)
+    if H_opt != nothing
+        println("[julia] Optimum:")
+        print_hierarchy(H_opt)
+    end
+
     feasible = prod(get_vec(Hmax) .- get_vec(Hmin) .+ 1)
     println("[julia] Counting ca. $feasible feasible hierarchies! (Excluding base constraints)")
 
@@ -614,8 +640,10 @@ function solve()
                 purged += 1
                 println("[julia] Purged")
             else
-                b_minus, b_plus = split(H_cen, H_fa, b)
+                b_minus, b_plus = split(Hmin_cur, Hmax_cur, H_cen, H_fa, b)
                 Hmin_new, Hmax_new = get_new_min_max(Hmin_cur, Hmax_cur, H_cen, b_minus, b_plus)
+                tighten_bounds!(Hmin_cur, Hmax_new, b_minus)
+                tighten_bounds!(Hmin_new, Hmax_cur, b_plus)
 
                 println("[julia] Split into:")
                 P_minus = [Hmin_cur, Hmax_new, nothing, nothing, b_minus]

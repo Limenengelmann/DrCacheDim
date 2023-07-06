@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use DrCachesim;
+use Aux;
 use YAML qw/ Load LoadFile Dump DumpFile /;
 
 sub solve {
@@ -13,16 +14,20 @@ sub solve {
     $H0 =  DrCachesim::get_local_hierarchy() if not defined $H0;
     my $Hmin = $args{Hmin} || die "No lower bound passed!";
     my $Hmax = $args{Hmax} || die "No upper bound passed!";
+    my $Hopt = $args{Hopt}; # for debugging, optional
 
-    my $pname_SIM = "$DrCachesim::TMPDIR/pipeSIM-$$";
-    my $pname_RES = "$DrCachesim::TMPDIR/pipeRES-$$";
+    my $Start = [$Hmin, $Hmax, $H0];
+    push @$Start, $Hopt if defined $Hopt;
+
+    my $pname_SIM = "$Aux::TMPDIR/pipeSIM-$$";
+    my $pname_RES = "$Aux::TMPDIR/pipeRES-$$";
     system("mkfifo $pname_SIM $pname_RES") == 0 or die "[Optim::solve] Could not create pipes: $!";
 
     print("[Optim::solve] Forking child\n");
     my $pid = fork;
     if ($pid == 0) {
         print("[Optim::solve][child] Calling exec..\n");
-        my $cmd = "julia $DrCachesim::ROOT/aux/optim.jl $pname_SIM $pname_RES $P->{jcfg}";
+        my $cmd = "julia $Aux::ROOT/aux/optim.jl $pname_SIM $pname_RES $P->{jcfg}";
         exec $cmd or die "Exec failed: $!";
     }
 
@@ -40,7 +45,7 @@ sub solve {
     # Send hierarchy prototype
     print("[Optim::solve] Sending starting problem\n");
     open($pipe_RES, ">", $pname_RES) or die "[Optim::solve] Could not open $pname_RES: $!";
-    print($pipe_RES Dump([$Hmin, $Hmax, $H0]));
+    print($pipe_RES Dump($Start));
     close($pipe_RES);
 
     while (not $done) {

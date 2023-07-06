@@ -3,18 +3,15 @@ package DrCachesim;
 use strict;
 use warnings;
 
+#use lib "/home/elimtob/Workspace/mymemtrace/aux";
+use Aux;
+
 use File::Temp qw/ tempfile /;
 use List::Util qw( min max reduce );
 use Storable qw(dclone);
 use YAML qw/ Load LoadFile Dump DumpFile /;
 use Term::ANSIColor;
 use POSIX;
-
-our $ROOT="/home/elimtob/Workspace/mymemtrace";
-our $DRDIR="/home/elimtob/.local/opt/DynamoRIO";
-our $TMPDIR = "/tmp/drcachesim";
-system("mkdir $TMPDIR") unless -d $TMPDIR;
-our $RESDIR="$ROOT/results";
 
 our @LVLS=("L1I", "L1D", "L2", "L3");
 our $LINE_SIZE=64;
@@ -129,9 +126,9 @@ sub get_cmd {
     my $drargs = shift || "";
     $simcfg = "-config_file \"$simcfg\"" unless $simcfg eq "";
     #TODO maybe just join
-    my $cmd = qq# drrun -root "$DRDIR"
+    my $cmd = qq# drrun -root "$Aux::DRDIR"
                         -t drcachesim
-                        -ipc_name $TMPDIR/drcachesim_pipe$$
+                        -ipc_name $Aux::TMPDIR/drcachesim_pipe$$
                         $simcfg
                         $drargs
                         -- $exe#;
@@ -139,9 +136,6 @@ sub get_cmd {
     return $cmd =~ s/\n/ /gr =~ s/  +/ /gr;
 }
 
-sub beep_when_done {
-    system("paplay /usr/share/sounds/purple/alert.wav");
-}
 
 sub get_local_hierarchy {
     my $H = new_hierarchy();
@@ -160,8 +154,8 @@ sub get_local_hierarchy {
 
     # WIP accurate latency calculation using range of sizes
     my $Lat;
-    my $rchase = "$ROOT/aux/random-chase";
-    my $rchase_out = "$ROOT/config/random-chase.out";
+    my $rchase = "$Aux::ROOT/aux/random-chase";
+    my $rchase_out = "$Aux::ROOT/config/random-chase.out";
     if (-e "$rchase_out") {
         $Lat = `cat $rchase_out`;
     } else {
@@ -182,93 +176,6 @@ sub get_local_hierarchy {
     return $H;
 }
 
-#TODO refactor math sub into another module
-sub log2 {
-    if (wantarray()) { # list context
-        my @N = @_;
-        my @res = map {log2($_)} @N;
-    } else {
-        my $n = shift;
-        return floor(log($n)/log(2));
-    }
-}
-
-sub int_log2 {
-    # inefficient, but works with float, int, always returns an int
-    # and is also not called often
-    my @N = @_;
-    my @res = ();
-
-    foreach my $n (@N) {
-        my $r = 1;
-        while ($n >= 2**$r) {
-            $r++;
-        }
-        push @res, $r-1;
-    }
-    return \@res;
-}
-
-sub valid_config {
-    # Check that a hierarchy can be simulated with dynamorio
-    # And that the sizes make "sense", e.g. L1 < L2 < L3
-    my $H = shift;
-    my $L1I = $H->{L1I}->{cfg};
-    my $L1D = $H->{L1D}->{cfg};
-    my $L2 = $H->{L2}->{cfg};
-    my $L3 = $H->{L3}->{cfg};
-
-    # Rationale for ">" instead of ">=":
-    # Since the simulator only supports sizes as powers of 2,
-    # we might get situations, where the performance improves tremendously
-    # between 2^(n-1) and 2^n, where n is the next levels size.
-    # So those configurations should be allowed
-    my $weird_size = $L1I->{size} > $L1D->{size} ||
-                     $L1D->{size} > $L2->{size}  ||
-                     $L2->{size}  > $L3->{size};
-    my $bad_size = $L1I->{assoc} * $LINE_SIZE > $L1I->{size} ||
-                   $L1D->{assoc} * $LINE_SIZE > $L1D->{size} ||
-                   $L2->{assoc}  * $LINE_SIZE > $L2->{size}  ||
-                   $L3->{assoc}  * $LINE_SIZE > $L3->{size};
-    #print colored("Weird size\n", "red") if $weird_size;
-    #print colored("Bad size\n", "red") if $bad_size;
-
-    return not ($weird_size or $bad_size);
-}
-
-sub default_lat {
-    # evaluate "goodness" of a hierarchy by simply weighing off size of the cash and average miss rate
-    my $H = shift;
-    my $L1I = $H->{L1I};
-    my $L1D = $H->{L1D};
-    my $L2  = $H->{L2};
-    my $L3  = $H->{L3};
-
-    print "Warning: L1D->{lat}    undefined\n" if not defined $L1D->{lat};
-    print "Warning: L1D->{'Hits'} undefined\n" if not defined $L1D->{stats}->{Hits};
-    print "Warning: L2->{lat}     undefined\n" if not defined $L2->{lat};
-    print "Warning: L3->{lat}     undefined\n" if not defined $L3->{lat};
-    print "Warning: H->{MML}      undefined\n" if not defined $H->{MML};
-    print "Warning: L2->{'Hits'}  undefined\n" if not defined $L2->{stats}->{Hits};
-    print "Warning: L3->{'Hits'}  undefined\n" if not defined $L3->{stats}->{Hits};
-
-    # old AMAT code
-    #my $AMAT = $L1D->{lat}
-    #           + ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"})
-    #           / ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"} + $L1D->{stats}->{"Hits"} + $L1I->{stats}->{"Hits"})
-    #           * ($L2->{lat} +  $L2->{stats}->{"Miss rate"}
-    #           * ($L3->{lat} +  $L3->{stats}->{"Miss rate"}
-    #           * $H->{MML}));
-
-    #XXX changed to absolute latency for simplicity
-    my $lat = $L1D->{lat}*$L1D->{stats}->{Hits} +
-               $L1I->{lat}*$L1I->{stats}->{Hits} +
-               $L2->{lat}*$L2->{stats}->{Hits} +
-               $L3->{lat}*$L3->{stats}->{Hits} +
-               $H->{MML}*$L3->{stats}->{Misses};
-
-    return $lat;
-}
 
 sub get_lin_cost_fun {
     my $cost = shift;
@@ -343,6 +250,40 @@ sub get_max_lat_val {
     return $val_fun;
 }
 
+sub default_lat {
+    # evaluate "goodness" of a hierarchy by simply weighing off size of the cash and average miss rate
+    my $H = shift;
+    my $L1I = $H->{L1I};
+    my $L1D = $H->{L1D};
+    my $L2  = $H->{L2};
+    my $L3  = $H->{L3};
+
+    print "Warning: L1D->{lat}    undefined\n" if not defined $L1D->{lat};
+    print "Warning: L1D->{'Hits'} undefined\n" if not defined $L1D->{stats}->{Hits};
+    print "Warning: L2->{lat}     undefined\n" if not defined $L2->{lat};
+    print "Warning: L3->{lat}     undefined\n" if not defined $L3->{lat};
+    print "Warning: H->{MML}      undefined\n" if not defined $H->{MML};
+    print "Warning: L2->{'Hits'}  undefined\n" if not defined $L2->{stats}->{Hits};
+    print "Warning: L3->{'Hits'}  undefined\n" if not defined $L3->{stats}->{Hits};
+
+    # old AMAT code
+    #my $AMAT = $L1D->{lat}
+    #           + ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"})
+    #           / ($L1D->{stats}->{"Misses"} + $L1I->{stats}->{"Misses"} + $L1D->{stats}->{"Hits"} + $L1I->{stats}->{"Hits"})
+    #           * ($L2->{lat} +  $L2->{stats}->{"Miss rate"}
+    #           * ($L3->{lat} +  $L3->{stats}->{"Miss rate"}
+    #           * $H->{MML}));
+
+    #XXX changed to absolute latency for simplicity
+    my $lat = $L1D->{lat}*$L1D->{stats}->{Hits} +
+               $L1I->{lat}*$L1I->{stats}->{Hits} +
+               $L2->{lat}*$L2->{stats}->{Hits} +
+               $L3->{lat}*$L3->{stats}->{Hits} +
+               $H->{MML}*$L3->{stats}->{Misses};
+
+    return $lat;
+}
+
 sub default_problem {
     my $exe = shift || "";
     my $drargs = shift || "";
@@ -355,6 +296,32 @@ sub default_problem {
     return $defp;
 }
 
+sub valid_config {
+    # Check that a hierarchy can be simulated with dynamorio
+    # And that the sizes make "sense", e.g. L1 < L2 < L3
+    my $H = shift;
+    my $L1I = $H->{L1I}->{cfg};
+    my $L1D = $H->{L1D}->{cfg};
+    my $L2 = $H->{L2}->{cfg};
+    my $L3 = $H->{L3}->{cfg};
+
+    # Rationale for ">" instead of ">=":
+    # Since the simulator only supports sizes as powers of 2,
+    # we might get situations, where the performance improves tremendously
+    # between 2^(n-1) and 2^n, where n is the next levels size.
+    # So those configurations should be allowed
+    my $weird_size = $L1I->{size} > $L1D->{size} ||
+                     $L1D->{size} > $L2->{size}  ||
+                     $L2->{size}  > $L3->{size};
+    my $bad_size = $L1I->{assoc} * $LINE_SIZE > $L1I->{size} ||
+                   $L1D->{assoc} * $LINE_SIZE > $L1D->{size} ||
+                   $L2->{assoc}  * $LINE_SIZE > $L2->{size}  ||
+                   $L3->{assoc}  * $LINE_SIZE > $L3->{size};
+    #print colored("Weird size\n", "red") if $weird_size;
+    #print colored("Bad size\n", "red") if $bad_size;
+
+    return not ($weird_size or $bad_size);
+}
 
 sub get_best {
     my $S = shift; 
@@ -386,7 +353,7 @@ sub update_simulations {
 sub create_cfg {
     my $H      = shift;
     #our $KEEP_ALL = 0;  # delete tmpfile at end of run
-    my ($fh, $fname) = tempfile("drcachesim_cfgXXXX", DIR => $TMPDIR, UNLINK => 1);
+    my ($fh, $fname) = tempfile("drcachesim_cfgXXXX", DIR => $Aux::TMPDIR, UNLINK => 1);
 
     my @C = ();
     my $params = qq#
@@ -430,7 +397,7 @@ sub brutef_sweep {
     # set default values
     foreach my $l (@LVLS) {
         unless (defined $args{$l}) {
-            $args{$l} = log2($HP->{$l}->{cfg}->{size} , $HP->{$l}->{cfg}->{size},
+            $args{$l} = Aux::log2($HP->{$l}->{cfg}->{size} , $HP->{$l}->{cfg}->{size},
                              $HP->{$l}->{cfg}->{assoc}, $HP->{$l}->{cfg}->{assoc}); 
         }
 
@@ -610,7 +577,7 @@ sub parallel_run {
             }
             #FIXME strips object type
             #XXX: Does that really matter? Maybe for loading, but even then we dont really care about it
-            DumpFile("$TMPDIR/drcachesim_$$.yml", \@slice) or die "parallel_sweep: Can't open file: $!";
+            DumpFile("$Aux::TMPDIR/drcachesim_$$.yml", \@slice) or die "parallel_sweep: Can't open file: $!";
             close $writer;
             exit 0;
         }
@@ -637,7 +604,7 @@ sub parallel_run {
     @$sweep = ();   # empty the sweep
     foreach my $p (@pids) {
         waitpid $p, 0;
-        my $fname = "$TMPDIR/drcachesim_$p.yml";
+        my $fname = "$Aux::TMPDIR/drcachesim_$p.yml";
         die "parallel_sweep: Error in process $p: Missing output file '$fname'. Aborting" unless -e $fname;
         #my $s = `cat /tmp/${x}_sim_$p`;
         #$s = eval "my " . $s or die "eval failed: $@";
@@ -650,7 +617,7 @@ sub parallel_run {
         return @$sweep; # potentially unnecessary deep copy
     } else {  # return filename in scalar context
         # collect results and store in RESDIR
-        my $rfile = "$RESDIR/drcachesim_$$.yml";
+        my $rfile = "$Aux::RESDIR/drcachesim_$$.yml";
         DumpFile($rfile, $sweep) or die "parallel_sweep: Can't load tmp results: $!";
         return $rfile;
     }

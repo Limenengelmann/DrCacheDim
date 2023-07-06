@@ -11,6 +11,8 @@ use Aux;
 
 use YAML qw/ Load LoadFile Dump DumpFile /;
 
+#TODO variance test
+# e.g. rerun the same simulation, and check the variance of the latency (cost is constant, but should also be varied)
 my $H0 = DrCachesim::get_local_hierarchy();
 my $Hmin = DrCachesim::get_local_hierarchy();
 my $Hmax = DrCachesim::get_local_hierarchy();
@@ -27,17 +29,14 @@ my @cost_ratio = (1, 1, 1, 1, 0.1, 0.1, 0.01, 0.01);
 my $cost_scale = 0.0001;
 my @cost = map {$cost_scale * $_} @cost_ratio;
 
-#my $name = "imagick_r";
-my $name = "x264_r";
+my $name = "imagick_r";
 my $tstamp = Aux::get_tstamp();
 my $resf = "$Aux::RESDIR/$name-res-$tstamp.yml";
 my $jcfg = "$Aux::ROOT/experiments/charact.jl";
 
 my $P = DrCachesim::default_problem();
 
-# crashes x264_r when using this
-#my $drargs = "-warmup_refs 10000 -retrace_every_instrs 800000 -trace_for_instrs 200000";
-my $drargs = "";
+my $drargs = "-warmup_refs 10000 -retrace_every_instrs 800000 -trace_for_instrs 200000";
 $P->{exe} = SpecInt::testrun_callback($name, $drargs);
 $P->{cost} = DrCachesim::get_real_cost_fun(\@cost);
 $P->{jcfg} = "$jcfg";
