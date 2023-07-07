@@ -539,6 +539,7 @@ function lat_limit_bound(Hmin, Hmax)
     return Hmin["COST"] + lat
 end
 
+#TODO cost normalisation
 #TODO if initial value is better than any feasible value, an infeasible opt is returned
 function solve()
     println("[julia] Reading Start Hierarchy")
