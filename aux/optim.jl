@@ -82,7 +82,7 @@ const BONMIN = AmplNLWriter.Optimizer(Bonmin_jll.amplexe)
 
 function print_hierarchy(H::Dict)
     cost = (H["COST"] != nothing) ? round(H["COST"]) : 0
-    lat = (H["LAT"] != nothing)   ? round(H["LAT"])  : 0
+    lat = (H["MAT"] != nothing)   ? round(H["MAT"])  : 0
     val = (H["VAL"] != nothing)   ? round(H["VAL"])  : 0
     @printf("%2d %2d | %2d %2d | %2d %2d | %2d %2d | %9d %9d %9d\n", get_vec(H)..., cost, lat, val)
 end
@@ -110,7 +110,7 @@ end
 
 function print_problem(P)
     Hmin, Hmax, H_cen, _, b = P
-    println("Hmin, H_cen, Hmax, [vec, COST, LAT, VAL]:")
+    println("Hmin, H_cen, Hmax, [vec, COST, MAT, VAL]:")
     print_hierarchy(Hmin)
     print_hierarchy(H_cen)
     print_hierarchy(Hmax)
@@ -154,8 +154,9 @@ end
 
 function clean_copy(H)
     H_ = deepcopy(H)
+    # TODO reset miss rates etc aswell
     # Reset Cost Val and Lat, since H_ will mostly represent a different hierarchy
-    H_["COST"], H_["VAL"], H_["LAT"] = nothing, nothing, nothing
+    H_["COST"], H_["VAL"], H_["MAT"] = nothing, nothing, nothing
     return H_
 end
 
@@ -230,7 +231,7 @@ function run_cachesim!(batch)
     ind = []
     for (i,H) in enumerate(batch)
         #TODO this does not work, since we copy most hierarchies
-        if !(H["COST"] != nothing) || !(H["VAL"] != nothing) || !(H["LAT"] != nothing)
+        if !(H["COST"] != nothing) || !(H["VAL"] != nothing) || !(H["MAT"] != nothing)
             push!(S, H)
             push!(ind, i)
         end
@@ -530,12 +531,12 @@ function split(Hmin, Hmax, H, H_fa, b)
 end
 
 function default_bound(Hmin, Hmax)
-    return Hmin["COST"] + Hmax["LAT"]
+    return Hmin["COST"] + Hmax["MAT"]
 end
 
 function lat_limit_bound(Hmin, Hmax)
     limit = 100000
-    lat = Hmax["LAT"] > limit ? Inf : Hmax["LAT"]
+    lat = Hmax["MAT"] > limit ? Inf : Hmax["MAT"]
     return Hmin["COST"] + lat
 end
 
@@ -612,9 +613,9 @@ function solve()
             # calculate lower bound
             Hmin_cur, Hmax_cur, H_cen, H_fa, b = P_cur
             if ! sim_fa
-                H_fa = H_cen    # ignore H_fa, but give it some reasonable values so we don't spam have to check sim_fa everywhere
+                H_fa = H_cen    # ignore H_fa, but give it some reasonable values so we don't have to spam check sim_fa everywhere
             end
-            #Some logging & debugging
+            #Some logging for debugging
             if is_in_P(P_cur, H_opt)
                 println("[julia] Current Problem: ******************************************************** contains optimum!")
             else
@@ -622,25 +623,26 @@ function solve()
             end
             print_problem(P_cur)
 
-            batch = [Hmin_cur, Hmax_cur, H_cen, H_fa] # cannot assign directly to batch (run_cachesim replaces its elements)
-            Vals = [Hmin_cur["VAL"], Hmax_cur["VAL"], H_cen["VAL"], H_fa["VAL"]]
-            H_Best_P = batch[argmin(Vals)]
-
-            if H_Best_P["VAL"] < Best_H["VAL"]
-                #TODO: If H0 is invalid, it could stay the optimum
-                println("[julia] vvvvv New optimum!")
-                print_hierarchy(H_Best_P)
-                println("[julia] ^^^^^ New optimum!")
-                Best_H = H_Best_P
-                P_best = P_cur
-            end
-
             #XXX: bound only correct if objective fun is the sum of cost and latency!
             if lower_bound(Hmin_cur, Hmax_cur) >= Best_H["VAL"]
                 # discard
                 purged += 1
                 println("[julia] Purged")
             else
+
+                # Update optimum here, so we do not consider purged problems (needed in case of penalties in the bounds)
+                batch = [Hmin_cur, Hmax_cur, H_cen, H_fa] # cannot assign directly to batch (run_cachesim replaces its elements)
+                Vals = [Hmin_cur["VAL"], Hmax_cur["VAL"], H_cen["VAL"], H_fa["VAL"]]
+                H_Best_P = batch[argmin(Vals)]
+                if H_Best_P["VAL"] < Best_H["VAL"]
+                    #TODO: If H0 is invalid, it could stay the optimum
+                    println("[julia] vvvvv New optimum!")
+                    print_hierarchy(H_Best_P)
+                    println("[julia] ^^^^^ New optimum!")
+                    Best_H = H_Best_P
+                    P_best = P_cur
+                end
+
                 b_minus, b_plus = split(Hmin_cur, Hmax_cur, H_cen, H_fa, b)
                 Hmin_new, Hmax_new = get_new_min_max(Hmin_cur, Hmax_cur, H_cen, b_minus, b_plus)
                 tighten_bounds!(Hmin_cur, Hmax_new, b_minus)
@@ -675,7 +677,12 @@ function solve()
     push!(Simulated, P_best)
     Simulated_H = []
     for (i, P) in enumerate(Simulated)
-        append!(Simulated_H, P[1:4])
+        H_min, H_max, H_cen, H_fa = P[1:4]
+        #only append defined H
+        push!(Simulated_H, H_min, H_max, H_cen)
+        if sim_fa
+            push!(Simulated_H, H_fa)
+        end
     end
     push!(Simulated_H, Best_H)
 
