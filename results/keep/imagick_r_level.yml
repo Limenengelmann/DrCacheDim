@@ -1,5 +1,5 @@
 ---
-- AMAT: 549.942135074915
+- MAT: 549.942135074915
   L1D:
     cfg:
       assoc: 8
@@ -76,7 +76,7 @@
   Total miss rate: 0.04
   VAL: 921589.942135075
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595642 -config_file "/tmp/drcachesim_cfgUfAI" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 565.847171398433
+- MAT: 565.847171398433
   L1D:
     cfg:
       assoc: 8
@@ -153,7 +153,7 @@
   Total miss rate: 0.04
   VAL: 593885.847171398
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595642 -config_file "/tmp/drcachesim_cfgFdp8" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.858423542838
+- MAT: 549.858423542838
   L1D:
     cfg:
       assoc: 8
@@ -230,7 +230,7 @@
   Total miss rate: 0.04
   VAL: 1144149.85842354
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595642 -config_file "/tmp/drcachesim_cfgNL5a" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.2013319691
+- MAT: 550.2013319691
   L1D:
     cfg:
       assoc: 8
@@ -307,7 +307,7 @@
   Total miss rate: 0.04
   VAL: 921550.201331969
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595642 -config_file "/tmp/drcachesim_cfg8zoD" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 545.970351176587
+- MAT: 545.970351176587
   L1D:
     cfg:
       assoc: 8
@@ -384,7 +384,7 @@
   Total miss rate: 0.04
   VAL: 737345.970351177
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595642 -config_file "/tmp/drcachesim_cfgC_Cw" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 546.535160562552
+- MAT: 546.535160562552
   L1D:
     cfg:
       assoc: 8
@@ -461,7 +461,7 @@
   Total miss rate: 0.04
   VAL: 3602146.53516056
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595642 -config_file "/tmp/drcachesim_cfg8Fzh" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.058687662215
+- MAT: 550.058687662215
   L1D:
     cfg:
       assoc: 2
@@ -538,7 +538,7 @@
   Total miss rate: 0.04
   VAL: 610150.058687662
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595642 -config_file "/tmp/drcachesim_cfggf9u" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.058737490601
+- MAT: 550.058737490601
   L1D:
     cfg:
       assoc: 8
@@ -615,7 +615,7 @@
   Total miss rate: 0.04
   VAL: 307430.058737491
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595642 -config_file "/tmp/drcachesim_cfgsaRM" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.01168875471
+- MAT: 550.01168875471
   L1D:
     cfg:
       assoc: 16
@@ -692,7 +692,7 @@
   Total miss rate: 0.04
   VAL: 446150.011688755
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595643 -config_file "/tmp/drcachesim_cfgitrV" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.921492656819
+- MAT: 549.921492656819
   L1D:
     cfg:
       assoc: 16
@@ -769,7 +769,7 @@
   Total miss rate: 0.04
   VAL: 414149.921492657
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595643 -config_file "/tmp/drcachesim_cfggNlU" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 547.883906670866
+- MAT: 547.883906670866
   L1D:
     cfg:
       assoc: 8
@@ -846,7 +846,7 @@
   Total miss rate: 0.04
   VAL: 532547.883906671
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595643 -config_file "/tmp/drcachesim_cfgkzu2" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.782010753355
+- MAT: 549.782010753355
   L1D:
     cfg:
       assoc: 8
@@ -923,7 +923,7 @@
   Total miss rate: 0.04
   VAL: 482149.782010753
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595643 -config_file "/tmp/drcachesim_cfgnXlT" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 757.989910072395
+- MAT: 757.989910072395
   L1D:
     cfg:
       assoc: 8
@@ -1000,7 +1000,7 @@
   Total miss rate: 0.06
   VAL: 430237.989910072
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595643 -config_file "/tmp/drcachesim_cfgphER" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.171583502506
+- MAT: 550.171583502506
   L1D:
     cfg:
       assoc: 8
@@ -1077,7 +1077,7 @@
   Total miss rate: 0.04
   VAL: 594150.171583503
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595643 -config_file "/tmp/drcachesim_cfg7OTe" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.184747813969
+- MAT: 550.184747813969
   L1D:
     cfg:
       assoc: 8
@@ -1154,7 +1154,7 @@
   Total miss rate: 0.04
   VAL: 1576910.18474781
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595643 -config_file "/tmp/drcachesim_cfgtxNJ" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.97852794527
+- MAT: 549.97852794527
   L1D:
     cfg:
       assoc: 8
@@ -1231,7 +1231,7 @@
   Total miss rate: 0.04
   VAL: 430149.978527945
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595643 -config_file "/tmp/drcachesim_cfghIjt" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.166460376323
+- MAT: 550.166460376323
   L1D:
     cfg:
       assoc: 8
@@ -1308,7 +1308,7 @@
   Total miss rate: 0.04
   VAL: 593990.166460376
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595645 -config_file "/tmp/drcachesim_cfgF4T6" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.914964203707
+- MAT: 549.914964203707
   L1D:
     cfg:
       assoc: 8
@@ -1385,7 +1385,7 @@
   Total miss rate: 0.04
   VAL: 414149.914964204
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595645 -config_file "/tmp/drcachesim_cfgG_1q" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.173431104865
+- MAT: 550.173431104865
   L1D:
     cfg:
       assoc: 8
@@ -1462,7 +1462,7 @@
   Total miss rate: 0.04
   VAL: 734950.173431105
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595645 -config_file "/tmp/drcachesim_cfgqSga" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.945663397234
+- MAT: 549.945663397234
   L1D:
     cfg:
       assoc: 16
@@ -1539,7 +1539,7 @@
   Total miss rate: 0.04
   VAL: 510149.945663397
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595645 -config_file "/tmp/drcachesim_cfgoXfJ" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.584272800496
+- MAT: 550.584272800496
   L1D:
     cfg:
       assoc: 8
@@ -1616,7 +1616,7 @@
   Total miss rate: 0.04
   VAL: 428550.5842728
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595645 -config_file "/tmp/drcachesim_cfgDpel" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.848331617066
+- MAT: 549.848331617066
   L1D:
     cfg:
       assoc: 8
@@ -1693,7 +1693,7 @@
   Total miss rate: 0.04
   VAL: 390149.848331617
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595645 -config_file "/tmp/drcachesim_cfgjr4z" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 547.831799980934
+- MAT: 547.831799980934
   L1D:
     cfg:
       assoc: 8
@@ -1770,7 +1770,7 @@
   Total miss rate: 0.04
   VAL: 1963347.83179998
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595645 -config_file "/tmp/drcachesim_cfg8Xck" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.287547375028
+- MAT: 550.287547375028
   L1D:
     cfg:
       assoc: 8
@@ -1847,7 +1847,7 @@
   Total miss rate: 0.04
   VAL: 530950.287547375
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595645 -config_file "/tmp/drcachesim_cfgL0Q1" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.941035984247
+- MAT: 549.941035984247
   L1D:
     cfg:
       assoc: 2
@@ -1924,7 +1924,7 @@
   Total miss rate: 0.04
   VAL: 1378149.94103598
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595646 -config_file "/tmp/drcachesim_cfgnvWr" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 547.645190603512
+- MAT: 547.645190603512
   L1D:
     cfg:
       assoc: 8
@@ -2001,7 +2001,7 @@
   Total miss rate: 0.04
   VAL: 735747.645190604
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595646 -config_file "/tmp/drcachesim_cfgPPHj" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.169252000607
+- MAT: 550.169252000607
   L1D:
     cfg:
       assoc: 8
@@ -2078,7 +2078,7 @@
   Total miss rate: 0.04
   VAL: 593910.169252001
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595646 -config_file "/tmp/drcachesim_cfgdHHL" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 546.889905724055
+- MAT: 546.889905724055
   L1D:
     cfg:
       assoc: 8
@@ -2155,7 +2155,7 @@
   Total miss rate: 0.04
   VAL: 3601746.88990572
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595646 -config_file "/tmp/drcachesim_cfgzLBp" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.816211959724
+- MAT: 549.816211959724
   L1D:
     cfg:
       assoc: 8
@@ -2232,7 +2232,7 @@
   Total miss rate: 0.04
   VAL: 430149.81621196
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595646 -config_file "/tmp/drcachesim_cfgIOTl" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 547.863343818005
+- MAT: 547.863343818005
   L1D:
     cfg:
       assoc: 8
@@ -2309,7 +2309,7 @@
   Total miss rate: 0.04
   VAL: 1144547.86334382
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595646 -config_file "/tmp/drcachesim_cfgAH3s" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.155933395711
+- MAT: 550.155933395711
   L1D:
     cfg:
       assoc: 8
@@ -2386,7 +2386,7 @@
   Total miss rate: 0.04
   VAL: 422150.155933396
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595646 -config_file "/tmp/drcachesim_cfgXNHj" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.264572361193
+- MAT: 550.264572361193
   L1D:
     cfg:
       assoc: 8
@@ -2463,7 +2463,7 @@
   Total miss rate: 0.04
   VAL: 430150.264572361
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595646 -config_file "/tmp/drcachesim_cfg5LDU" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.175856620765
+- MAT: 550.175856620765
   L1D:
     cfg:
       assoc: 8
@@ -2540,7 +2540,7 @@
   Total miss rate: 0.04
   VAL: 430150.175856621
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595650 -config_file "/tmp/drcachesim_cfg8dnF" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 545.888656439283
+- MAT: 545.888656439283
   L1D:
     cfg:
       assoc: 8
@@ -2617,7 +2617,7 @@
   Total miss rate: 0.04
   VAL: 1964545.88865644
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595650 -config_file "/tmp/drcachesim_cfg_uya" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 803.133331444144
+- MAT: 803.133331444144
   L1D:
     cfg:
       assoc: 8
@@ -2694,7 +2694,7 @@
   Total miss rate: 0.06
   VAL: 348403.133331444
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595650 -config_file "/tmp/drcachesim_cfgGH2L" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.916000063336
+- MAT: 549.916000063336
   L1D:
     cfg:
       assoc: 8
@@ -2771,7 +2771,7 @@
   Total miss rate: 0.04
   VAL: 921669.916000063
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595650 -config_file "/tmp/drcachesim_cfghoCF" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 803.365880757544
+- MAT: 803.365880757544
   L1D:
     cfg:
       assoc: 8
@@ -2848,7 +2848,7 @@
   Total miss rate: 0.06
   VAL: 307523.365880758
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595650 -config_file "/tmp/drcachesim_cfgNiv9" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.851027379803
+- MAT: 550.851027379803
   L1D:
     cfg:
       assoc: 8
@@ -2925,7 +2925,7 @@
   Total miss rate: 0.04
   VAL: 378950.85102738
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595650 -config_file "/tmp/drcachesim_cfgdAdN" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.759006972358
+- MAT: 549.759006972358
   L1D:
     cfg:
       assoc: 8
@@ -3002,7 +3002,7 @@
   Total miss rate: 0.04
   VAL: 348389.759006972
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595650 -config_file "/tmp/drcachesim_cfgLlTP" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.032293567609
+- MAT: 550.032293567609
   L1D:
     cfg:
       assoc: 8
@@ -3079,7 +3079,7 @@
   Total miss rate: 0.04
   VAL: 2887630.03229357
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595650 -config_file "/tmp/drcachesim_cfgzC0n" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.098672866991
+- MAT: 550.098672866991
   L1D:
     cfg:
       assoc: 4
@@ -3156,7 +3156,7 @@
   Total miss rate: 0.04
   VAL: 486150.098672867
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595655 -config_file "/tmp/drcachesim_cfg9hfX" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.90469217054
+- MAT: 549.90469217054
   L1D:
     cfg:
       assoc: 8
@@ -3233,7 +3233,7 @@
   Total miss rate: 0.04
   VAL: 430309.904692171
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595655 -config_file "/tmp/drcachesim_cfgKo8Y" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.95736696543
+- MAT: 549.95736696543
   L1D:
     cfg:
       assoc: 4
@@ -3310,7 +3310,7 @@
   Total miss rate: 0.04
   VAL: 614149.957366965
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595655 -config_file "/tmp/drcachesim_cfgPvYI" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.953141834799
+- MAT: 549.953141834799
   L1D:
     cfg:
       assoc: 4
@@ -3387,7 +3387,7 @@
   Total miss rate: 0.04
   VAL: 870149.953141835
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595655 -config_file "/tmp/drcachesim_cfgDyWy" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.895184567412
+- MAT: 549.895184567412
   L1D:
     cfg:
       assoc: 8
@@ -3464,7 +3464,7 @@
   Total miss rate: 0.04
   VAL: 418149.895184567
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595655 -config_file "/tmp/drcachesim_cfgxxuC" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.874343090492
+- MAT: 549.874343090492
   L1D:
     cfg:
       assoc: 8
@@ -3541,7 +3541,7 @@
   Total miss rate: 0.04
   VAL: 494149.874343091
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595655 -config_file "/tmp/drcachesim_cfgVvrW" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.623926218652
+- MAT: 550.623926218652
   L1D:
     cfg:
       assoc: 8
@@ -3618,7 +3618,7 @@
   Total miss rate: 0.04
   VAL: 530150.623926219
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595655 -config_file "/tmp/drcachesim_cfg5GbW" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.944866512596
+- MAT: 549.944866512596
   L1D:
     cfg:
       assoc: 8
@@ -3695,7 +3695,7 @@
   Total miss rate: 0.04
   VAL: 486149.944866513
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595655 -config_file "/tmp/drcachesim_cfgWKkW" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.847832667637
+- MAT: 549.847832667637
   L1D:
     cfg:
       assoc: 8
@@ -3772,7 +3772,7 @@
   Total miss rate: 0.04
   VAL: 610149.847832668
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595661 -config_file "/tmp/drcachesim_cfgI2e0" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 815.159695550672
+- MAT: 815.159695550672
   L1D:
     cfg:
       assoc: 8
@@ -3849,7 +3849,7 @@
   Total miss rate: 0.06
   VAL: 287215.159695551
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595661 -config_file "/tmp/drcachesim_cfg6MqC" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.04309763829
+- MAT: 550.04309763829
   L1D:
     cfg:
       assoc: 2
@@ -3926,7 +3926,7 @@
   Total miss rate: 0.04
   VAL: 866150.043097638
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595661 -config_file "/tmp/drcachesim_cfgax6i" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 551.203748615639
+- MAT: 551.203748615639
   L1D:
     cfg:
       assoc: 8
@@ -4003,7 +4003,7 @@
   Total miss rate: 0.04
   VAL: 734551.203748616
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595661 -config_file "/tmp/drcachesim_cfgnbeF" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.127244215385
+- MAT: 550.127244215385
   L1D:
     cfg:
       assoc: 8
@@ -4080,7 +4080,7 @@
   Total miss rate: 0.04
   VAL: 1576950.12724422
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595661 -config_file "/tmp/drcachesim_cfgTDKy" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.756807985129
+- MAT: 549.756807985129
   L1D:
     cfg:
       assoc: 8
@@ -4157,7 +4157,7 @@
   Total miss rate: 0.04
   VAL: 398149.756807985
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595661 -config_file "/tmp/drcachesim_cfgzxPV" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.251416620167
+- MAT: 550.251416620167
   L1D:
     cfg:
       assoc: 8
@@ -4234,7 +4234,7 @@
   Total miss rate: 0.04
   VAL: 390150.25141662
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595661 -config_file "/tmp/drcachesim_cfg5Fb6" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.260743805639
+- MAT: 550.260743805639
   L1D:
     cfg:
       assoc: 8
@@ -4311,7 +4311,7 @@
   Total miss rate: 0.04
   VAL: 382150.260743806
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595661 -config_file "/tmp/drcachesim_cfgxUXx" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.154705054124
+- MAT: 550.154705054124
   L1D:
     cfg:
       assoc: 8
@@ -4388,7 +4388,7 @@
   Total miss rate: 0.04
   VAL: 398150.154705054
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595663 -config_file "/tmp/drcachesim_cfghM3S" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 546.61858385533
+- MAT: 546.61858385533
   L1D:
     cfg:
       assoc: 8
@@ -4465,7 +4465,7 @@
   Total miss rate: 0.04
   VAL: 6878546.61858386
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595663 -config_file "/tmp/drcachesim_cfgs1I5" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.855799764515
+- MAT: 549.855799764515
   L1D:
     cfg:
       assoc: 8
@@ -4542,7 +4542,7 @@
   Total miss rate: 0.04
   VAL: 622149.855799765
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595663 -config_file "/tmp/drcachesim_cfg1nBV" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 551.375454794727
+- MAT: 551.375454794727
   L1D:
     cfg:
       assoc: 8
@@ -4619,7 +4619,7 @@
   Total miss rate: 0.04
   VAL: 430071.375454795
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595663 -config_file "/tmp/drcachesim_cfgQr4K" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 546.352532333976
+- MAT: 546.352532333976
   L1D:
     cfg:
       assoc: 8
@@ -4696,7 +4696,7 @@
   Total miss rate: 0.04
   VAL: 1146946.35253233
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595663 -config_file "/tmp/drcachesim_cfgwzGW" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 546.477793129286
+- MAT: 546.477793129286
   L1D:
     cfg:
       assoc: 8
@@ -4773,7 +4773,7 @@
   Total miss rate: 0.04
   VAL: 1963746.47779313
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595663 -config_file "/tmp/drcachesim_cfgH1HT" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 546.093161224506
+- MAT: 546.093161224506
   L1D:
     cfg:
       assoc: 8
@@ -4850,7 +4850,7 @@
   Total miss rate: 0.04
   VAL: 1145346.09316122
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595663 -config_file "/tmp/drcachesim_cfg6DZq" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 550.328212860408
+- MAT: 550.328212860408
   L1D:
     cfg:
       assoc: 8
@@ -4927,7 +4927,7 @@
   Total miss rate: 0.04
   VAL: 348230.32821286
   cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim_pipe595663 -config_file "/tmp/drcachesim_cfgyPEG" -- ./imagick_r_base.linux-amd64 -limit disk 0 test_input.tga -shear 25 -resize 640x480 -negate -alpha Off test_output.tga '
-- AMAT: 549.419683776912
+- MAT: 549.419683776912
   L1D:
     cfg:
       assoc: 12

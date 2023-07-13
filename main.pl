@@ -82,6 +82,7 @@ sub bruteforce_sim {
     #$H->{L1D}->{cfg}->{assoc} = $H->{L1D}->{cfg}->{size} / 64;  # fully associative
     #$H->{L3}->{cfg}->{size} = 2**30;
 
+    #XXX outdated
     my $s1I = DrCachesim::brutef_sweep(H => $H, L1I => [13,17,1,4]);
     my $s1D = DrCachesim::brutef_sweep(H => $H, L1D => [13,17,1,4]);
     my $s2  = DrCachesim::brutef_sweep(H => $H, L2  => [19,23,1,4]);

@@ -29,9 +29,8 @@ DrCachesim::set_sets_ways($H0, (64, 8, 512, 7, 2048, 3, 16384, 15));
 #DrCachesim::set_sets_ways($Hmin, (32, 1, 32, 1, 64, 1, 128, 1));
 #DrCachesim::set_sets_ways($Hmax, (512, 16, 1024, 16, 8192, 16, 2**15, 16));
 
-my @cost_ratio = (1, 1, 1, 1, 0.1, 0.1, 0.01, 0.01);
 my $cost_scale = 0.001;
-my @cost = map {$cost_scale * $_} @cost_ratio;
+my @cost = map {$cost_scale * $_} @DynamoRIO::DEFAULT_COST_RATIO;
 
 my $name = "capway";
 my $resf = "$Aux::RESDIR/$name-res.yml";

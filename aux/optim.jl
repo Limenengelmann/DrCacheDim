@@ -22,6 +22,7 @@ const pSIM = ARGS[1]
 const pRES  = ARGS[2]
 Base.MainInclude.include(ARGS[3])
 
+# "Enums" (julia enums kinda suck)
 const L1I = "L1I"
 const L1D = "L1D"
 const L2 = "L2"
@@ -303,9 +304,11 @@ end
 
 function add_constraints!(M, h, b)
     #Base constraints
-    @constraint(M, h[SETS0] <= h[SETS1])
-    @constraint(M, h[SETS1] <= h[SETS2])
-    @constraint(M, h[SETS2] <= h[SETS3])
+    if base_constr
+        @constraint(M, h[SETS0] <= h[SETS1])
+        @constraint(M, h[SETS1] <= h[SETS2])
+        @constraint(M, h[SETS2] <= h[SETS3])
+    end
 
     #Parameter bounds
     @constraint(M, A*h .<= b)
@@ -556,6 +559,7 @@ function solve()
     global max_iter     = (max_iter != nothing)     ? max_iter     : 10
     global parallel_sim = (parallel_sim != nothing) ? parallel_sim : 1
     global sim_fa       = (sim_fa != nothing)       ? sim_fa       : false
+    global base_constr  = (base_constr != nothing)  ? base_constr  : true
 
     println("[julia] Start Hierarchy:")
     print_hierarchy(H0)

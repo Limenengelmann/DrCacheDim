@@ -11,6 +11,9 @@ system("mkdir $TMPDIR") unless -d $TMPDIR;
 our $RESDIR="$ROOT/results";
 system("mkdir $RESDIR") unless -d $RESDIR;
 
+# common simulation params
+our $BIG_VAL = 1.0e32;  #Common large value for penalty terms
+our $HEAD_ONLY_SIM = "-trace_after_instrs 100000 -exit_after_tracing 10000000";
 
 sub get_tstamp {
     my @tstamp = reverse localtime;
@@ -23,8 +26,8 @@ sub beep_when_done {
 }
 
 sub notify_when_done {
-    my $txt = shift;
-    system("notify-send --urgency=critical $txt");
+    my $txt = shift || return;
+    system("notify-send --urgency=critical \'$txt\'");
 }
 
 sub log2 {
@@ -33,7 +36,7 @@ sub log2 {
         my @res = map {log2($_)} @N;
     } else {
         my $n = shift;
-        return floor(log($n)/log(2));
+        return int(log($n)/log(2) + 0.5);
     }
 }
 

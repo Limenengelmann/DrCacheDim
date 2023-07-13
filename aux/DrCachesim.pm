@@ -17,15 +17,17 @@ our @LVLS=("L1I", "L1D", "L2", "L3");
 our $LINE_SIZE=64;
 #default cost
 our @DEFAULT_COST=(
-    1000, #998.69,  # L1Isets
-    2000, #1998.65, #L1Iassoc 
-    1000, #998.69 , # L1Dsets 
-    2000, #1998.65, #L1Dassoc 
-    100 , #99.07  , #  L2sets 
-    200 , #198.98 , # L2assoc 
-    10  , #9.35   , #  L3sets 
-    20  , #19.48  , # L3assoc 
+    1, #998.69,  # L1Isets
+    2, #1998.65, #L1Iassoc 
+    1, #998.69 , # L1Dsets 
+    2, #1998.65, #L1Dassoc 
+    0.1 , #99.07  , #  L2sets 
+    0.2 , #198.98 , # L2assoc 
+    0.01  , #9.35   , #  L3sets 
+    0.02  , #19.48  , # L3assoc 
 );
+
+our @DEFAULT_COST_RATIO=(1, 1, 1, 1, 0.1, 0.1, 0.01, 0.01);
 
 #TODO store simulations in sqlite instead of yaml
 
@@ -66,7 +68,7 @@ sub new_hierarchy {
         L2   => new_cache(type => "unified", parent => "L3", inclusive => "false"),
         L3   => new_cache(type => "unified", parent => "memory", inclusive => "false"),
         MML  => 1000,    # TODO main memory latency
-        LAT  => undef,
+        MAT  => undef,
         VAL  => undef,
         COST => undef,
         cmd  => undef,
@@ -95,7 +97,7 @@ sub print_hierarchy {
     my $sets3 = $size3 / $ways3 / $LINE_SIZE;
 
     my $cost = $H->{COST} || 0;
-    my $lat  = $H->{LAT} || 0;
+    my $mat  = $H->{MAT} || 0;
     my $val  = $H->{VAL} || 0;
 
     printf("%4d %2d %4d %2d %5d %2d %5d %2d | %9d %9d %9d\n",
@@ -103,8 +105,23 @@ sub print_hierarchy {
         $sets1, $ways1,
         $sets2, $ways2,
         $sets3, $ways3,
-        $cost, $lat, $val
+        $cost, $mat, $val
     );
+}
+
+sub get_sets_ways {
+    my $H = shift;
+    my @V = ();
+    foreach my $l (@LVLS) {
+        my $w = $H->{$l}->{cfg}->{assoc};
+        my $s = $H->{$l}->{cfg}->{size} / $w / $LINE_SIZE;
+        push @V, ($s, $w);
+    }
+    if (wantarray()) { # list context
+        return @V;
+    } else {
+        return \@V;
+    }
 }
 
 sub set_sets_ways {
@@ -199,7 +216,7 @@ sub get_lin_cost_fun {
 }
 
 sub get_real_cost_fun {
-    my $cost = shift;
+    my $cost = shift || \@DEFAULT_COST_RATIO;
     my $cost_fun = sub {
         my $H = shift;
         my $L1I = $H->{L1I};
@@ -234,23 +251,23 @@ sub default_cost {
 
 sub default_val {
     my $H = shift;
-    die "[default_val] Cannot calc objective val. Uninitialized cost or lat!" if not defined $H->{COST} or not defined $H->{LAT};
-    return $H->{COST} + $H->{LAT};
+    die "[default_val] Cannot calc objective val. Uninitialized cost or mat!" if not defined $H->{COST} or not defined $H->{MAT};
+    return $H->{COST} + $H->{MAT};
 }
 
-sub get_max_lat_val {
-    my $max_lat = shift;
+sub get_max_mat_val {
+    my $max_mat = shift;
     my $val_fun = sub {
         my $H = shift;
-        die "[max_lat_val] Cannot calc objective val. Uninitialized cost or lat!" if not defined $H->{COST} or not defined $H->{LAT};
-        #TODO some max cost or max lat value should be obtainable from a worst case scenario (100% miss rate)
-        my $penalty = $H->{LAT} > $max_lat ? 1e9 : 0;
-        return $H->{COST} + $H->{LAT} + $penalty;
+        die "[max_mat_val] Cannot calc objective val. Uninitialized cost or mat!" if not defined $H->{COST} or not defined $H->{MAT};
+        #TODO some max cost or max mat value should be obtainable from a worst case scenario (100% miss rate)
+        my $penalty = $H->{MAT} > $max_mat ? $Aux::BIG_VAL : 0;
+        return $H->{COST} + $H->{MAT} + $penalty;
     };
     return $val_fun;
 }
 
-sub default_lat {
+sub default_mat {
     # evaluate "goodness" of a hierarchy by simply weighing off size of the cash and average miss rate
     my $H = shift;
     my $L1I = $H->{L1I};
@@ -275,13 +292,13 @@ sub default_lat {
     #           * $H->{MML}));
 
     #XXX changed to absolute latency for simplicity
-    my $lat = $L1D->{lat}*$L1D->{stats}->{Hits} +
+    my $mat = $L1D->{lat}*$L1D->{stats}->{Hits} +
                $L1I->{lat}*$L1I->{stats}->{Hits} +
                $L2->{lat}*$L2->{stats}->{Hits} +
                $L3->{lat}*$L3->{stats}->{Hits} +
                $H->{MML}*$L3->{stats}->{Misses};
 
-    return $lat;
+    return $mat;
 }
 
 sub default_problem {
@@ -290,7 +307,7 @@ sub default_problem {
     my $defp = {
         exe  => sub { return ($exe, $drargs); },
         cost => \&default_cost,
-        lat => \&default_lat,
+        mat => \&default_mat,
         val  => \&default_val,
     };
     return $defp;
@@ -305,11 +322,6 @@ sub valid_config {
     my $L2 = $H->{L2}->{cfg};
     my $L3 = $H->{L3}->{cfg};
 
-    # Rationale for ">" instead of ">=":
-    # Since the simulator only supports sizes as powers of 2,
-    # we might get situations, where the performance improves tremendously
-    # between 2^(n-1) and 2^n, where n is the next levels size.
-    # So those configurations should be allowed
     my $weird_size = $L1I->{size} > $L1D->{size} ||
                      $L1D->{size} > $L2->{size}  ||
                      $L2->{size}  > $L3->{size};
@@ -329,8 +341,19 @@ sub get_best {
     return $min;
 }
 
-sub update_simulations {
-    # Update non-simulated parameters like latency or AMAT
+sub update_sims {
+    # Update non-simulated parameters MAT, COST and VAL
+    my $P = shift;
+    my $S = shift;
+
+    foreach my $H (@$S) {
+        $H->{MAT}  = $P->{mat}->($H);
+        $H->{COST} = $P->{cost}->($H);
+        $H->{VAL}  = $P->{val}->($H);
+    }
+}
+
+sub update_simulations_files {
     # for all simulations in the given folder
     my $folder = shift;
     my $P = shift;
@@ -340,13 +363,10 @@ sub update_simulations {
     my @list = split "\n", $all;
     foreach my $fname (@list) {
         print "Loading $fname\n";
-        my $s = LoadFile($fname) or die "update_simulations: Can't load '$fname': $!";
-        foreach my $H (@$s) {
-            $H->{LAT} = $P->{lat}->($H);
-            $H->{VAL}  = $P->{val}->($H);
-        }
+        my $S = LoadFile($fname) or die "update_simulations: Can't load '$fname': $!";
+        update_sims $P, $S;
         print "Writing back $fname\n";
-        DumpFile($fname, $s) or die "update_simulations: Can't dump '$fname': $!";
+        DumpFile($fname, $S) or die "update_simulations: Can't dump '$fname': $!";
     }
 }
 
@@ -383,7 +403,7 @@ sub create_cfg {
         push @C, $l;
     }
     my $cfg = join "", @C;
-    $cfg =~ s/ {2,}/ /g;    # just for easier debugging
+    $cfg =~ s/ {2,}/ /g;    # collapse spaces for easier debugging
 
     print $fh "$cfg\n";
     return $fname;
@@ -422,7 +442,7 @@ sub brutef_sweep {
     print "Warning: Generating up to $count Hierarchies!\n";
 
     my $ill = 0;
-    my $S = ();
+    my $S = [];
     for (my $s1I=2**$L1I_smin; $s1I<=2**$L1I_smax; $s1I*=2) {
     for (my $s1D=2**$L1D_smin; $s1D<=2**$L1D_smax; $s1D*=2) {
     for (my $s2 =2**$L2_smin ; $s2 <=2**$L2_smax ; $s2 *=2) {
@@ -452,6 +472,49 @@ sub brutef_sweep {
     return $S;
 }
 
+sub cube_sweep {
+    my $Hmin = shift;
+    my $Hmax = shift;
+
+    my ($L1I_smin, $L1I_amin,
+        $L1D_smin, $L1D_amin,
+        $L2_smin, $L2_amin, 
+        $L3_smin, $L3_amin) = get_sets_ways($Hmin);
+
+    my ($L1I_smax, $L1I_amax,
+        $L1D_smax, $L1D_amax,
+        $L2_smax, $L2_amax, 
+        $L3_smax, $L3_amax) = get_sets_ways($Hmax);
+
+    my $count = (Aux::log2($L1I_smax)-Aux::log2($L1I_smin)+1)*(Aux::log2($L1D_smax)-Aux::log2($L1D_smin)+1)*
+                (Aux::log2($L2_smax )-Aux::log2($L2_smin )+1)  *(Aux::log2($L3_smax)-Aux::log2($L3_smin)+1)*
+                ($L1I_amax-$L1I_amin+1)*($L1D_amax-$L1D_amin+1)*
+                ($L2_amax -$L2_amin +1)  *($L3_amax-$L3_amin+1);
+    print "Warning: Generating up to $count Hierarchies!\n";
+
+    my $ill = 0;
+    my $S = [];
+    for (my $s1I=$L1I_smin; $s1I<=$L1I_smax; $s1I*=2) {
+    for (my $s1D=$L1D_smin; $s1D<=$L1D_smax; $s1D*=2) {
+    for (my $s2 =$L2_smin ; $s2 <=$L2_smax ; $s2 *=2) {
+    for (my $s3 =$L3_smin ; $s3 <=$L3_smax ; $s3 *=2) {
+    for (my $a1I=$L1I_amin; $a1I<=$L1I_amax; $a1I+=1) {
+    for (my $a1D=$L1D_amin; $a1D<=$L1D_amax; $a1D+=1) {
+    for (my $a2 =$L2_amin ; $a2 <=$L2_amax ; $a2 +=1) {
+    for (my $a3 =$L3_amin ; $a3 <=$L3_amax ; $a3 +=1) {
+        my $H = dclone($Hmin);
+        set_sets_ways($H, ($s1I, $a1I, $s1D, $a1D, $s2, $a2 , $s3, $a3));
+        if (valid_config($H)) {
+            push @$S, $H;
+        } else {
+            #print Dump($H);
+            $ill++;
+        }
+    }}}}}}}}
+    print "Skipped $ill/$count bad Hierarchies!\n" if $ill;
+    return $S;
+}
+
 sub run_cachesim {
     #my $k = shift;
     my $P = shift;
@@ -468,7 +531,7 @@ sub run_cachesim {
         my $h = Dump($H);
         die "$msg\nCommand output: $cmdout\nCommand: $cmd\nConfig:$h\n";
     }
-    $H->{LAT} = $P->{lat}->($H);
+    $H->{MAT} = $P->{mat}->($H);
     $H->{COST} = $P->{cost}->($H);
     $H->{VAL}  = $P->{val}->($H);
 }
@@ -613,6 +676,7 @@ sub parallel_run {
         `rm $fname`;
     }
 
+    #TODO This is kinda bad
     if (wantarray()) { # return sweep in list context
         return @$sweep; # potentially unnecessary deep copy
     } else {  # return filename in scalar context

@@ -1,3 +1,4 @@
+#XXX unused, only needed for the memory tracing to sqlite
 cmake_minimum_required(VERSION 3.22)
 project(MyMemtrace)
 
