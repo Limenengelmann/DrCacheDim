@@ -2,8 +2,8 @@
 use strict; 
 use warnings;
 
-use lib "/home/elimtob/Workspace/mymemtrace/aux";
-use DrCachesim;
+use lib "/home/elimtob/Workspace/drcachedim/aux";
+use DrCacheDim;
 use Aux;
 use Storable qw(dclone);
 
@@ -15,22 +15,22 @@ my $infile = shift;
 die "Cannot find input file '$infile'!" unless -e $infile;
 my $S = LoadFile($infile);
 my $B = [];
-my $P = DrCachesim::default_problem();
+my $P = DrCacheDim::default_problem();
 
 my @cost_scales = map { 2**$_ } (-16 .. 16);
 foreach my $cscale (@cost_scales) {
-    my @cost = map {$cscale * $_} @DrCachesim::DEFAULT_COST_RATIO;
-    $P->{cost} = DrCachesim::get_real_cost_fun(\@cost);
-    #$P->{cost} = DrCachesim::get_lin_cost_fun(\@cost);
-    DrCachesim::update_sims($P, $S);
-    my $H_best = dclone(DrCachesim::get_best($S));
+    my @cost = map {$cscale * $_} @DrCacheDim::DEFAULT_COST_RATIO;
+    $P->{cost} = DrCacheDim::get_real_cost_fun(\@cost);
+    #$P->{cost} = DrCacheDim::get_lin_cost_fun(\@cost);
+    DrCacheDim::update_sims($P, $S);
+    my $H_best = dclone(DrCacheDim::get_best($S));
     $H_best->{CSCALE} = $cscale;
     push @$B, $H_best;
 }
 
-$P->{cost} = DrCachesim::get_real_cost_fun(\@DrCachesim::DEFAULT_COST_RATIO);
+$P->{cost} = DrCacheDim::get_real_cost_fun(\@DrCacheDim::DEFAULT_COST_RATIO);
 # put all on the same scale to compare them better
-DrCachesim::update_sims($P, $B);
+DrCacheDim::update_sims($P, $B);
 
 my $len = @$B;
 my ($name) = $infile =~ /.*\/(.*).yml$/;

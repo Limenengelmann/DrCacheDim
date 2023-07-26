@@ -1,4 +1,4 @@
-package DrCachesim;
+package DrCacheDim;
 
 use strict;
 use warnings;
@@ -27,6 +27,7 @@ our @DEFAULT_COST=(
     0.02  , #19.48  , # L3assoc 
 );
 
+#unused
 our @DEFAULT_COST_RATIO=(1, 1, 1, 1, 0.1, 0.1, 0.01, 0.01);
 
 #TODO store simulations in sqlite instead of yaml
@@ -72,15 +73,18 @@ sub new_hierarchy {
         VAL  => undef,
         COST => undef,
         cmd  => undef,
+        CSCALE => 1,
+        LAMBDA => 0.5,
         "Total miss rate" => undef,
    };
-   #XXX: Julia YAML package cannot deserialize this
+   #XXX: Julia YAML package cannot deserialize the serialization of blessed objects
    #bless $self, $class;
    return $self;
 }
 
 sub print_hierarchy {
     my $H = shift;
+    my $name = shift || "";
 
     my $size0 = $H->{L1I}->{cfg}->{size};
     my $ways0 = $H->{L1I}->{cfg}->{assoc};
@@ -100,7 +104,7 @@ sub print_hierarchy {
     my $mat  = $H->{MAT} || 0;
     my $val  = $H->{VAL} || 0;
 
-    printf("%4d %2d %4d %2d %5d %2d %5d %2d | %9d %9d %9d\n",
+    printf("%6s %4d %2d %4d %2d %5d %2d %5d %2d | %9d %9d %9d\n", $name,
         $sets0, $ways0,
         $sets1, $ways1,
         $sets2, $ways2,
@@ -155,7 +159,9 @@ sub get_cmd {
 
 
 sub get_local_hierarchy {
+    my $lambda = shift || 0.5;
     my $H = new_hierarchy();
+    $H->{LAMBDA} = $lambda;
 
     #TODO more precise way to do it via looking in /proc/.../cache
     my $out = `getconf -a | grep CACHE`;
@@ -216,7 +222,7 @@ sub get_lin_cost_fun {
 }
 
 sub get_real_cost_fun {
-    my $cost = shift || \@DEFAULT_COST_RATIO;
+    my $cost = shift || \@DEFAULT_COST;
     my $cost_fun = sub {
         my $H = shift;
         my $L1I = $H->{L1I};
@@ -252,17 +258,18 @@ sub default_cost {
 sub default_val {
     my $H = shift;
     die "[default_val] Cannot calc objective val. Uninitialized cost or mat!" if not defined $H->{COST} or not defined $H->{MAT};
-    return $H->{COST} + $H->{MAT};
+    return $H->{LAMBDA} * $H->{CSCALE} * $H->{COST} + (1-$H->{LAMBDA}) * $H->{MAT};
 }
 
 sub get_max_mat_val {
     my $max_mat = shift;
+    my $old_val = shift || \&default_val;
     my $val_fun = sub {
         my $H = shift;
         die "[max_mat_val] Cannot calc objective val. Uninitialized cost or mat!" if not defined $H->{COST} or not defined $H->{MAT};
         #TODO some max cost or max mat value should be obtainable from a worst case scenario (100% miss rate)
         my $penalty = $H->{MAT} > $max_mat ? $Aux::BIG_VAL : 0;
-        return $H->{COST} + $H->{MAT} + $penalty;
+        return $old_val->($H) + $penalty;
     };
     return $val_fun;
 }
@@ -292,8 +299,8 @@ sub default_mat {
     #           * $H->{MML}));
 
     #XXX changed to absolute latency for simplicity
-    my $mat = $L1D->{lat}*$L1D->{stats}->{Hits} +
-               $L1I->{lat}*$L1I->{stats}->{Hits} +
+    my $mat =  $L1I->{lat}*$L1I->{stats}->{Hits} +
+               $L1D->{lat}*$L1D->{stats}->{Hits} +
                $L2->{lat}*$L2->{stats}->{Hits} +
                $L3->{lat}*$L3->{stats}->{Hits} +
                $H->{MML}*$L3->{stats}->{Misses};
@@ -312,6 +319,7 @@ sub default_problem {
     };
     return $defp;
 }
+
 
 sub valid_config {
     # Check that a hierarchy can be simulated with dynamorio
@@ -537,14 +545,15 @@ sub run_cachesim {
 }
 
 sub run_analysistool {
-    my $P = shift;
-    my $tool = shift;
+    my $P = shift || die "[run_analysistool] No problem passed!";
+    my $tool = shift || die "[run_analysistool] No tool passed!";
     my ($exe, $drargs) = $P->{exe}->();
     #TODO handle potential duplicate simulator type
     $drargs ||= "";
     $drargs .= " $tool";
     my $cmd = get_cmd($exe, "", $drargs);
     print("Running: $cmd\n");
+    #TODO safe open and return output
     system($cmd);
 }
 
@@ -685,4 +694,14 @@ sub parallel_run {
         DumpFile($rfile, $sweep) or die "parallel_sweep: Can't load tmp results: $!";
         return $rfile;
     }
+}
+
+sub get_cost_scaling_factor {
+    my $P = shift || die "[set_scaled_val] No problem given!";
+    my $Hmin   = shift || die "[set_scaled_val] No Hmin!";
+    my $Hmax   = shift || die "[set_scaled_val] No Hmax!";
+
+    my ($Hmin_, $Hmax_) = parallel_run($P, [$Hmin, $Hmax]);
+    my $cscale = ($Hmin_->{MAT} - $Hmax_->{MAT}) / ($Hmax_->{COST} - $Hmin_->{COST});
+    return $cscale;
 }

@@ -15,24 +15,29 @@ import os.path
 #fig = px.bar(x=["a", "b", "c"], y=[1, 3, 2])
 #fig.write_html('first_figure.html', auto_open=True)
 
-proot="/home/elimtob/Workspace/mymemtrace"
+proot="/home/elimtob/Workspace/drcachedim"
 
 #fglob=f"{proot}/results/keep/imagick_r_1000.yml"
 #fglob=f"{proot}/results/keep/cachetest_1000.yml"
 #fglob=f"{proot}/results/xz_r-res-7-7-16-5-28.yml"
 #fglob=f"{proot}/results/imagick_r-res.yml"
-fglob=f"{proot}/results/imagick_r-max_cost-4144497-7-12-13-36-20.yml"
+#fglob=f"{proot}/results/imagick_r-max_cost-4144497-7-12-13-36-20.yml"
+fglob=f"{proot}/results/imagick_r-char-7-24-2-35-32.yml"
 if len(sys.argv) > 1:
     fglob = sys.argv[1]
 
-plot_name = "plot.png"
+plot_name = "pcoord.pdf"
 if len(sys.argv) > 2:
     plot_name = sys.argv[2]
 plot_name = f"{proot}/plots/{plot_name}"
 
-title = "title"
+title = "TODO: title"
 if len(sys.argv) > 3:
     title = sys.argv[3]
+
+top = 10
+if len(sys.argv) > 4:
+    top = int(sys.argv[4])
 
 #Load
 sweeps = []
@@ -48,7 +53,7 @@ df = pd.concat(sweeps)
 s0 = "L1I.cfg.size"
 a0 = "L1I.cfg.assoc"
 m0 = "L1I.stats.Misses"
-mr0 = "L1I.stats.Miss rate",
+mr0 = "L1I.stats.Miss rate"
 
 s1 = "L1D.cfg.size"
 a1 = "L1D.cfg.assoc"
@@ -58,12 +63,12 @@ mr1 = "L1D.stats.Miss rate"
 s2 = "L2.cfg.size"
 a2 = "L2.cfg.assoc"
 m2 = "L2.stats.Misses"
-mr2 = "L2.stats.Miss rate",
+mr2 = "L2.stats.Miss rate"
 
 s3 = "L3.cfg.size"
 a3 = "L3.cfg.assoc"
 m3 = "L3.stats.Misses"
-mr3 = "L3.stats.Miss rate",
+mr3 = "L3.stats.Miss rate"
 
 Labels = {
         s1 : "size1",
@@ -103,34 +108,36 @@ D = [
 
 color_key = "VAL"
 #color_key = "MAT"
+#color_key = "CSCALE"
 
-numeric_keys = [m1,m2,m3,s0,a0,s1,a1,s2,a2,s3,a3,"MAT","COST","VAL"]
+numeric_keys = [m1,m2,m3,s0,a0,s1,a1,s2,a2,s3,a3,"MAT","COST","VAL", "CSCALE", "LAMBDA"]
 df[numeric_keys] = df[numeric_keys].apply(pd.to_numeric)
-
-if "CSCALE" in df:
-    color_key = "CSCALE"
-    df["CSCALE"] = df["CSCALE"].apply(pd.to_numeric)
-    df["CSCALE"] = df["CSCALE"].apply(np.log2)
-    D.insert(0, "CSCALE")
 #print(df[D])
 
 # drop penalized sims, value from $Aux::BIG_VAL
 ind = df["VAL"].lt(1.0e31)
 df = df[ind]
 
+df = df.sort_values(by="VAL")
+df = df.drop_duplicates(subset=[s0,a0,s1,a1,s2,a2,s3,a3,"COST", "CSCALE", "LAMBDA"])
+
 #Some "enhancements"
 SIZES = [s0,s1,s2,s3]
 WAYS = [a0,a1,a2,a3]
 OTHER = ["MAT", "VAL"]
 # add slight jitter to sizes, so the lines don't overlap too much
-jitter = 10    # percentage of jitter to add
+jitter = 0    # percentage of jitter to add
 df[SIZES] = df[SIZES].apply(lambda x: x+(random.random()-0.5)*x*jitter/100, axis=1)
-jitter = 5    # percentage of jitter to add
-df[WAYS] = df[WAYS].apply(lambda x: x+(random.random()-0.5)*x*jitter/100, axis=1)
+jitter = 0.1    # percentage of jitter to add
+df[WAYS] = df[WAYS].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
 # negate MAT, VAL and COST column, so that it also aligns properly with the sizes etc (Large size -> Small MAT -> Large -MAT)
 # should make the graph easier to read, since the lines should become more horizontal
-df[OTHER] = df[OTHER] * -1
+#df[OTHER] = df[OTHER] * -1
 
+#Limit plot to top 10 
+if top > 0:
+    df = df.iloc[0:top]
+print(df)
 
 dims = []
 for d in D:
@@ -139,6 +146,8 @@ for d in D:
             label=Labels[d],
             #tickvals=[df[d]],
             )
+    #if d == "MAT":
+    #    dd["constraintrange"] = [53.1*1e6, 53.28*1e6]
     #if d.endswith("assoc"):
     #    dd["tickvals"] = [32,16,8,4,2,1]
     dims.append(dd)
@@ -164,6 +173,7 @@ fig = go.Figure(data=
                     #colorscale="RdBu"     ,
                     #colorscale="Reds"     ,
                     #colorscale="Viridis"  ,
+                    #colorscale="Plasma"  ,
                     #colorscale="YlGnBu"   ,
                     #colorscale="YlOrRd"   ,
                     showscale = True,
@@ -187,5 +197,6 @@ fig.update_layout(title=dict(text=title, x=0.5, xanchor="center"))
 
 fig.show()
 #fig.write_image("test.png", width=400, height=400, scale=2)
-#fig.write_image(plot_name, scale=2)
+#fig.write_image(plot_name, scale=2.5)
+fig.write_image(plot_name)
 print(f"Plot saved as {plot_name}")

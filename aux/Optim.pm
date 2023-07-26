@@ -3,7 +3,7 @@ package Optim;
 use strict; 
 use warnings;
 
-use DrCachesim;
+use DrCacheDim;
 use Aux;
 use YAML qw/ Load LoadFile Dump DumpFile /;
 
@@ -11,7 +11,7 @@ sub solve {
     my %args = @_;
     my $P = $args{P} || die "No problem passed!";
     my $H0 = $args{H0};
-    $H0 =  DrCachesim::get_local_hierarchy() if not defined $H0;
+    $H0 =  DrCacheDim::get_local_hierarchy() if not defined $H0;
     my $Hmin = $args{Hmin} || die "No lower bound passed!";
     my $Hmax = $args{Hmax} || die "No upper bound passed!";
     my $Hopt = $args{Hopt}; # for debugging, optional
@@ -64,7 +64,7 @@ sub solve {
             #$S = julia2H($s);   #FIXME slow if length($s) is large (either bc of get_local_hierarchy or YAML::load)
             $S = Load($s);
             #print("[Optim::solve] Starting simulation.\n");
-            @R = DrCachesim::parallel_run $P, $S;
+            @R = DrCacheDim::parallel_run $P, $S;
             #print("[Optim::solve] Serializing results.\n");
             #$r = H2julia(\@R);
             $r = Dump(\@R);

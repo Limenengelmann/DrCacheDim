@@ -534,7 +534,9 @@ function split(Hmin, Hmax, H, H_fa, b)
 end
 
 function default_bound(Hmin, Hmax)
-    return Hmin["COST"] + Hmax["MAT"]
+    lambda = Hmin["LAMBDA"]
+    cscale = Hmin["CSCALE"]
+    return lambda*cscale*Hmin["COST"] + (1-lambda)*Hmax["MAT"]
 end
 
 function lat_limit_bound(Hmin, Hmax)
