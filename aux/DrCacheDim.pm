@@ -696,7 +696,7 @@ sub parallel_run {
         return @$sweep; # potentially unnecessary deep copy
     } else {  # return filename in scalar context
         # collect results and store in RESDIR
-        my $rfile = "$Aux::RESDIR/drcachesim_$$.yml";
+        my $rfile = "$Aux::TMPDIR/drcachesim_$$.yml";
         DumpFile($rfile, $sweep) or die "parallel_sweep: Can't load tmp results: $!";
         return $rfile;
     }
