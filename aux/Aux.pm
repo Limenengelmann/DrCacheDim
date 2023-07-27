@@ -2,6 +2,7 @@ package Aux;
 
 use strict;
 use warnings;
+use List::Util qw( min max sum );
 
 our $ROOT    = "/home/elimtob/Workspace/drcachedim";
 our $DRDIR   = "/home/elimtob/.local/opt/DynamoRIO";
@@ -122,6 +123,21 @@ sub hierarchy2latex {
         $ways2,
         $ways3,
     );
+}
+
+sub analyse_stddev {
+    my $name = shift;
+    my $S = shift;
+    my $n = @$S;
+
+    my @Lat = map {$_->{MAT}} @$S;
+    my $min = min @Lat;
+    my $max = max @Lat;
+    my $avg = sum(map {$_ / $n} @Lat);
+    my $var = sum(map {($_/$max - $avg/$max)**2 / $n} @Lat);
+
+    printf "%s latency: min: %d, max: %d, avg: %d, normalized var: %e\n", $name,
+        $min, $max, int($avg), sqrt($var);
 }
 
 1;

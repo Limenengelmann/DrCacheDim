@@ -78,8 +78,14 @@ sub capway_code {
                 SECTION .bss
                     align LINESIZE
                 A:  resb    GSIZE1
+                ; guard
+                    align LINESIZE
+                D:  resb    GSIZE1
                     align LINESIZE
                 B:  resb    GSIZE2
+                ; guard
+                    align LINESIZE
+                E:  resb    GSIZE2
                     align LINESIZE
                 C:  resb    GSIZE3
                     

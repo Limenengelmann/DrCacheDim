@@ -18,6 +18,12 @@ our $test_run = {
         "./perlbench_r_base.linux-amd64 -I. -I./lib test.pl "
     ],
 
+    "lbm_r" => [
+        #"./lbm_r_base.linux-amd64-m64 20 reference.dat 0 1 100_100_130_cf_a.of > lbm.out 2>> lbm.err",
+        "./lbm_r 20 reference.dat 0 1 100_100_130_cf_a.of",
+    ],
+
+
     "mcf_r" =>  [
         "./mcf_r_base.linux-amd64 inp.in  "
     ],

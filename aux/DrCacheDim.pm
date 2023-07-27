@@ -109,7 +109,7 @@ sub print_hierarchy {
         $sets1, $ways1,
         $sets2, $ways2,
         $sets3, $ways3,
-        $cost, $mat, $val
+        int($cost), int($mat), int($val)
     );
 }
 
@@ -240,6 +240,12 @@ sub get_real_cost_fun {
 
 sub default_cost {
     my $H = shift;
+
+    return get_real_cost_fun()->($H);
+}
+
+sub linear_cost {
+    my $H = shift;
     my $L1I = $H->{L1I};
     my $L1D = $H->{L1D};
     my $L2  = $H->{L2};
@@ -257,7 +263,7 @@ sub default_cost {
 
 sub default_val {
     my $H = shift;
-    die "[default_val] Cannot calc objective val. Uninitialized cost or mat!" if not defined $H->{COST} or not defined $H->{MAT};
+    die "[default_val] Cannot calc objective val. Uninitialized cost or mat!" if not defined $H->{COST} or not defined $H->{MAT} or not defined $H->{LAMBDA} or not defined $H->{CSCALE};
     return $H->{LAMBDA} * $H->{CSCALE} * $H->{COST} + (1-$H->{LAMBDA}) * $H->{MAT};
 }
 

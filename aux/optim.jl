@@ -581,9 +581,12 @@ function solve()
     b0 = get_b(Hmin, Hmax)
     P0 = [Hmin, Hmax, H0, nothing, b0]
 
-    if !(H0["VAL"] != nothing)
-        H0["VAL"]  = Inf
-    end
+    # Needed
+    H0["VAL"] = Inf
+    # Just in case
+    H0["MAT"] = nothing
+    Hmin["MAT"] = nothing
+    Hmax["MAT"] = nothing
 
     first_iter   = true
     Best_H       = H0

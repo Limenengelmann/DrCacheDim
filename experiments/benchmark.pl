@@ -1,0 +1,217 @@
+#!/usr/bin/perl
+use strict; 
+use warnings;
+
+use lib "/home/elimtob/Workspace/drcachedim/aux";
+use RefGen;
+use SpecInt;
+use DrCacheDim;
+use Optim;
+use Aux;
+
+use YAML qw/ Load LoadFile Dump DumpFile /;
+use List::Util qw( sample );
+
+my $tstamp = Aux::get_tstamp();
+my $matmul_n = 8;   #TODO changeme
+my $mibench_path = "/home/elimtob/Workspace/telecomm";
+my $H_capw = DrCacheDim::get_local_hierarchy();
+#DrCacheDim::set_sets_ways($H_capw, (64, 8, 512, 4, 512, 8, 2048, 16));
+#DrCacheDim::set_sets_ways($H_capw, (64, 8, 128, 5, 512, 7, 2048, 13));
+#DrCacheDim::set_sets_ways($H_capw, (64, 8, 256, 5, 512, 17, 2048, 9));
+DrCacheDim::set_sets_ways($H_capw, (64, 8, 512, 5, 512, 7, 2048, 17));
+my $capway = RefGen::compile_code(RefGen::capway_code($H_capw));
+
+my $exe = {
+    #SPEC
+    #"imagick_r" => SpecInt::testrun_callback("imagick_r", $Aux::HEAD_ONLY_SIM),
+    #"lbm_r" => SpecInt::testrun_callback("lbm_r", $Aux::HEAD_ONLY_SIM),
+    #Matmul
+    #"matmul_ref" => sub { return ("$Aux::ROOT/bin/matmul_ref $matmul_n", ""); },
+    #"matmul_kji" => sub { return ("$Aux::ROOT/bin/matmul_kji $matmul_n", ""); },
+    #mibench
+    #"adpcm" => sub { return ("$mibench_path/adpcm/runme_small.sh", ""); },
+    #"CRC32" => sub { return ("$mibench_path/CRC32/runme_small.sh", ""); },
+    #"FFT"   => sub { return ("$mibench_path/FFT/runme_small.sh", ""); },
+    #"gsm"   => sub { return ("$mibench_path/gsm/runme_small.sh", ""); },
+    #Capway
+    "capway" => sub { return ($capway, "");}
+};
+
+sub init_H {
+    my $Hmin = DrCacheDim::get_local_hierarchy();
+    my $Hmax = DrCacheDim::get_local_hierarchy();
+    my $H0 = DrCacheDim::get_local_hierarchy();
+
+    # "realistic" bounds from ./aux/cache-db
+    DrCacheDim::set_sets_ways($Hmin, (64, 8, 64, 2, 512, 4, 2048, 8));
+    DrCacheDim::set_sets_ways($Hmax, (64, 8, 512, 16, 1024, 20, 8192, 32));
+    DrCacheDim::set_sets_ways($H0, (64, 8, 64, 12, 1024, 20, 4096, 8)); # local config
+    return ($Hmin, $Hmax, $H0);
+}
+
+sub bruteforce {
+    my $name = shift;
+    my $Hmin = shift;
+    my $Hmax = shift;
+
+    my $P = DrCacheDim::default_problem();
+    $P->{exe} = $exe->{$name};
+
+    my $hcube_sweep = DrCacheDim::cube_sweep($Hmin, $Hmax);
+    my $cap = 1000;
+    @$hcube_sweep = sample $cap, @$hcube_sweep;
+    @$hcube_sweep = DrCacheDim::parallel_run $P, $hcube_sweep;
+
+    my $resf = "$Aux::RESDIR/$name-brutef-$tstamp.yml";
+    DumpFile($resf, $hcube_sweep);
+    Aux::notify_when_done("$resf is done!");
+    printf "Wrote results to '$resf'\n";
+}
+
+sub variance {
+    my $name = shift;
+    my $Hmin = shift;
+    my $Hmax = shift;
+    my $Hopt = shift;
+
+    my $resf = "$Aux::RESDIR/$name-variance.yml";
+    my $P = DrCacheDim::default_problem();
+    $P->{exe} = $exe->{$name};
+
+    my $N = 10;
+    my $R = [];
+    my $S = LoadFile($resf) if -e $resf;
+    for (my $i=0; $i<$N; $i++) {
+        push @$R, ($Hmin, $Hmax, $Hopt);
+    }
+    if ($N > 0) {
+        DrCacheDim::parallel_run($P, $R) if $N > 0;
+        push @$S, @$R;
+        DumpFile($resf, $S) if $N > 0;
+        Aux::notify_when_done("$resf is done!");
+    }
+    $N = @$S;
+    $N /= 3;
+
+    my @Smin = map { $_ % 3 == 0 ? $S->[$_] : () } (0 .. $N-1);
+    my @Smax = map { $_ % 3 == 1 ? $S->[$_] : () } (0 .. $N-1);
+    my @Sopt = map { $_ % 3 == 2 ? $S->[$_] : () } (0 .. $N-1);
+    Aux::analyse_stddev("Hmin", \@Smin);
+    Aux::analyse_stddev("Hmax", \@Smax);
+    Aux::analyse_stddev("Hopt", \@Sopt);
+}
+
+sub characterisation {
+    my $name = shift;
+    my $Hmin = shift;
+    my $Hmax = shift;
+    my $H0   = shift;
+
+    my $P = DrCacheDim::default_problem();
+    $P->{exe} = $exe->{$name};
+    $P->{jcfg} = "$Aux::ROOT/experiments/charact.jl";
+
+    my $tic = time();
+    my $res = Optim::solve(P => $P, H0 =>$H0, Hmin => $Hmin, Hmax => $Hmax);
+    my $toc = time() - $tic;
+    printf "Characterisation finished in %.2f s or %.2f m or %.2f h\n", $toc, $toc / 60 , $toc / 3600;
+
+    my $resf = "$Aux::RESDIR/$name-char-$tstamp.yml";
+    DumpFile($resf, $res);
+    Aux::notify_when_done("$resf is done!");
+    printf "Wrote results to '$resf'\n";
+    return $res;
+}
+
+sub max_cost {
+    my $name = shift;
+    my $max_cost = shift;
+    my $Hmin = shift;
+    my $Hmax = shift;
+    my $H0   = shift;
+
+
+    my $jcfg = "$Aux::ROOT/experiments/max_cost.jl";
+    # hacky way to set max_cost in jcfg
+    system("sed -i 's/^max_cost = .*\$/max_cost = $max_cost/' $jcfg") == 0 or die;
+
+    my $P = DrCacheDim::default_problem();
+    $P->{exe} = $exe->{$name};
+    $P->{val} = sub { my $H = shift; return $H->{COST} > $max_cost ? $Aux::BIG_VAL : DrCacheDim::default_val($H); };
+    $P->{jcfg} = "$jcfg";
+
+    my $tic = time();
+    my $res = Optim::solve(P => $P, H0 =>$H0, Hmin => $Hmin, Hmax => $Hmax);
+    my $toc = time() - $tic;
+    printf "max_cost finished in %.2f s or %.2f m or %.2f h\n", $toc, $toc / 60 , $toc / 3600;
+
+    my $resf = "$Aux::RESDIR/$name-max_cost-$max_cost-$tstamp.yml";
+    DumpFile($resf, $res);
+    Aux::notify_when_done("$resf is done!");
+    printf "Wrote results to '$resf'\n";
+    return $res;
+}
+
+sub max_mat {
+    my $name = shift;
+    my $max_mat = shift;
+    my $Hmin = shift;
+    my $Hmax = shift;
+    my $H0   = shift;
+
+    my $jcfg = "$Aux::ROOT/experiments/max_mat.jl";
+    system("sed -i 's/^max_mat = .*\$/max_mat = $max_mat/' $jcfg") == 0 or die;
+
+    my $P = DrCacheDim::default_problem();
+    $P->{exe} = $exe->{$name};
+    $P->{jcfg} = "$jcfg";
+    $P->{val} = sub { my $H = shift; return $H->{MAT} > $max_mat ? $Aux::BIG_VAL : DrCacheDim::default_val($H); };
+
+    my $tic = time();
+    my $res = Optim::solve(P => $P, H0 =>$H0, Hmin => $Hmin, Hmax => $Hmax);
+    my $toc = time() - $tic;
+    printf "max_mat finished in %.2f s or %.2f m or %.2f h\n", $toc, $toc / 60 , $toc / 3600;
+
+    my $resf = "$Aux::RESDIR/$name-max_mat-$max_mat-$tstamp.yml";
+    DumpFile($resf, $res);
+    Aux::notify_when_done("$resf is done!");
+    printf "Wrote results to '$resf'\n";
+    return $res;
+}
+
+sub analysis {
+    my $name = shift;
+    my $P = DrCacheDim::default_problem();
+    $P->{exe} = $exe->{$name};
+    DrCacheDim::run_analysistool($P, "-simulator_type reuse_distance");
+    DrCacheDim::run_analysistool($P, "-simulator_type basic_counts");
+}
+
+foreach my $name (keys %$exe) {
+    my ($Hmin, $Hmax, $H0) = init_H();
+    my $P = DrCacheDim::default_problem();
+    $P->{exe} = $exe->{$name};
+    my $cscale  = DrCacheDim::get_cost_scaling_factor($P, $Hmin, $Hmax);
+    ($Hmin->{CSCALE}, $Hmax->{CSCALE}, $H0->{CSCALE}) = ($cscale, $cscale, $cscale);
+    DrCacheDim::run_cachesim($P, $H0);
+    my $max_mat = $H0->{MAT};
+    my $max_cost = $H0->{COST};
+    if ($name eq "capway") {
+        #$max_mat = 8792481; # best possible
+        #$max_mat = 8792482; # best possible
+        #$max_mat = 8874684; # best possible
+        $max_mat = 9346990; # best possible
+    }
+
+    printf("Benchmarking $name. Scaling cost with factor: %f\n", $H0->{CSCALE});
+
+    #my $S = LoadFile("/home/elimtob/Workspace/drcachedim/results/capway-char-7-27-13-36-12.yml");
+    my $S = [];
+    #$S = characterisation $name, $Hmin, $Hmax, $H0;
+    #variance $name, $Hmin, $Hmax, $S->[-1];
+    #max_cost $name, $max_cost, $Hmin, $Hmax, $H0;
+    max_mat $name, $max_mat, $Hmin, $Hmax, $H0;
+    #bruteforce $name, $Hmin, $Hmax;
+    #analysis $name;
+}
