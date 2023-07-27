@@ -31,30 +31,14 @@ sub notify_when_done {
     system("notify-send --urgency=critical \'$txt\'");
 }
 
-sub log2 {
+sub int_log2 {
     if (wantarray()) { # list context
         my @N = @_;
-        my @res = map {log2($_)} @N;
+        my @res = map {int_log2($_)} @N;
     } else {
         my $n = shift;
         return int(log($n)/log(2) + 0.5);
     }
-}
-
-sub int_log2 {
-    # inefficient, but works with float, int, always returns an int
-    # and is also not called often
-    my @N = @_;
-    my @res = ();
-
-    foreach my $n (@N) {
-        my $r = 1;
-        while ($n >= 2**$r) {
-            $r++;
-        }
-        push @res, $r-1;
-    }
-    return \@res;
 }
 
 sub gcd2p {

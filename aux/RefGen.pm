@@ -2,6 +2,7 @@ package RefGen;
 
 use strict;
 use warnings;
+use POSIX qw( ceil );
 use File::Temp qw/ tempfile /;
 use File::Basename;
 
@@ -26,6 +27,13 @@ sub capway_code {
     my $sets1 = $size1 / $ways1 / 64;
     my $sets2 = $size2 / $ways2 / 64;
     my $sets3 = $size3 / $ways3 / 64;
+
+    #Round up sizes to powers of two, to avoid unaligning the references
+    #TODO needs offset changed for L1I though, so does not work there yet
+    #$size0 = 2**int(Aux::log2($size0)+0.5);
+    $size1 = 2**ceil(log($size1)/log(2));
+    $size2 = 2**ceil(log($size2)/log(2));
+    $size3 = 2**ceil(log($size3)/log(2));
 
     my $gcd0 = Aux::gcd2p($ways0);
     my $gcd1 = Aux::gcd2p($ways1);
@@ -64,28 +72,29 @@ sub capway_code {
                 GCD2 equ $gcd2
                 GCD3 equ $gcd3
 
-                ; TODO properly handle non-powers of 2 ways for L1I
                 OFFS0 equ LINESIZE + (WAYS0-1)*SETS0*LINESIZE
-                OFFS1 equ LINESIZE*SETS1*GCD1
-                OFFS2 equ LINESIZE*SETS2*GCD2
-                OFFS3 equ LINESIZE*SETS3*GCD3
+                ; Regression: this 'improvement' allows trading ways for sets 
+                ; while keeping performance in some cases
+                ;OFFS1 equ LINESIZE*SETS1*GCD1
+                ;OFFS2 equ LINESIZE*SETS2*GCD2
+                ;OFFS3 equ LINESIZE*SETS3*GCD3
+                OFFS1 equ SIZE1
+                OFFS2 equ SIZE2
+                OFFS3 equ SIZE3
 
                 ; SIZE3*assoc3 so we can access the same tags in a direct mapped cache of the same capacity
-                GSIZE1 equ SIZE1*GCD1
-                GSIZE2 equ SIZE2*GCD2
-                GSIZE3 equ SIZE3*GCD3
+                ;GSIZE1 equ SIZE1*GCD1
+                ;GSIZE2 equ SIZE2*GCD2
+                ;GSIZE3 equ SIZE3*GCD3
+                GSIZE1 equ SIZE1*WAYS1
+                GSIZE2 equ SIZE2*WAYS2
+                GSIZE3 equ SIZE3*WAYS3
 
                 SECTION .bss
                     align LINESIZE
                 A:  resb    GSIZE1
-                ; guard
-                    align LINESIZE
-                D:  resb    GSIZE1
                     align LINESIZE
                 B:  resb    GSIZE2
-                ; guard
-                    align LINESIZE
-                E:  resb    GSIZE2
                     align LINESIZE
                 C:  resb    GSIZE3
                     

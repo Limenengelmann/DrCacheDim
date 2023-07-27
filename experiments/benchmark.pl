@@ -24,7 +24,7 @@ my $capway = RefGen::compile_code(RefGen::capway_code($H_capw));
 
 my $exe = {
     #SPEC
-    #"imagick_r" => SpecInt::testrun_callback("imagick_r", $Aux::HEAD_ONLY_SIM),
+    "imagick_r" => SpecInt::testrun_callback("imagick_r", $Aux::HEAD_ONLY_SIM),
     #"lbm_r" => SpecInt::testrun_callback("lbm_r", $Aux::HEAD_ONLY_SIM),
     #Matmul
     #"matmul_ref" => sub { return ("$Aux::ROOT/bin/matmul_ref $matmul_n", ""); },
@@ -35,7 +35,7 @@ my $exe = {
     #"FFT"   => sub { return ("$mibench_path/FFT/runme_small.sh", ""); },
     #"gsm"   => sub { return ("$mibench_path/gsm/runme_small.sh", ""); },
     #Capway
-    "capway" => sub { return ($capway, "");}
+    #"capway" => sub { return ($capway, "");}
 };
 
 sub init_H {
@@ -208,10 +208,10 @@ foreach my $name (keys %$exe) {
 
     #my $S = LoadFile("/home/elimtob/Workspace/drcachedim/results/capway-char-7-27-13-36-12.yml");
     my $S = [];
-    #$S = characterisation $name, $Hmin, $Hmax, $H0;
-    #variance $name, $Hmin, $Hmax, $S->[-1];
-    #max_cost $name, $max_cost, $Hmin, $Hmax, $H0;
+    $S = characterisation $name, $Hmin, $Hmax, $H0;
+    variance $name, $Hmin, $Hmax, $S->[-1];
+    max_cost $name, $max_cost, $Hmin, $Hmax, $H0;
     max_mat $name, $max_mat, $Hmin, $Hmax, $H0;
     #bruteforce $name, $Hmin, $Hmax;
-    #analysis $name;
+    analysis $name;
 }

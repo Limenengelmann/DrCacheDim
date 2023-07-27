@@ -431,7 +431,7 @@ sub brutef_sweep {
     # set default values
     foreach my $l (@LVLS) {
         unless (defined $args{$l}) {
-            $args{$l} = Aux::log2($HP->{$l}->{cfg}->{size} , $HP->{$l}->{cfg}->{size},
+            $args{$l} = Aux::int_log2($HP->{$l}->{cfg}->{size} , $HP->{$l}->{cfg}->{size},
                              $HP->{$l}->{cfg}->{assoc}, $HP->{$l}->{cfg}->{assoc}); 
         }
 
@@ -500,8 +500,8 @@ sub cube_sweep {
         $L2_smax, $L2_amax, 
         $L3_smax, $L3_amax) = get_sets_ways($Hmax);
 
-    my $count = (Aux::log2($L1I_smax)-Aux::log2($L1I_smin)+1)*(Aux::log2($L1D_smax)-Aux::log2($L1D_smin)+1)*
-                (Aux::log2($L2_smax )-Aux::log2($L2_smin )+1)  *(Aux::log2($L3_smax)-Aux::log2($L3_smin)+1)*
+    my $count = (Aux::int_log2($L1I_smax)-Aux::int_log2($L1I_smin)+1)*(Aux::int_log2($L1D_smax)-Aux::int_log2($L1D_smin)+1)*
+                (Aux::int_log2($L2_smax )-Aux::int_log2($L2_smin )+1)  *(Aux::int_log2($L3_smax)-Aux::int_log2($L3_smin)+1)*
                 ($L1I_amax-$L1I_amin+1)*($L1D_amax-$L1D_amin+1)*
                 ($L2_amax -$L2_amin +1)  *($L3_amax-$L3_amin+1);
     print "Warning: Generating up to $count Hierarchies!\n";
