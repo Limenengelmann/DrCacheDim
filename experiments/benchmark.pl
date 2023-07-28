@@ -13,7 +13,7 @@ use YAML qw/ Load LoadFile Dump DumpFile /;
 use List::Util qw( sample );
 
 my $tstamp = Aux::get_tstamp();
-my $matmul_n = 128;   #TODO changeme
+my $matmul_n = 300;   #TODO changeme
 my $mibench_path = "/home/elimtob/Workspace/telecomm";
 my $H_capw = DrCacheDim::get_local_hierarchy();
 #DrCacheDim::set_sets_ways($H_capw, (64, 8, 512, 4, 512, 8, 2048, 16));
@@ -24,16 +24,16 @@ my $capway = RefGen::compile_code(RefGen::capway_code($H_capw));
 
 my $exe = {
     #SPEC
-    "imagick_r" => SpecInt::testrun_callback("imagick_r", $Aux::HEAD_ONLY_SIM),
-    "lbm_r" => SpecInt::testrun_callback("lbm_r", $Aux::HEAD_ONLY_SIM),
+    #"imagick_r" => SpecInt::testrun_callback("imagick_r", $Aux::HEAD_ONLY_SIM),
+    #"lbm_r" => SpecInt::testrun_callback("lbm_r", $Aux::HEAD_ONLY_SIM),
     #Matmul
     "matmul_ref" => sub { return ("$Aux::ROOT/bin/matmul_ref $matmul_n", ""); },
     "matmul_kji" => sub { return ("$Aux::ROOT/bin/matmul_kji $matmul_n", ""); },
     #mibench
-    "adpcm" => sub { chdir "$mibench_path/adpcm"; return ("bash runme_small.sh", ""); },
-    "CRC32" => sub { chdir "$mibench_path/CRC32"; return ("bash runme_small.sh", ""); },
-    "FFT"   => sub { chdir "$mibench_path/FFT"; return ("bash runme_small.sh", ""); },
-    "gsm"   => sub { chdir "$mibench_path/gsm"; return ("bash runme_small.sh", ""); },
+    #"adpcm" => sub { chdir "$mibench_path/adpcm"; return ("bash runme_small.sh", ""); },
+    #"CRC32" => sub { chdir "$mibench_path/CRC32"; return ("bash runme_small.sh", ""); },
+    #"FFT"   => sub { chdir "$mibench_path/FFT"; return ("bash runme_small.sh", ""); },
+    #"gsm"   => sub { chdir "$mibench_path/gsm"; return ("bash runme_small.sh", ""); },
     #Capway
     #"capway" => sub { return ($capway, "");}
 };
@@ -146,6 +146,7 @@ sub max_cost {
     my $toc = time() - $tic;
     printf "max_cost finished in %.2f s or %.2f m or %.2f h\n", $toc, $toc / 60 , $toc / 3600;
 
+    $max_cost = int($max_cost);
     my $resf = "$Aux::RESDIR/$name-max_cost-$max_cost-$tstamp.yml";
     DumpFile($resf, $res);
     Aux::notify_when_done("$resf is done!");
@@ -173,6 +174,7 @@ sub max_mat {
     my $toc = time() - $tic;
     printf "max_mat finished in %.2f s or %.2f m or %.2f h\n", $toc, $toc / 60 , $toc / 3600;
 
+    $max_mat = int($max_mat);
     my $resf = "$Aux::RESDIR/$name-max_mat-$max_mat-$tstamp.yml";
     DumpFile($resf, $res);
     Aux::notify_when_done("$resf is done!");
