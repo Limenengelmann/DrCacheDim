@@ -120,8 +120,8 @@ sub analyse_stddev {
     my $avg = sum(map {$_ / $n} @Lat);
     my $var = sum(map {($_/$max - $avg/$max)**2 / $n} @Lat);
 
-    printf "%s latency: min: %d, max: %d, avg: %d, normalized var: %e\n", $name,
-        $min, $max, int($avg), sqrt($var);
+    printf "%s latency: min: %10d, max: %10d, avg: %10d, normalized var: %e\n", $name,
+        int($min), int($max), int($avg), sqrt($var);
 }
 
 1;

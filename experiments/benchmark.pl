@@ -13,7 +13,7 @@ use YAML qw/ Load LoadFile Dump DumpFile /;
 use List::Util qw( sample );
 
 my $tstamp = Aux::get_tstamp();
-my $matmul_n = 64;   #TODO changeme
+my $matmul_n = 128;
 my $mibench_path = "/home/elimtob/Workspace/telecomm";
 my $H_capw = DrCacheDim::get_local_hierarchy();
 #DrCacheDim::set_sets_ways($H_capw, (64, 8, 512, 4, 512, 8, 2048, 16));
@@ -67,39 +67,6 @@ sub bruteforce {
     DumpFile($resf, $hcube_sweep);
     Aux::notify_when_done("$resf is done!");
     printf "Wrote results to '$resf'\n";
-}
-
-sub variance {
-    my $name = shift;
-    my $Hmin = shift;
-    my $Hmax = shift;
-    my $Hopt = shift;
-
-    my $resf = "$Aux::RESDIR/$name-variance.yml";
-    my $P = DrCacheDim::default_problem();
-    $P->{exe} = $exe->{$name};
-
-    my $N = 10;
-    my $R = [];
-    my $S = LoadFile($resf) if -e $resf;
-    for (my $i=0; $i<$N; $i++) {
-        push @$R, ($Hmin, $Hmax, $Hopt);
-    }
-    if ($N > 0) {
-        DrCacheDim::parallel_run($P, $R) if $N > 0;
-        push @$S, @$R;
-        DumpFile($resf, $S) if $N > 0;
-        Aux::notify_when_done("$resf is done!");
-    }
-    $N = @$S;
-    $N /= 3;
-
-    my @Smin = map { $_ % 3 == 0 ? $S->[$_] : () } (0 .. $N-1);
-    my @Smax = map { $_ % 3 == 1 ? $S->[$_] : () } (0 .. $N-1);
-    my @Sopt = map { $_ % 3 == 2 ? $S->[$_] : () } (0 .. $N-1);
-    Aux::analyse_stddev("Hmin", \@Smin);
-    Aux::analyse_stddev("Hmax", \@Smax);
-    Aux::analyse_stddev("Hopt", \@Sopt);
 }
 
 sub characterisation {
@@ -196,7 +163,7 @@ foreach my $name (keys %$exe) {
     my $P = DrCacheDim::default_problem();
     $P->{exe} = $exe->{$name};
     my $cscale  = DrCacheDim::get_cost_scaling_factor($P, $Hmin, $Hmax);
-    my $lambda = 0.1;
+    my $lambda = 0.5;#0.1;
     DrCacheDim::set_cscale_lambda([$Hmin, $Hmax, $H0], $cscale, $lambda);
     DrCacheDim::run_cachesim($P, $H0);
     my $max_mat = $H0->{MAT};
@@ -208,10 +175,8 @@ foreach my $name (keys %$exe) {
     }
     printf("Scaling cost with factor: %f\n", $H0->{CSCALE});
 
-    #my $S = LoadFile("/home/elimtob/Workspace/drcachedim/results/capway-char-7-27-13-36-12.yml");
     my $S = [];
     #$S = characterisation $name, $Hmin, $Hmax, $H0;
-    #variance $name, $Hmin, $Hmax, $S->[-1];
     max_cost $name, $max_cost, $Hmin, $Hmax, $H0;
     max_mat $name, $max_mat, $Hmin, $Hmax, $H0;
     #bruteforce $name, $Hmin, $Hmax;

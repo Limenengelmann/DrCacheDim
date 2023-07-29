@@ -104,7 +104,7 @@ sub print_hierarchy {
     my $mat  = $H->{MAT} || 0;
     my $val  = $H->{VAL} || 0;
 
-    printf("%6s %4d %2d %4d %2d %5d %2d %5d %2d | %9d %9d %9d\n", $name,
+    printf("%10s %4d %2d %4d %2d %5d %2d %5d %2d | %9d %9d %9d\n", $name,
         $sets0, $ways0,
         $sets1, $ways1,
         $sets2, $ways2,
