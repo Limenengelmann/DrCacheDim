@@ -33,8 +33,8 @@ DrCacheDim::set_sets_ways($H0, (64, 8, 64, 12, 1024, 20, 4096, 8)); # local conf
 my $P = DrCacheDim::default_problem($capway);
 my $cscale  = DrCacheDim::get_cost_scaling_factor($P, $Hmin, $Hmax);
 printf("cscale: $cscale\n");
-($H_capw->{CSCALE}, $H_2->{CSCALE}, $H_3->{CSCALE}) = ($cscale,$cscale, $cscale);
-($Hmin->{CSCALE}, $Hmax->{CSCALE}, $H0->{CSCALE}) = ($cscale, $cscale, $cscale);
+
+DrCacheDim::set_cscale_lambda([$Hmin, $Hmax, $H0, $H_capw, $H_2, $H_3], $cscale);
 
 ($H_capw, $H_2, $H_3) = DrCacheDim::parallel_run $P, [$H_capw, $H_2, $H_3];
 

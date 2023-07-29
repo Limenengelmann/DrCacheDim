@@ -13,7 +13,7 @@ use YAML qw/ Load LoadFile Dump DumpFile /;
 use List::Util qw( sample );
 
 my $tstamp = Aux::get_tstamp();
-my $matmul_n = 300;   #TODO changeme
+my $matmul_n = 64;   #TODO changeme
 my $mibench_path = "/home/elimtob/Workspace/telecomm";
 my $H_capw = DrCacheDim::get_local_hierarchy();
 #DrCacheDim::set_sets_ways($H_capw, (64, 8, 512, 4, 512, 8, 2048, 16));
@@ -24,16 +24,16 @@ my $capway = RefGen::compile_code(RefGen::capway_code($H_capw));
 
 my $exe = {
     #SPEC
-    #"imagick_r" => SpecInt::testrun_callback("imagick_r", $Aux::HEAD_ONLY_SIM),
-    #"lbm_r" => SpecInt::testrun_callback("lbm_r", $Aux::HEAD_ONLY_SIM),
+    "imagick_r" => SpecInt::testrun_callback("imagick_r", $Aux::HEAD_ONLY_SIM),
+    "lbm_r" => SpecInt::testrun_callback("lbm_r", $Aux::HEAD_ONLY_SIM),
     #Matmul
-    "matmul_ref" => sub { return ("$Aux::ROOT/bin/matmul_ref $matmul_n", ""); },
-    "matmul_kji" => sub { return ("$Aux::ROOT/bin/matmul_kji $matmul_n", ""); },
+    #"matmul_ref" => sub { return ("$Aux::ROOT/bin/matmul_ref $matmul_n", ""); },
+    #"matmul_kji" => sub { return ("$Aux::ROOT/bin/matmul_kji $matmul_n", ""); },
     #mibench
-    #"adpcm" => sub { chdir "$mibench_path/adpcm"; return ("bash runme_small.sh", ""); },
-    #"CRC32" => sub { chdir "$mibench_path/CRC32"; return ("bash runme_small.sh", ""); },
-    #"FFT"   => sub { chdir "$mibench_path/FFT"; return ("bash runme_small.sh", ""); },
-    #"gsm"   => sub { chdir "$mibench_path/gsm"; return ("bash runme_small.sh", ""); },
+    "adpcm" => sub { chdir "$mibench_path/adpcm"; return ("bash runme_small.sh", ""); },
+    "CRC32" => sub { chdir "$mibench_path/CRC32"; return ("bash runme_small.sh", ""); },
+    "FFT"   => sub { chdir "$mibench_path/FFT"; return ("bash runme_small.sh", ""); },
+    "gsm"   => sub { chdir "$mibench_path/gsm"; return ("bash runme_small.sh", ""); },
     #Capway
     #"capway" => sub { return ($capway, "");}
 };
@@ -196,7 +196,8 @@ foreach my $name (keys %$exe) {
     my $P = DrCacheDim::default_problem();
     $P->{exe} = $exe->{$name};
     my $cscale  = DrCacheDim::get_cost_scaling_factor($P, $Hmin, $Hmax);
-    ($Hmin->{CSCALE}, $Hmax->{CSCALE}, $H0->{CSCALE}) = ($cscale, $cscale, $cscale);
+    my $lambda = 0.1;
+    DrCacheDim::set_cscale_lambda([$Hmin, $Hmax, $H0], $cscale, $lambda);
     DrCacheDim::run_cachesim($P, $H0);
     my $max_mat = $H0->{MAT};
     my $max_cost = $H0->{COST};
@@ -209,10 +210,10 @@ foreach my $name (keys %$exe) {
 
     #my $S = LoadFile("/home/elimtob/Workspace/drcachedim/results/capway-char-7-27-13-36-12.yml");
     my $S = [];
-    $S = characterisation $name, $Hmin, $Hmax, $H0;
-    variance $name, $Hmin, $Hmax, $S->[-1];
+    #$S = characterisation $name, $Hmin, $Hmax, $H0;
+    #variance $name, $Hmin, $Hmax, $S->[-1];
     max_cost $name, $max_cost, $Hmin, $Hmax, $H0;
     max_mat $name, $max_mat, $Hmin, $Hmax, $H0;
-    bruteforce $name, $Hmin, $Hmax;
+    #bruteforce $name, $Hmin, $Hmax;
     #analysis $name;
 }

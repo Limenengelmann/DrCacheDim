@@ -536,13 +536,7 @@ end
 function default_bound(Hmin, Hmax)
     lambda = Hmin["LAMBDA"]
     cscale = Hmin["CSCALE"]
-    return lambda*cscale*Hmin["COST"] + (1-lambda)*Hmax["MAT"]
-end
-
-function lat_limit_bound(Hmin, Hmax)
-    limit = 100000
-    lat = Hmax["MAT"] > limit ? Inf : Hmax["MAT"]
-    return Hmin["COST"] + lat
+    return (1-lambda)*cscale*Hmin["COST"] + lambda*Hmax["MAT"]
 end
 
 #TODO cost normalisation

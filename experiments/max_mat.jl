@@ -1,4 +1,4 @@
-max_mat = 816731094.89382
+max_mat = 240583570.61653
 #lower_bound = function (Hmin, Hmax) return Inf; end
 #lower_bound = function (Hmin, Hmax) return Hmax["MAT"] > max_mat ? Inf : Hmin["COST"] end
 lower_bound = function (Hmin, Hmax) return Hmax["MAT"] > max_mat ? Inf : default_bound(Hmin, Hmax) end

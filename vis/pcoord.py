@@ -195,7 +195,7 @@ fig.update_layout(title=dict(text=title, x=0.5, xanchor="center"))
 #fig.update_yaxes(type="log")
 #fig.update_layout(paper_bgcolor = "lightgray") #bg color
 
-fig.show()
+#fig.show()
 #fig.write_image("test.png", width=400, height=400, scale=2)
 #fig.write_image(plot_name, scale=2.5)
 fig.write_image(plot_name)

@@ -159,9 +159,7 @@ sub get_cmd {
 
 
 sub get_local_hierarchy {
-    my $lambda = shift || 0.5;
     my $H = new_hierarchy();
-    $H->{LAMBDA} = $lambda;
 
     #TODO more precise way to do it via looking in /proc/.../cache
     my $out = `getconf -a | grep CACHE`;
@@ -264,7 +262,7 @@ sub linear_cost {
 sub default_val {
     my $H = shift;
     die "[default_val] Cannot calc objective val. Uninitialized cost or mat!" if not defined $H->{COST} or not defined $H->{MAT} or not defined $H->{LAMBDA} or not defined $H->{CSCALE};
-    return $H->{LAMBDA} * $H->{CSCALE} * $H->{COST} + (1-$H->{LAMBDA}) * $H->{MAT};
+    return (1-$H->{LAMBDA}) * $H->{CSCALE} * $H->{COST} + $H->{LAMBDA} * $H->{MAT};
 }
 
 sub get_max_mat_val {
@@ -710,4 +708,14 @@ sub get_cost_scaling_factor {
     my ($Hmin_, $Hmax_) = parallel_run($P, [$Hmin, $Hmax]);
     my $cscale = ($Hmin_->{MAT} - $Hmax_->{MAT}) / ($Hmax_->{COST} - $Hmin_->{COST});
     return $cscale;
+}
+
+sub set_cscale_lambda {
+    my $S = shift;
+    my $cscale = shift || 1;
+    my $lambda = shift || 0.5;
+    foreach my $H (@$S) {
+        $H->{CSCALE} = $cscale;
+        $H->{LAMBDA} = $lambda;
+    }
 }
