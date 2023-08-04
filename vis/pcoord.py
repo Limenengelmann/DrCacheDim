@@ -5,6 +5,7 @@ import plotly.graph_objects as go
 import yaml
 from yaml import CLoader as Loader, CDumper as Dumper
 import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
 import numpy as np
 import random
 import glob
@@ -87,9 +88,8 @@ Labels = {
         mr3 : "mr3",
 
         "COST": "COST",
-        "MAT": "-MAT",
-        "VAL": "-VAL",
-        # only for cost_shift
+        "MAT": "MAT",
+        "VAL": "VAL",
         "CSCALE": "COST SCALE"
 }
 
@@ -124,37 +124,126 @@ df = df.drop_duplicates(subset=[s0,a0,s1,a1,s2,a2,s3,a3,"COST", "CSCALE", "LAMBD
 #Some "enhancements"
 SIZES = [s0,s1,s2,s3]
 WAYS = [a0,a1,a2,a3]
-OTHER = ["MAT", "VAL"]
-# add slight jitter to sizes, so the lines don't overlap too much
-jitter = 0    # percentage of jitter to add
-df[SIZES] = df[SIZES].apply(lambda x: x+(random.random()-0.5)*x*jitter/100, axis=1)
-jitter = 0.1    # percentage of jitter to add
-df[WAYS] = df[WAYS].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
-# negate MAT, VAL and COST column, so that it also aligns properly with the sizes etc (Large size -> Small MAT -> Large -MAT)
-# should make the graph easier to read, since the lines should become more horizontal
-#df[OTHER] = df[OTHER] * -1
-
+OBJEC = ["COST", "MAT", "VAL"]
+df_top = df
 #Limit plot to top 10 
 if top > 0:
-    df = df.iloc[0:top]
-print(df)
+    df_top = df.iloc[0:top]
+
+# add additional lines to simulate thickness
+def thick(df, delta, width, K):
+    # shift down, then add steady increments
+    df_ = df.copy()
+    df_[K] = df_[K] - (width-1)/2 * delta[K]
+
+    new_dfs = [df_,]
+    for w in range(1, width):
+        #df__ = df_.copy()
+        new_dfs.append(df_[K] + w * delta[K])
+    return pd.concat(new_dfs, ignore_index=True)
+
+# add optimum multiple times to hack line width
+df_opt = df_top.iloc[0]
+delta = {}
+perc = 0.001
+for d in list(df_top):
+    if d in SIZES:
+        v = np.sort(pd.unique(df[d]))   # jitter based on global range
+        delta[d] = (v[-1]-v[0])*perc
+        jitter = (v[-1]-v[0])*0.01
+        df_top[[d]] = df_top[[d]].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
+    if d in OBJEC:
+        v = np.sort(pd.unique(df_top[d])) # jitter based on local range
+        delta[d] = (v[-1]-v[0])*perc
+        jitter = (v[-1]-v[0])*0.01
+        df_top[[d]] = df_top[[d]].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
+    if d in WAYS:
+        v = np.sort(pd.unique(df[d]))   # jitter based on global range
+        delta[d] = (v[-1]-v[0])*perc
+        jitter = (v[-1]-v[0])*0.01
+        #delta[d] = 0.1    # absolute value of jitter to add
+        #delta[d] = (v[-1]-v[0])*0.01
+        df_top[[d]] = df_top[[d]].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
+
+L = len(df_top)
+#df_top.reset_index(inplace=True)
+#print("Len : ", L)
+new_dfs = [df_top]
+for i in range(L):
+    #for w in range(int(np.round((L/2**i))+10)):
+    for w in range(int(np.round(1.5*(L-i) + 5))):
+        new_dfs.append(thick(df_top.iloc[[i]], pd.Series(delta), w, SIZES + OBJEC + WAYS))
+        #df_top.loc[-i*L-j] = np.copy(df_top.iloc[i])
+        #df_top.reset_index(inplace=True)
+# add slight jitter to sizes, so the lines don't overlap too much
+
+#df_top = thick(df_top, pd.Series(delta), 5, SIZES + OBJEC + WAYS)
+df_top = pd.concat(new_dfs, ignore_index=True)
+
+#jitter = 2    # percentage of jitter to add
+#df_top[SIZES] = df_top[SIZES].apply(lambda x: x+(random.random()-0.5)*x*jitter/100, axis=1)
+#jitter = 0.15    # absolute value of jitter to add
+#df_top[SIZES] = df_top[SIZES].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
+#jitter = 0.15    # absolute value of jitter to add
+#df_top[OBJEC] = df_top[OBJEC].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
+#jitter = 0.15    # absolute value of jitter to add
+#df_top[WAYS] = df_top[WAYS].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
+# negate MAT, VAL and COST column, so that it also aligns properly with the sizes etc (Large size -> Small MAT -> Large -MAT)
+# should make the graph easier to read, since the lines should become more horizontal
+#df_top[OBJEC] = df_top[OBJEC] * -1
+
+print(df_top)
+#df_top = df_top.sample(frac=1)
 
 dims = []
 for d in D:
     dd = dict(
-            values = df[d], 
+            values = df_top[d], 
             label=Labels[d],
             #tickvals=[df[d]],
             )
     #if d == "MAT":
     #    dd["constraintrange"] = [53.1*1e6, 53.28*1e6]
-    #if d.endswith("assoc"):
-    #    dd["tickvals"] = [32,16,8,4,2,1]
+    # calculate tick values
+    if d.endswith("size"):
+        v = np.sort(pd.unique(df[d]))
+        dd["range"] = [v[0],v[-1]]
+        #dd["tickvals"] = v
+    if d.endswith("assoc"):
+        v = np.sort(pd.unique(df[d]))
+        dd["range"] = [v[0],v[-1]]
+        #dd["tickvals"] = v
+        #if d == a3:
+        #    #dd["tickvals"] = [32,16,8,4,2,1]
+        #    dd["tickvals"] = [1,2,4,8,16,32]
+        #    dd["range"] = [1,32]
+        #else:
+        #    #dd["tickvals"] = [16,8,4,2,1]
+        #    dd["tickvals"] = [1,2,4,8,16]
+        #    dd["range"] = [1,16]
+    #if d == "COST":
+    #    v = np.sort(pd.unique(df_top[d]))
+    #    tvals = np.round(np.linspace(v[0], v[-1], 8))
+    #    v = v[::-1] # reverse order
+    #    dd["range"] = [v[0],v[-1]]
+    #    dd["tickvals"] = tvals[::-1]
+    #if d == "MAT":
+    #    v = np.sort(pd.unique(df_top[d]))
+    #    tvals = np.round(np.linspace(v[0], v[-1], 8))
+    #    v = v[::-1] # reverse order
+    #    dd["range"] = [v[0],v[-1]]
+    #    dd["tickvals"] = tvals[::-1]
+    #if d == "VAL":
+    #    v = np.sort(pd.unique(df_top[d]))
+    #    tvals = np.linspace(v[0], v[-1], 8)
+    #    v = v[::-1] # reverse order
+    #    dd["range"] = [v[0],v[-1]]
+    #    dd["tickvals"] = tvals[::-1]
     dims.append(dd)
 
 fig = go.Figure(data=
     go.Parcoords(
-        line = dict(color = df[color_key],
+        line = dict(color = df_top[color_key],
                     #colorscale=[[0, "darkyellow"],[0.5, "green"],[1, "blue"]],
                     #colorscale="fall",
                     #colorscale="Blackbody",

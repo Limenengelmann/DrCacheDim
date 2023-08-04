@@ -87,6 +87,7 @@ Hopt = df.iloc[i_opt]
 x = "COST"
 y = "MAT"
 color = "VAL"
+#color = s1
 #fig = px.scatter(df, x="COST", y="MAT", color="MPC")
 fig = px.scatter(df, x=x, y=y, color=color,
         hover_data=[s0,a0,s1,a1,s2,a2,s3,a3,"MAT", "COST", "VAL"],

@@ -13,6 +13,8 @@ use YAML qw/ Load LoadFile Dump DumpFile /;
 use List::Util qw( sample );
 
 my $tstamp = Aux::get_tstamp();
+my $lambda = 0.5;#0.1;
+$tstamp = $tstamp . "-c100"; # . "-l0.1";
 my $matmul_n = 128;
 my $mibench_path = "/home/elimtob/Workspace/telecomm";
 my $H_capw = DrCacheDim::get_local_hierarchy();
@@ -27,8 +29,8 @@ my $exe = {
     "imagick_r" => SpecInt::testrun_callback("imagick_r", $Aux::HEAD_ONLY_SIM),
     "lbm_r" => SpecInt::testrun_callback("lbm_r", $Aux::HEAD_ONLY_SIM),
     #Matmul
-    #"matmul_ref" => sub { return ("$Aux::ROOT/bin/matmul_ref $matmul_n", ""); },
-    #"matmul_kji" => sub { return ("$Aux::ROOT/bin/matmul_kji $matmul_n", ""); },
+    "matmul_ref" => sub { return ("$Aux::ROOT/bin/matmul_ref $matmul_n", ""); },
+    "matmul_kji" => sub { return ("$Aux::ROOT/bin/matmul_kji $matmul_n", ""); },
     #mibench
     "adpcm" => sub { chdir "$mibench_path/adpcm"; return ("bash runme_small.sh", ""); },
     "CRC32" => sub { chdir "$mibench_path/CRC32"; return ("bash runme_small.sh", ""); },
@@ -163,7 +165,6 @@ foreach my $name (keys %$exe) {
     my $P = DrCacheDim::default_problem();
     $P->{exe} = $exe->{$name};
     my $cscale  = DrCacheDim::get_cost_scaling_factor($P, $Hmin, $Hmax);
-    my $lambda = 0.5;#0.1;
     DrCacheDim::set_cscale_lambda([$Hmin, $Hmax, $H0], $cscale, $lambda);
     DrCacheDim::run_cachesim($P, $H0);
     my $max_mat = $H0->{MAT};
@@ -176,7 +177,7 @@ foreach my $name (keys %$exe) {
     printf("Scaling cost with factor: %f\n", $H0->{CSCALE});
 
     my $S = [];
-    #$S = characterisation $name, $Hmin, $Hmax, $H0;
+    $S = characterisation $name, $Hmin, $Hmax, $H0;
     max_cost $name, $max_cost, $Hmin, $Hmax, $H0;
     max_mat $name, $max_mat, $Hmin, $Hmax, $H0;
     #bruteforce $name, $Hmin, $Hmax;

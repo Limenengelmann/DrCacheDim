@@ -1,4 +1,4 @@
-max_cost = 3641180.16
+max_cost = 1115789.7216
 #lower_bound = function (Hmin, Hmax) return Inf; end
 # XXX: depends on the objective function used!
 #lower_bound = function (Hmin, Hmax) return Hmin["COST"] > max_cost ? Inf : Hmax["MAT"] end

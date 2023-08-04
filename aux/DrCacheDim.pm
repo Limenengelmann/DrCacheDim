@@ -16,15 +16,16 @@ use POSIX;
 our @LVLS=("L1I", "L1D", "L2", "L3");
 our $LINE_SIZE=64;
 #default cost
+#TODO changeme back to 1,0.1,0.01,...
 our @DEFAULT_COST=(
     1, #998.69,  # L1Isets
     2, #1998.65, #L1Iassoc 
     1, #998.69 , # L1Dsets 
     2, #1998.65, #L1Dassoc 
-    0.1 , #99.07  , #  L2sets 
-    0.2 , #198.98 , # L2assoc 
-    0.01  , #9.35   , #  L3sets 
-    0.02  , #19.48  , # L3assoc 
+    0.01 , #99.07  , #  L2sets 
+    0.02 , #198.98 , # L2assoc 
+    0.0001  , #9.35   , #  L3sets 
+    0.0002  , #19.48  , # L3assoc 
 );
 
 #unused
@@ -199,7 +200,7 @@ sub get_local_hierarchy {
 
 
 sub get_lin_cost_fun {
-    my $cost = shift;
+    my $cost = shift || \@DEFAULT_COST;
     my $cost_fun = sub {
         my $H = shift;
         my $L1I = $H->{L1I};

@@ -18,21 +18,21 @@ my $capway = RefGen::compile_code(RefGen::capway_code($H_capw));
 my $mibench_path = "/home/elimtob/Workspace/telecomm";
 my $exe = {
     #SPEC
-    "imagick_r" => SpecInt::testrun_callback("imagick_r", $Aux::HEAD_ONLY_SIM),
-    "lbm_r" => SpecInt::testrun_callback("lbm_r", $Aux::HEAD_ONLY_SIM),
+    #"imagick_r" => SpecInt::testrun_callback("imagick_r", $Aux::HEAD_ONLY_SIM),
+    #"lbm_r" => SpecInt::testrun_callback("lbm_r", $Aux::HEAD_ONLY_SIM),
     #Matmul
-    "matmul_ref" => sub { return ("$Aux::ROOT/bin/matmul_ref 128", ""); },
-    "matmul_kji" => sub { return ("$Aux::ROOT/bin/matmul_kji 128", ""); },
+    #"matmul_ref" => sub { return ("$Aux::ROOT/bin/matmul_ref 128", ""); },
+    #"matmul_kji" => sub { return ("$Aux::ROOT/bin/matmul_kji 128", ""); },
     #mibench
-    "adpcm" => sub { chdir "$mibench_path/adpcm"; return ("bash runme_small.sh", ""); },
-    "CRC32" => sub { chdir "$mibench_path/CRC32"; return ("bash runme_small.sh", ""); },
-    "FFT"   => sub { chdir "$mibench_path/FFT"; return ("bash runme_small.sh", ""); },
-    "gsm"   => sub { chdir "$mibench_path/gsm"; return ("bash runme_small.sh", ""); },
+    #"adpcm" => sub { chdir "$mibench_path/adpcm"; return ("bash runme_small.sh", ""); },
+    #"CRC32" => sub { chdir "$mibench_path/CRC32"; return ("bash runme_small.sh", ""); },
+    #"FFT"   => sub { chdir "$mibench_path/FFT"; return ("bash runme_small.sh", ""); },
+    #"gsm"   => sub { chdir "$mibench_path/gsm"; return ("bash runme_small.sh", ""); },
     #Capway
     #"capway" => sub { return ($capway, "");} 
 };
 
-my $N = 128;
+my $N = 8;#128;
 
 foreach my $name (keys %$exe) {
     my @fnames = <"$Aux::RESDIR/$name/$name-char-*">;
@@ -69,9 +69,9 @@ foreach my $name (keys %$exe) {
     for (my $i=0; $i<$N; $i++) {
         push @$R, ($Hmin, $Hmax, $Hopt);
     }
-    DrCacheDim::parallel_run($P, $R);
-    DumpFile($resf, $R);
+    DrCacheDim::parallel_run($P, $R, 16);
+    #DumpFile($resf, $R);
     Aux::notify_when_done("$resf is done!");
-    system("perl show_sols.pl $fn");
-    system("perl show_sols.pl $resf");
+    #system("perl show_sols.pl $fn");
+    #system("perl show_sols.pl $resf");
 }

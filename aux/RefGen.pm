@@ -157,8 +157,7 @@ sub capway_code {
                     %endif
                 %endmacro
 
-                    ; TODO adjust reruns so overall contributions to latency are roughly equal
-                    ; TODO flush between adjacent capways
+                    ; TODO calculate number of reruns so overall contributions to latency are roughly equal
                     capway 0, 2, A
                     capway 1, 2, A
                     capway 2, 2, B

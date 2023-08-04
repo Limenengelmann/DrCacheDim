@@ -48,19 +48,28 @@ foreach my $resf (@resfiles) {
         # count unique hierarchies
         my %seen;
         my @unique = grep { !$seen{join("-", DrCacheDim::get_sets_ways($_))}++ } @$S;
+        my %seen2;
+        map { $seen2{$_->{COST}}++ } @unique;
+        my @double_cost = grep { $seen2{$_->{COST}}>=2 } @unique;
+        @double_cost = sort {$a->{COST} <=> $b->{COST}} @double_cost;
 
         my $sims = @$S;
         my $uniq = @unique;
+        my $dup_cost = @double_cost;
 
-        print("$resf: ($uniq unique, $sims total Sims) \n");
-        Aux::hierarchy2latex($Hmin, "Hmin");
-        Aux::hierarchy2latex($Hmax, "Hmax");
-        Aux::hierarchy2latex($H0, "H0");
-        Aux::hierarchy2latex($H_opt, "H\\_opt");
+        print("$resf: ($uniq unique, $sims total Sims!) \n");
+        #Aux::hierarchy2latex($Hmin, "Hmin");
+        #Aux::hierarchy2latex($Hmax, "Hmax");
+        #Aux::hierarchy2latex($H0, "H0");
+        #Aux::hierarchy2latex($H_opt, "H\\_opt");
 
         DrCacheDim::print_hierarchy($Hmin, "Hmin");
         DrCacheDim::print_hierarchy($Hmax, "Hmax");
         DrCacheDim::print_hierarchy($H0, "H0");
         DrCacheDim::print_hierarchy($H_opt, "H\\_opt");
+
+        #foreach my $H (@double_cost) {
+        #    DrCacheDim::print_hierarchy($H, "Hcost");
+        #}
     }
 }
