@@ -1,0 +1,8001 @@
+---
+- COST: 3836477.44
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 16
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 131072
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5919362
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8178
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 589824
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894793
+      Compulsory misses: 10686
+      Hits: 3016
+      Invalidations: 0
+      Miss rate: 78.07
+      Misses: 10735
+  L3:
+    cfg:
+      assoc: 19
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 4980736
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897809
+      Compulsory misses: 10686
+      Hits: 49
+      Invalidations: 0
+      Miss rate: 99.54
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332080340.65282
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166101582.054822
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfglJfZ" -- bash runme_small.sh'
+- COST: 5966397.44
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 9
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 294912
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5920078
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7469
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975430
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 17
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1114112
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895508
+      Compulsory misses: 10687
+      Hits: 2356
+      Invalidations: 0
+      Miss rate: 81.94
+      Misses: 10687
+  L3:
+    cfg:
+      assoc: 21
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 5505024
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897864
+      Compulsory misses: 10687
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332063699.78477
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166127355.935341
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfgcbR8" -- bash runme_small.sh'
+- COST: 8903065.6
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 15
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 245760
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5919953
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7593
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975477
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 6
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 393216
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895430
+      Compulsory misses: 10686
+      Hits: 2296
+      Invalidations: 0
+      Miss rate: 82.56
+      Misses: 10871
+  L3:
+    cfg:
+      assoc: 30
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 15728640
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897726
+      Compulsory misses: 10686
+      Hits: 185
+      Invalidations: 0
+      Miss rate: 98.30
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332075948.09041
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166180488.279999
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfgH4vR" -- bash runme_small.sh'
+- COST: 4567859.2
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 7
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 229376
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5919821
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7707
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975463
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5571
+  L2:
+    cfg:
+      assoc: 18
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 589824
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895284
+      Compulsory misses: 10687
+      Hits: 2561
+      Invalidations: 0
+      Miss rate: 80.71
+      Misses: 10717
+  L3:
+    cfg:
+      assoc: 25
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 6553600
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897845
+      Compulsory misses: 10687
+      Hits: 30
+      Invalidations: 0
+      Miss rate: 99.72
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332070029.63554
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166108134.009269
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfgHqQC" -- bash runme_small.sh'
+- COST: 4457758.72
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 10
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 81920
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5918191
+      Invalidations: 0
+      Miss rate: 0.16
+      Misses: 9351
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 20
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1310720
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893622
+      Compulsory misses: 10686
+      Hits: 4238
+      Invalidations: 0
+      Miss rate: 71.60
+      Misses: 10686
+  L3:
+    cfg:
+      assoc: 12
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 6291456
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897860
+      Compulsory misses: 10686
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332101326.66182
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166122020.108611
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfgLaKG" -- bash runme_small.sh'
+- COST: 3875799.04
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 14
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 114688
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7239
+      Hits: 5919184
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8339
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 6
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 393216
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894645
+      Compulsory misses: 10685
+      Hits: 3035
+      Invalidations: 0
+      Miss rate: 78.18
+      Misses: 10877
+  L3:
+    cfg:
+      assoc: 26
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 6815744
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897680
+      Compulsory misses: 10685
+      Hits: 192
+      Invalidations: 0
+      Miss rate: 98.23
+      Misses: 10685
+  LAMBDA: 0.5
+  MAT: 332091001.37655
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166107541.850187
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfgLoR5" -- bash runme_small.sh'
+- COST: 1959034.88
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 15
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 61440
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5917197
+      Invalidations: 0
+      Miss rate: 0.17
+      Misses: 10340
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975495
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 5
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 163840
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892692
+      Compulsory misses: 10686
+      Hits: 2437
+      Invalidations: 0
+      Miss rate: 84.69
+      Misses: 13477
+  L3:
+    cfg:
+      assoc: 23
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3014656
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81895129
+      Compulsory misses: 10686
+      Hits: 2791
+      Invalidations: 0
+      Miss rate: 79.29
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332267426.48736
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166165072.145142
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfg4y5Q" -- bash runme_small.sh'
+- COST: 6645350.4
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 11
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 360448
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5920215
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7309
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975460
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 17
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1114112
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895675
+      Compulsory misses: 10687
+      Hits: 2196
+      Invalidations: 0
+      Miss rate: 82.95
+      Misses: 10687
+  L3:
+    cfg:
+      assoc: 10
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 5242880
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897871
+      Compulsory misses: 10687
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332060517.00066
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166136632.761707
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfgxivw" -- bash runme_small.sh'
+- COST: 7802060.8
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 13
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 425984
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5920270
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7259
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3447
+      Hits: 75975462
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5575
+  L2:
+    cfg:
+      assoc: 19
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 622592
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895732
+      Compulsory misses: 10687
+      Hits: 2133
+      Invalidations: 0
+      Miss rate: 83.38
+      Misses: 10701
+  L3:
+    cfg:
+      assoc: 25
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3276800
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897865
+      Compulsory misses: 10687
+      Hits: 14
+      Invalidations: 0
+      Miss rate: 99.87
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332060298.21742
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166155039.205524
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfg0vB7" -- bash runme_small.sh'
+- COST: 2768568.32
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 13
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 106496
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5919013
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8508
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975458
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 6
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 393216
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894471
+      Compulsory misses: 10687
+      Hits: 3230
+      Invalidations: 0
+      Miss rate: 77.06
+      Misses: 10851
+  L3:
+    cfg:
+      assoc: 26
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3407872
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897701
+      Compulsory misses: 10687
+      Hits: 164
+      Invalidations: 0
+      Miss rate: 98.49
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332093113.85672
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166090874.291988
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfgA58j" -- bash runme_small.sh'
+- COST: 1652817.92
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 4
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 65536
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5917351
+      Invalidations: 0
+      Miss rate: 0.17
+      Misses: 10171
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 10
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 655360
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892812
+      Compulsory misses: 10686
+      Hits: 5044
+      Invalidations: 0
+      Miss rate: 67.96
+      Misses: 10700
+  L3:
+    cfg:
+      assoc: 19
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2490368
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897856
+      Compulsory misses: 10686
+      Hits: 14
+      Invalidations: 0
+      Miss rate: 99.87
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332118555.94928
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166085735.162726
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfgfq3X" -- bash runme_small.sh'
+- COST: 3460956.16
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 196608
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7238
+      Hits: 5919791
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7755
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975478
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 11
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 360448
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895269
+      Compulsory misses: 10684
+      Hits: 2441
+      Invalidations: 0
+      Miss rate: 81.69
+      Misses: 10887
+  L3:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3407872
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897710
+      Compulsory misses: 10684
+      Hits: 203
+      Invalidations: 0
+      Miss rate: 98.14
+      Misses: 10684
+  LAMBDA: 0.5
+  MAT: 332079915.13469
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166095358.205839
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410506 -config_file "/tmp/drcachesim/drcachesim_cfgWDsP" -- bash runme_small.sh'
+- COST: 6879313.92
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 5
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 81920
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5918079
+      Invalidations: 0
+      Miss rate: 0.16
+      Misses: 9478
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975466
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 16
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 524288
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893545
+      Compulsory misses: 10687
+      Hits: 4283
+      Invalidations: 0
+      Miss rate: 71.54
+      Misses: 10768
+  L3:
+    cfg:
+      assoc: 32
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 16777216
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897828
+      Compulsory misses: 10687
+      Hits: 81
+      Invalidations: 0
+      Miss rate: 99.25
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332108416.98158
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166164327.881488
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfgTo9z" -- bash runme_small.sh'
+- COST: 2601451.52
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 15
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 122880
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5919272
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8267
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 7
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 229376
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894703
+      Compulsory misses: 10687
+      Hits: 2401
+      Invalidations: 0
+      Miss rate: 82.65
+      Misses: 11439
+  L3:
+    cfg:
+      assoc: 16
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2097152
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897104
+      Compulsory misses: 10687
+      Hits: 752
+      Invalidations: 0
+      Miss rate: 93.43
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332118997.47917
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166101141.010841
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfgCBf2" -- bash runme_small.sh'
+- COST: 3736207.36
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 9
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 147456
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5919478
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8069
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 6
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 393216
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894909
+      Compulsory misses: 10687
+      Hits: 2729
+      Invalidations: 0
+      Miss rate: 80.00
+      Misses: 10913
+  L3:
+    cfg:
+      assoc: 27
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 7077888
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897638
+      Compulsory misses: 10687
+      Hits: 226
+      Invalidations: 0
+      Miss rate: 97.93
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332087542.55337
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166103577.949674
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfgSxdw" -- bash runme_small.sh'
+- COST: 6853918.72
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 13
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 53248
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5916920
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10617
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 589824
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892351
+      Compulsory misses: 10686
+      Hits: 5490
+      Invalidations: 0
+      Miss rate: 66.09
+      Misses: 10700
+  L3:
+    cfg:
+      assoc: 32
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 16777216
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897841
+      Compulsory misses: 10686
+      Hits: 14
+      Invalidations: 0
+      Miss rate: 99.87
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332127446.17907
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166173435.971098
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfgwFfT" -- bash runme_small.sh'
+- COST: 2512650.24
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 4
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 65536
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5917436
+      Invalidations: 0
+      Miss rate: 0.17
+      Misses: 10102
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975496
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 15
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 983040
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892932
+      Compulsory misses: 10687
+      Hits: 4987
+      Invalidations: 0
+      Miss rate: 68.19
+      Misses: 10688
+  L3:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3670016
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897919
+      Compulsory misses: 10687
+      Hits: 1
+      Invalidations: 0
+      Miss rate: 99.99
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332116799.90351
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166098620.752358
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfgvhZS" -- bash runme_small.sh'
+- COST: 5699665.92
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 49152
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5916727
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10801
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975460
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 15
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 491520
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892187
+      Compulsory misses: 10687
+      Hits: 5640
+      Invalidations: 0
+      Miss rate: 65.56
+      Misses: 10735
+  L3:
+    cfg:
+      assoc: 28
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 14680064
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897827
+      Compulsory misses: 10687
+      Hits: 48
+      Invalidations: 0
+      Miss rate: 99.55
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332133124.98094
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166157798.87619
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfgnwwr" -- bash runme_small.sh'
+- COST: 3040870.4
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 98304
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5918782
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 8761
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975432
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5572
+  L2:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 524288
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894214
+      Compulsory misses: 10686
+      Hits: 3570
+      Invalidations: 0
+      Miss rate: 75.09
+      Misses: 10763
+  L3:
+    cfg:
+      assoc: 30
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3932160
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897784
+      Compulsory misses: 10686
+      Hits: 77
+      Invalidations: 0
+      Miss rate: 99.28
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332093497.54643
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166095424.963825
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfgRLYt" -- bash runme_small.sh'
+- COST: 1768980.48
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 15
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 61440
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5917226
+      Invalidations: 0
+      Miss rate: 0.17
+      Misses: 10336
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975465
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 11
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 360448
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892691
+      Compulsory misses: 10686
+      Hits: 4948
+      Invalidations: 0
+      Miss rate: 68.90
+      Misses: 10962
+  L3:
+    cfg:
+      assoc: 12
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 1572864
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897639
+      Compulsory misses: 10686
+      Hits: 276
+      Invalidations: 0
+      Miss rate: 97.48
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332135773.56675
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166096203.422924
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfgWGkU" -- bash runme_small.sh'
+- COST: 2211348.48
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 15
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 61440
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5917235
+      Invalidations: 0
+      Miss rate: 0.17
+      Misses: 10315
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975466
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 16
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 524288
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892701
+      Compulsory misses: 10688
+      Hits: 5166
+      Invalidations: 0
+      Miss rate: 67.48
+      Misses: 10722
+  L3:
+    cfg:
+      assoc: 12
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 1572864
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897867
+      Compulsory misses: 10688
+      Hits: 34
+      Invalidations: 0
+      Miss rate: 99.68
+      Misses: 10688
+  LAMBDA: 0.5
+  MAT: 332122830.87003
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166096813.20143
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfgBx3n" -- bash runme_small.sh'
+- COST: 1770127.36
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 14
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 57344
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5917087
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10451
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 10
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 327680
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892518
+      Compulsory misses: 10687
+      Hits: 4881
+      Invalidations: 0
+      Miss rate: 69.54
+      Misses: 11143
+  L3:
+    cfg:
+      assoc: 12
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3145728
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897399
+      Compulsory misses: 10687
+      Hits: 456
+      Invalidations: 0
+      Miss rate: 95.91
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332147341.31162
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166102005.653836
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfgrhVh" -- bash runme_small.sh'
+- COST: 2774958.08
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 9
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 36864
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5916162
+      Invalidations: 0
+      Miss rate: 0.19
+      Misses: 11388
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975466
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 16
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 524288
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81891628
+      Compulsory misses: 10686
+      Hits: 6236
+      Invalidations: 0
+      Miss rate: 63.23
+      Misses: 10725
+  L3:
+    cfg:
+      assoc: 32
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 4194304
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897864
+      Compulsory misses: 10686
+      Hits: 39
+      Invalidations: 0
+      Miss rate: 99.64
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332144420.88597
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166116630.089557
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfg34S4" -- bash runme_small.sh'
+- COST: 3991470.08
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 13
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 106496
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5918951
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8578
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975460
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 18
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1179648
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894411
+      Compulsory misses: 10686
+      Hits: 3466
+      Invalidations: 0
+      Miss rate: 75.51
+      Misses: 10686
+  L3:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 1703936
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897877
+      Compulsory misses: 10686
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332085901.99993
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166106843.74542
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfghuXd" -- bash runme_small.sh'
+- COST: 2530017.28
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 7
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 57344
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7243
+      Hits: 5917033
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10505
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 16
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 524288
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892464
+      Compulsory misses: 10689
+      Hits: 5354
+      Invalidations: 0
+      Miss rate: 66.70
+      Misses: 10724
+  L3:
+    cfg:
+      assoc: 28
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3670016
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897818
+      Compulsory misses: 10689
+      Hits: 35
+      Invalidations: 0
+      Miss rate: 99.67
+      Misses: 10689
+  LAMBDA: 0.5
+  MAT: 332126609.33352
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166103803.467159
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410507 -config_file "/tmp/drcachesim/drcachesim_cfgj7hm" -- bash runme_small.sh'
+- COST: 1652817.92
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 3
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 98304
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5918423
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 9128
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3450
+      Hits: 75975454
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5578
+  L2:
+    cfg:
+      assoc: 16
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 524288
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893877
+      Compulsory misses: 10692
+      Hits: 3978
+      Invalidations: 0
+      Miss rate: 72.95
+      Misses: 10728
+  L3:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 1835008
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897855
+      Compulsory misses: 10692
+      Hits: 36
+      Invalidations: 0
+      Miss rate: 99.66
+      Misses: 10692
+  LAMBDA: 0.5
+  MAT: 332099600.85357
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166076257.614871
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfgT2wl" -- bash runme_small.sh'
+- COST: 10674503.68
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 393216
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5920260
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7271
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975460
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 10
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 655360
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895720
+      Compulsory misses: 10687
+      Hits: 2144
+      Invalidations: 0
+      Miss rate: 83.31
+      Misses: 10701
+  L3:
+    cfg:
+      assoc: 31
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 16252928
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897864
+      Compulsory misses: 10687
+      Hits: 14
+      Invalidations: 0
+      Miss rate: 99.87
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332060514.93939
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166201127.683631
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfgWdu5" -- bash runme_small.sh'
+- COST: 4479385.6
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 14
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 57344
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5917041
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10481
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975458
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 19
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1245184
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892499
+      Compulsory misses: 10688
+      Hits: 5366
+      Invalidations: 0
+      Miss rate: 66.58
+      Misses: 10688
+  L3:
+    cfg:
+      assoc: 20
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 5242880
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897865
+      Compulsory misses: 10688
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10688
+  LAMBDA: 0.5
+  MAT: 332124238.53899
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166133822.23562
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfghMM9" -- bash runme_small.sh'
+- COST: 6624378.88
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 4
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 65536
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5917502
+      Invalidations: 0
+      Miss rate: 0.17
+      Misses: 10023
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 18
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 589824
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892963
+      Compulsory misses: 10686
+      Hits: 4889
+      Invalidations: 0
+      Miss rate: 68.65
+      Misses: 10707
+  L3:
+    cfg:
+      assoc: 31
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 16252928
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897852
+      Compulsory misses: 10686
+      Hits: 21
+      Invalidations: 0
+      Miss rate: 99.80
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332115963.99375
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166164020.560386
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfgQaEX" -- bash runme_small.sh'
+- COST: 4143513.6
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 11
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 90112
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5918461
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 9085
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975478
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 19
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1245184
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893939
+      Compulsory misses: 10686
+      Hits: 3972
+      Invalidations: 0
+      Miss rate: 72.90
+      Misses: 10686
+  L3:
+    cfg:
+      assoc: 20
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2621440
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897911
+      Compulsory misses: 10686
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332096194.20815
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166114423.659061
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfgCKCy" -- bash runme_small.sh'
+- COST: 2028994.56
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 6
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 98304
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5918520
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 9016
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 524288
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893951
+      Compulsory misses: 10687
+      Hits: 3811
+      Invalidations: 0
+      Miss rate: 73.88
+      Misses: 10778
+  L3:
+    cfg:
+      assoc: 17
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 4456448
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897762
+      Compulsory misses: 10687
+      Hits: 91
+      Invalidations: 0
+      Miss rate: 99.16
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332099442.05818
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166082199.797652
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfgTs7L" -- bash runme_small.sh'
+- COST: 5334630.4
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 9
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 294912
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5920072
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7455
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975459
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5575
+  L2:
+    cfg:
+      assoc: 17
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1114112
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895531
+      Compulsory misses: 10687
+      Hits: 2343
+      Invalidations: 0
+      Miss rate: 82.02
+      Misses: 10687
+  L3:
+    cfg:
+      assoc: 20
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2621440
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897874
+      Compulsory misses: 10687
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332063479.26195
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166117132.77571
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfgBUtC" -- bash runme_small.sh'
+- COST: 4126310.4
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 9
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 36864
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5916157
+      Invalidations: 0
+      Miss rate: 0.19
+      Misses: 11386
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975496
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 17
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1114112
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81891653
+      Compulsory misses: 10686
+      Hits: 6273
+      Invalidations: 0
+      Miss rate: 63.01
+      Misses: 10686
+  L3:
+    cfg:
+      assoc: 25
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 6553600
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897926
+      Compulsory misses: 10686
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332142433.63124
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166137267.99345
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfgKAJy" -- bash runme_small.sh'
+- COST: 8638955.52
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 15
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 491520
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7239
+      Hits: 5920303
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7245
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975478
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 589824
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895781
+      Compulsory misses: 10685
+      Hits: 2117
+      Invalidations: 0
+      Miss rate: 83.48
+      Misses: 10701
+  L3:
+    cfg:
+      assoc: 19
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2490368
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897898
+      Compulsory misses: 10685
+      Hits: 16
+      Invalidations: 0
+      Miss rate: 99.85
+      Misses: 10685
+  LAMBDA: 0.5
+  MAT: 332060009.36389
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166168291.221735
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfgVxcJ" -- bash runme_small.sh'
+- COST: 3168665.6
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 14
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 57344
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7238
+      Hits: 5917045
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10484
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 917504
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892506
+      Compulsory misses: 10684
+      Hits: 5372
+      Invalidations: 0
+      Miss rate: 66.54
+      Misses: 10685
+  L3:
+    cfg:
+      assoc: 25
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3276800
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897878
+      Compulsory misses: 10684
+      Hits: 1
+      Invalidations: 0
+      Miss rate: 99.99
+      Misses: 10684
+  LAMBDA: 0.5
+  MAT: 332123980.22859
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166112711.963778
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfgc6V3" -- bash runme_small.sh'
+- COST: 7419985.92
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 10
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 327680
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7239
+      Hits: 5920127
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7408
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975444
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5572
+  L2:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 851968
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895571
+      Compulsory misses: 10685
+      Hits: 2295
+      Invalidations: 0
+      Miss rate: 82.32
+      Misses: 10685
+  L3:
+    cfg:
+      assoc: 23
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 12058624
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897866
+      Compulsory misses: 10685
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10685
+  LAMBDA: 0.5
+  MAT: 332062229.83557
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166149889.019098
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfgsteg" -- bash runme_small.sh'
+- COST: 5398855.68
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 5
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 81920
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5918074
+      Invalidations: 0
+      Miss rate: 0.16
+      Misses: 9461
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975441
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5575
+  L2:
+    cfg:
+      assoc: 19
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 622592
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893515
+      Compulsory misses: 10687
+      Hits: 4337
+      Invalidations: 0
+      Miss rate: 71.16
+      Misses: 10699
+  L3:
+    cfg:
+      assoc: 26
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 13631488
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897852
+      Compulsory misses: 10687
+      Hits: 12
+      Invalidations: 0
+      Miss rate: 99.89
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332104325.06717
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166138583.753035
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410508 -config_file "/tmp/drcachesim/drcachesim_cfgz2er" -- bash runme_small.sh'
+- COST: 1394606.08
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 2
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5915405
+      Invalidations: 0
+      Miss rate: 0.20
+      Misses: 12137
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 458752
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81890836
+      Compulsory misses: 10687
+      Hits: 6965
+      Invalidations: 0
+      Miss rate: 60.67
+      Misses: 10745
+  L3:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 4718592
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897801
+      Compulsory misses: 10687
+      Hits: 58
+      Invalidations: 0
+      Miss rate: 99.46
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332160375.62122
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166102511.718718
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgmoTl" -- bash runme_small.sh'
+- COST: 2428108.8
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 49152
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5916789
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10760
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975466
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 11
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 360448
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892255
+      Compulsory misses: 10687
+      Hits: 5420
+      Invalidations: 0
+      Miss rate: 66.82
+      Misses: 10913
+  L3:
+    cfg:
+      assoc: 30
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3932160
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897675
+      Compulsory misses: 10687
+      Hits: 226
+      Invalidations: 0
+      Miss rate: 97.93
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332141697.7264
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166109716.38178
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgtS9O" -- bash runme_small.sh'
+- COST: 7054458.88
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 13
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 53248
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5916911
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10607
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975458
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 18
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 589824
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892369
+      Compulsory misses: 10687
+      Hits: 5470
+      Invalidations: 0
+      Miss rate: 66.19
+      Misses: 10710
+  L3:
+    cfg:
+      assoc: 31
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 16252928
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897839
+      Compulsory misses: 10687
+      Hits: 23
+      Invalidations: 0
+      Miss rate: 99.79
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332127851.35253
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166176848.668674
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfg6Qp2" -- bash runme_small.sh'
+- COST: 5063311.36
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 262144
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7239
+      Hits: 5919959
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7576
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975444
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5572
+  L2:
+    cfg:
+      assoc: 11
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 720896
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895403
+      Compulsory misses: 10685
+      Hits: 2450
+      Invalidations: 0
+      Miss rate: 81.37
+      Misses: 10698
+  L3:
+    cfg:
+      assoc: 27
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 7077888
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897853
+      Compulsory misses: 10685
+      Hits: 13
+      Invalidations: 0
+      Miss rate: 99.88
+      Misses: 10685
+  LAMBDA: 0.5
+  MAT: 332066281.42711
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166114190.767145
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgYMZQ" -- bash runme_small.sh'
+- COST: 4542955.52
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 6
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 49152
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5916770
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10786
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975465
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5571
+  L2:
+    cfg:
+      assoc: 5
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 327680
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892235
+      Compulsory misses: 10686
+      Hits: 5091
+      Invalidations: 0
+      Miss rate: 68.88
+      Misses: 11266
+  L3:
+    cfg:
+      assoc: 27
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 14155776
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897326
+      Compulsory misses: 10686
+      Hits: 580
+      Invalidations: 0
+      Miss rate: 94.85
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332160609.46096
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166153025.280763
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgPjQQ" -- bash runme_small.sh'
+- COST: 5362810.88
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 11
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 360448
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5920180
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7354
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975443
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 17
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 557056
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895623
+      Compulsory misses: 10686
+      Hits: 2207
+      Invalidations: 0
+      Miss rate: 82.93
+      Misses: 10720
+  L3:
+    cfg:
+      assoc: 12
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 1572864
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897830
+      Compulsory misses: 10686
+      Hits: 34
+      Invalidations: 0
+      Miss rate: 99.68
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332063043.38158
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166117365.929532
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgz1X4" -- bash runme_small.sh'
+- COST: 3318743.04
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5915943
+      Invalidations: 0
+      Miss rate: 0.20
+      Misses: 11597
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975430
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 917504
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81891373
+      Compulsory misses: 10686
+      Hits: 6484
+      Invalidations: 0
+      Miss rate: 62.24
+      Misses: 10687
+  L3:
+    cfg:
+      assoc: 24
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 6291456
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897857
+      Compulsory misses: 10686
+      Hits: 1
+      Invalidations: 0
+      Miss rate: 99.99
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332146466.0269
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166126357.200789
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgjVsm" -- bash runme_small.sh'
+- COST: 897843.2
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 4
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5915892
+      Invalidations: 0
+      Miss rate: 0.20
+      Misses: 11627
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975458
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 262144
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81891350
+      Compulsory misses: 10686
+      Hits: 5558
+      Invalidations: 0
+      Miss rate: 67.69
+      Misses: 11642
+  L3:
+    cfg:
+      assoc: 15
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 1966080
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81896908
+      Compulsory misses: 10686
+      Hits: 956
+      Invalidations: 0
+      Miss rate: 91.79
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332197025.57258
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166112884.85119
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgkOjr" -- bash runme_small.sh'
+- COST: 2512650.24
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 6
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 49152
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5916716
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10809
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 917504
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892177
+      Compulsory misses: 10686
+      Hits: 5695
+      Invalidations: 0
+      Miss rate: 65.24
+      Misses: 10687
+  L3:
+    cfg:
+      assoc: 16
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 4194304
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897872
+      Compulsory misses: 10686
+      Hits: 1
+      Invalidations: 0
+      Miss rate: 99.99
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332130692.11639
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166105566.858799
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgixV6" -- bash runme_small.sh'
+- COST: 3214213.12
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 5
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 40960
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5916318
+      Invalidations: 0
+      Miss rate: 0.19
+      Misses: 11204
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975459
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5572
+  L2:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 262144
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81891777
+      Compulsory misses: 10686
+      Hits: 5125
+      Invalidations: 0
+      Miss rate: 69.45
+      Misses: 11651
+  L3:
+    cfg:
+      assoc: 22
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 11534336
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81896902
+      Compulsory misses: 10686
+      Hits: 965
+      Invalidations: 0
+      Miss rate: 91.72
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332188999.17629
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166145950.531431
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgEV1l" -- bash runme_small.sh'
+- COST: 5688524.8
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 49152
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5916779
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10767
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975478
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 6
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 196608
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892257
+      Compulsory misses: 10686
+      Hits: 3533
+      Invalidations: 0
+      Miss rate: 78.38
+      Misses: 12807
+  L3:
+    cfg:
+      assoc: 30
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 15728640
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81895790
+      Compulsory misses: 10686
+      Hits: 2121
+      Invalidations: 0
+      Miss rate: 83.44
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332240893.77737
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166211504.934913
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgNDoE" -- bash runme_small.sh'
+- COST: 1893990.4
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 131072
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5919264
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8276
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975443
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 7
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 458752
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894707
+      Compulsory misses: 10686
+      Hits: 3021
+      Invalidations: 0
+      Miss rate: 78.19
+      Misses: 10828
+  L3:
+    cfg:
+      assoc: 10
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2621440
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897728
+      Compulsory misses: 10686
+      Hits: 142
+      Invalidations: 0
+      Miss rate: 98.69
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332087220.4324
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166073927.929748
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgMqL5" -- bash runme_small.sh'
+- COST: 3136552.96
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 10
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 163840
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5919604
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7939
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 11
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 720896
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895035
+      Compulsory misses: 10686
+      Hits: 2812
+      Invalidations: 0
+      Miss rate: 79.19
+      Misses: 10700
+  L3:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3407872
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897847
+      Compulsory misses: 10686
+      Hits: 14
+      Invalidations: 0
+      Miss rate: 99.87
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332073725.51477
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166087070.56951
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410509 -config_file "/tmp/drcachesim/drcachesim_cfgz6jx" -- bash runme_small.sh'
+- COST: 4061921.28
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 14
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 229376
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7239
+      Hits: 5919889
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7642
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 262144
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895350
+      Compulsory misses: 10685
+      Hits: 2124
+      Invalidations: 0
+      Miss rate: 83.93
+      Misses: 11091
+  L3:
+    cfg:
+      assoc: 17
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2228224
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897474
+      Compulsory misses: 10685
+      Hits: 406
+      Invalidations: 0
+      Miss rate: 96.34
+      Misses: 10685
+  LAMBDA: 0.5
+  MAT: 332088239.28339
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166109140.12217
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfg2tee" -- bash runme_small.sh'
+- COST: 2466775.04
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 16
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 65536
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5917342
+      Invalidations: 0
+      Miss rate: 0.17
+      Misses: 10208
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 12
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 786432
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892773
+      Compulsory misses: 10687
+      Hits: 5093
+      Invalidations: 0
+      Miss rate: 67.73
+      Misses: 10688
+  L3:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2359296
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897866
+      Compulsory misses: 10687
+      Hits: 1
+      Invalidations: 0
+      Miss rate: 99.99
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332118713.23584
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166098843.079441
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfgdXDj" -- bash runme_small.sh'
+- COST: 4281466.88
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 4
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 65536
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7239
+      Hits: 5917382
+      Invalidations: 0
+      Miss rate: 0.17
+      Misses: 10151
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975496
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 15
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 491520
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892878
+      Compulsory misses: 10685
+      Hits: 4999
+      Invalidations: 0
+      Miss rate: 68.21
+      Misses: 10725
+  L3:
+    cfg:
+      assoc: 24
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 12582912
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897877
+      Compulsory misses: 10685
+      Hits: 40
+      Invalidations: 0
+      Miss rate: 99.63
+      Misses: 10685
+  LAMBDA: 0.5
+  MAT: 332119597.4779
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166128333.556462
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfgknMo" -- bash runme_small.sh'
+- COST: 3541565.44
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 4
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7243
+      Hits: 5915926
+      Invalidations: 0
+      Miss rate: 0.20
+      Misses: 11612
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 12
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 786432
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81891357
+      Compulsory misses: 10689
+      Hits: 6494
+      Invalidations: 0
+      Miss rate: 62.21
+      Misses: 10691
+  L3:
+    cfg:
+      assoc: 29
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 7602176
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897851
+      Compulsory misses: 10689
+      Hits: 2
+      Invalidations: 0
+      Miss rate: 99.98
+      Misses: 10689
+  LAMBDA: 0.5
+  MAT: 332147099.62518
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166130240.789758
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfgU_Ax" -- bash runme_small.sh'
+- COST: 2115502.08
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 6
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 98304
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5918608
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 8945
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975466
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 6
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 393216
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894074
+      Compulsory misses: 10688
+      Hits: 3587
+      Invalidations: 0
+      Miss rate: 75.29
+      Misses: 10931
+  L3:
+    cfg:
+      assoc: 28
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3670016
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897661
+      Compulsory misses: 10688
+      Hits: 243
+      Invalidations: 0
+      Miss rate: 97.78
+      Misses: 10688
+  LAMBDA: 0.5
+  MAT: 332106280.5899
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166087003.817211
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfgNcQz" -- bash runme_small.sh'
+- COST: 5966397.44
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 393216
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7239
+      Hits: 5920223
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7312
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975443
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 12
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 393216
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895666
+      Compulsory misses: 10685
+      Hits: 2112
+      Invalidations: 0
+      Miss rate: 83.61
+      Misses: 10773
+  L3:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3670016
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897778
+      Compulsory misses: 10685
+      Hits: 88
+      Invalidations: 0
+      Miss rate: 99.18
+      Misses: 10685
+  LAMBDA: 0.5
+  MAT: 332064926.30509
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166127969.195501
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfg_Ymx" -- bash runme_small.sh'
+- COST: 3860070.4
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 3
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 98304
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7243
+      Hits: 5918408
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 9115
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 12
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 786432
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893869
+      Compulsory misses: 10689
+      Hits: 3992
+      Invalidations: 0
+      Miss rate: 72.82
+      Misses: 10696
+  L3:
+    cfg:
+      assoc: 30
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 7864320
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897861
+      Compulsory misses: 10689
+      Hits: 7
+      Invalidations: 0
+      Miss rate: 99.93
+      Misses: 10689
+  LAMBDA: 0.5
+  MAT: 332097309.33005
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166110444.053537
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfgaxLR" -- bash runme_small.sh'
+- COST: 3261726.72
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 2
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5915643
+      Invalidations: 0
+      Miss rate: 0.20
+      Misses: 11897
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 11
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 360448
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81891074
+      Compulsory misses: 10688
+      Hits: 6526
+      Invalidations: 0
+      Miss rate: 62.64
+      Misses: 10944
+  L3:
+    cfg:
+      assoc: 22
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 11534336
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897600
+      Compulsory misses: 10688
+      Hits: 256
+      Invalidations: 0
+      Miss rate: 97.66
+      Misses: 10688
+  LAMBDA: 0.5
+  MAT: 332166010.59024
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166135216.803885
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfgCNlc" -- bash runme_small.sh'
+- COST: 7496007.68
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 13
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 425984
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5920291
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7257
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3448
+      Hits: 75975474
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5576
+  L2:
+    cfg:
+      assoc: 15
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 983040
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895765
+      Compulsory misses: 10689
+      Hits: 2144
+      Invalidations: 0
+      Miss rate: 83.29
+      Misses: 10689
+  L3:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 1703936
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897909
+      Compulsory misses: 10689
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10689
+  LAMBDA: 0.5
+  MAT: 332059880.64714
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166149931.329648
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfglbDQ" -- bash runme_small.sh'
+- COST: 2439905.28
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 7
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 114688
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5918882
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 8642
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975458
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 524288
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894340
+      Compulsory misses: 10687
+      Hits: 3476
+      Invalidations: 0
+      Miss rate: 75.55
+      Misses: 10739
+  L3:
+    cfg:
+      assoc: 27
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3538944
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897816
+      Compulsory misses: 10687
+      Hits: 52
+      Invalidations: 0
+      Miss rate: 99.52
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332089956.82081
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166084034.759035
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfgKmEQ" -- bash runme_small.sh'
+- COST: 6113853.44
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 13
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 212992
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5919837
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7688
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 20
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 655360
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895298
+      Compulsory misses: 10688
+      Hits: 2566
+      Invalidations: 0
+      Miss rate: 80.65
+      Misses: 10695
+  L3:
+    cfg:
+      assoc: 26
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 6815744
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897864
+      Compulsory misses: 10688
+      Hits: 7
+      Invalidations: 0
+      Miss rate: 99.93
+      Misses: 10688
+  LAMBDA: 0.5
+  MAT: 332068576.08507
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166132154.461114
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfgCz6J" -- bash runme_small.sh'
+- COST: 5110824.96
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 15
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 122880
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5919229
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8317
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 7
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 458752
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894660
+      Compulsory misses: 10686
+      Hits: 3088
+      Invalidations: 0
+      Miss rate: 77.77
+      Misses: 10802
+  L3:
+    cfg:
+      assoc: 32
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 8388608
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897748
+      Compulsory misses: 10686
+      Hits: 116
+      Invalidations: 0
+      Miss rate: 98.93
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332086659.05258
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166125140.145358
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410511 -config_file "/tmp/drcachesim/drcachesim_cfgjSTc" -- bash runme_small.sh'
+- COST: 4155637.76
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 131072
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5919166
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8371
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975443
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 7
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 229376
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894609
+      Compulsory misses: 10686
+      Hits: 2388
+      Invalidations: 0
+      Miss rate: 82.87
+      Misses: 11556
+  L3:
+    cfg:
+      assoc: 32
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 8388608
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81896997
+      Compulsory misses: 10686
+      Hits: 870
+      Invalidations: 0
+      Miss rate: 92.47
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332127194.47671
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166130117.86867
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfg1Eqy" -- bash runme_small.sh'
+- COST: 1614151.68
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 4
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5915889
+      Invalidations: 0
+      Miss rate: 0.20
+      Misses: 11653
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 294912
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81891320
+      Compulsory misses: 10687
+      Hits: 5910
+      Invalidations: 0
+      Miss rate: 65.69
+      Misses: 11316
+  L3:
+    cfg:
+      assoc: 27
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3538944
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897230
+      Compulsory misses: 10687
+      Hits: 629
+      Invalidations: 0
+      Miss rate: 94.44
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332180529.5828
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166116103.036545
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfgQV0X" -- bash runme_small.sh'
+- COST: 8354529.28
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 14
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 458752
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5920303
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7242
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975477
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 458752
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895780
+      Compulsory misses: 10687
+      Hits: 2112
+      Invalidations: 0
+      Miss rate: 83.52
+      Misses: 10704
+  L3:
+    cfg:
+      assoc: 28
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3670016
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897892
+      Compulsory misses: 10687
+      Hits: 17
+      Invalidations: 0
+      Miss rate: 99.84
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332060215.02022
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166163841.147589
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfgju2p" -- bash runme_small.sh'
+- COST: 8347975.68
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 393216
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7239
+      Hits: 5920263
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7268
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 15
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 983040
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895724
+      Compulsory misses: 10685
+      Hits: 2156
+      Invalidations: 0
+      Miss rate: 83.21
+      Misses: 10685
+  L3:
+    cfg:
+      assoc: 19
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 9961472
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897880
+      Compulsory misses: 10685
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10685
+  LAMBDA: 0.5
+  MAT: 332059496.76359
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166163377.113691
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfgLDsF" -- bash runme_small.sh'
+- COST: 2917662.72
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 2
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5915334
+      Invalidations: 0
+      Miss rate: 0.21
+      Misses: 12185
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975458
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 4
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 131072
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81890792
+      Compulsory misses: 10686
+      Hits: 3053
+      Invalidations: 0
+      Miss rate: 82.81
+      Misses: 14705
+  L3:
+    cfg:
+      assoc: 22
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 11534336
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81893845
+      Compulsory misses: 10686
+      Hits: 4019
+      Invalidations: 0
+      Miss rate: 72.67
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332368440.86672
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166230924.399006
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfg5n78" -- bash runme_small.sh'
+- COST: 2723676.16
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 98304
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7238
+      Hits: 5918886
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 8650
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975443
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 16
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 524288
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894329
+      Compulsory misses: 10684
+      Hits: 3483
+      Invalidations: 0
+      Miss rate: 75.51
+      Misses: 10740
+  L3:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3407872
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897812
+      Compulsory misses: 10684
+      Hits: 56
+      Invalidations: 0
+      Miss rate: 99.48
+      Misses: 10684
+  LAMBDA: 0.5
+  MAT: 332090006.08976
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166088601.805263
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfghusK" -- bash runme_small.sh'
+- COST: 4316856.32
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 14
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 229376
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5919914
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7643
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975466
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 294912
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895380
+      Compulsory misses: 10687
+      Hits: 2177
+      Invalidations: 0
+      Miss rate: 83.53
+      Misses: 11039
+  L3:
+    cfg:
+      assoc: 21
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2752512
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897557
+      Compulsory misses: 10687
+      Hits: 352
+      Invalidations: 0
+      Miss rate: 96.81
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332085765.52812
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166111984.071722
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfgYtGq" -- bash runme_small.sh'
+- COST: 5556142.08
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 15
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 245760
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5919923
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7602
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 19
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 622592
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895384
+      Compulsory misses: 10686
+      Hits: 2475
+      Invalidations: 0
+      Miss rate: 81.21
+      Misses: 10700
+  L3:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 4718592
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897859
+      Compulsory misses: 10686
+      Hits: 14
+      Invalidations: 0
+      Miss rate: 99.87
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332067010.69793
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166122444.302412
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfguI_5" -- bash runme_small.sh'
+- COST: 5738659.84
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 15
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 122880
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5919281
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8256
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 18
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1179648
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894712
+      Compulsory misses: 10686
+      Hits: 3143
+      Invalidations: 0
+      Miss rate: 77.27
+      Misses: 10686
+  L3:
+    cfg:
+      assoc: 24
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 6291456
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897855
+      Compulsory misses: 10686
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332079330.87567
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166131526.011775
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfg7_EU" -- bash runme_small.sh'
+- COST: 8894545.92
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 14
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 458752
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5920299
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7250
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975466
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 851968
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895765
+      Compulsory misses: 10687
+      Hits: 2134
+      Invalidations: 0
+      Miss rate: 83.36
+      Misses: 10689
+  L3:
+    cfg:
+      assoc: 29
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3801088
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897899
+      Compulsory misses: 10687
+      Hits: 2
+      Invalidations: 0
+      Miss rate: 99.98
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332059538.59664
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166172147.155856
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfgptOd" -- bash runme_small.sh'
+- COST: 5783060.48
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 13
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 53248
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7239
+      Hits: 5916922
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10628
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975432
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5572
+  L2:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 917504
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892354
+      Compulsory misses: 10685
+      Hits: 5514
+      Invalidations: 0
+      Miss rate: 65.96
+      Misses: 10686
+  L3:
+    cfg:
+      assoc: 26
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 13631488
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897868
+      Compulsory misses: 10685
+      Hits: 1
+      Invalidations: 0
+      Miss rate: 99.99
+      Misses: 10685
+  LAMBDA: 0.5
+  MAT: 332126916.56392
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166156029.591226
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfgFuFW" -- bash runme_small.sh'
+- COST: 5788794.88
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 9
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 147456
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5919497
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8054
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975467
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5572
+  L2:
+    cfg:
+      assoc: 10
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 655360
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894964
+      Compulsory misses: 10687
+      Hits: 2910
+      Invalidations: 0
+      Miss rate: 78.64
+      Misses: 10716
+  L3:
+    cfg:
+      assoc: 26
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 13631488
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897874
+      Compulsory misses: 10687
+      Hits: 29
+      Invalidations: 0
+      Miss rate: 99.73
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332077074.40348
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166131200.303391
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfgg9Dk" -- bash runme_small.sh'
+- COST: 4499046.4
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 11
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 180224
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5919685
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7844
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 18
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1179648
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895146
+      Compulsory misses: 10688
+      Hits: 2729
+      Invalidations: 0
+      Miss rate: 79.66
+      Misses: 10688
+  L3:
+    cfg:
+      assoc: 10
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 1310720
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897875
+      Compulsory misses: 10688
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10688
+  LAMBDA: 0.5
+  MAT: 332071356.85521
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166107696.11048
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410514 -config_file "/tmp/drcachesim/drcachesim_cfgD70Z" -- bash runme_small.sh'
+- COST: 3012689.92
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 131072
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5919220
+      Invalidations: 0
+      Miss rate: 0.14
+      Misses: 8305
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 17
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 557056
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894681
+      Compulsory misses: 10688
+      Hits: 3148
+      Invalidations: 0
+      Miss rate: 77.32
+      Misses: 10730
+  L3:
+    cfg:
+      assoc: 24
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3145728
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897829
+      Compulsory misses: 10688
+      Hits: 42
+      Invalidations: 0
+      Miss rate: 99.61
+      Misses: 10688
+  LAMBDA: 0.5
+  MAT: 332082789.43265
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166089619.812928
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfgpCRm" -- bash runme_small.sh'
+- COST: 2371092.48
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 16
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 65536
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5917346
+      Invalidations: 0
+      Miss rate: 0.17
+      Misses: 10189
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975443
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 16
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 524288
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892789
+      Compulsory misses: 10687
+      Hits: 5045
+      Invalidations: 0
+      Miss rate: 67.99
+      Misses: 10717
+  L3:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 1703936
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897834
+      Compulsory misses: 10687
+      Hits: 30
+      Invalidations: 0
+      Miss rate: 99.72
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332119836.71873
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166097873.199371
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfgBnse" -- bash runme_small.sh'
+- COST: 3120824.32
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 6
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 49152
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5916708
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10837
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3447
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5576
+  L2:
+    cfg:
+      assoc: 16
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1048576
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892139
+      Compulsory misses: 10687
+      Hits: 5726
+      Invalidations: 0
+      Miss rate: 65.11
+      Misses: 10687
+  L3:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 6815744
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897865
+      Compulsory misses: 10687
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332131336.48704
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166115624.282246
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfgxzI8" -- bash runme_small.sh'
+- COST: 5120327.68
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 16
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 65536
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7239
+      Hits: 5917355
+      Invalidations: 0
+      Miss rate: 0.17
+      Misses: 10177
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975511
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5558
+  L2:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 294912
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892866
+      Compulsory misses: 10685
+      Hits: 4554
+      Invalidations: 0
+      Miss rate: 71.06
+      Misses: 11181
+  L3:
+    cfg:
+      assoc: 26
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 13631488
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897420
+      Compulsory misses: 10685
+      Hits: 496
+      Invalidations: 0
+      Miss rate: 95.56
+      Misses: 10685
+  LAMBDA: 0.5
+  MAT: 332143666.25571
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166153795.860019
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfgdKjF" -- bash runme_small.sh'
+- COST: 5936250.88
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 11
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 360448
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5920222
+      Invalidations: 0
+      Miss rate: 0.12
+      Misses: 7316
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975443
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 917504
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895665
+      Compulsory misses: 10687
+      Hits: 2202
+      Invalidations: 0
+      Miss rate: 82.92
+      Misses: 10687
+  L3:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 4718592
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897867
+      Compulsory misses: 10687
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332060621.26502
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166125334.109784
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfg0cwQ" -- bash runme_small.sh'
+- COST: 1277952
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 7
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 114688
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5918816
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 8708
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975458
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 5
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 163840
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894274
+      Compulsory misses: 10687
+      Hits: 1652
+      Invalidations: 0
+      Miss rate: 88.43
+      Misses: 12629
+  L3:
+    cfg:
+      assoc: 10
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 1310720
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81895926
+      Compulsory misses: 10687
+      Hits: 1942
+      Invalidations: 0
+      Miss rate: 84.62
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332190141.87205
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166115527.524751
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfg4PF_" -- bash runme_small.sh'
+- COST: 5290393.6
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 5
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 40960
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5916283
+      Invalidations: 0
+      Miss rate: 0.19
+      Misses: 11247
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 4
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 262144
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81891744
+      Compulsory misses: 10686
+      Hits: 4898
+      Invalidations: 0
+      Miss rate: 70.88
+      Misses: 11922
+  L3:
+    cfg:
+      assoc: 30
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 15728640
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81896642
+      Compulsory misses: 10686
+      Hits: 1236
+      Invalidations: 0
+      Miss rate: 89.63
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332204101.86116
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166186735.962628
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfgKlKP" -- bash runme_small.sh'
+- COST: 6050938.88
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 15
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 245760
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5919935
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7593
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 262144
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895396
+      Compulsory misses: 10687
+      Hits: 2073
+      Invalidations: 0
+      Miss rate: 84.25
+      Misses: 11093
+  L3:
+    cfg:
+      assoc: 19
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 9961472
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897469
+      Compulsory misses: 10687
+      Hits: 406
+      Invalidations: 0
+      Miss rate: 96.34
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332087449.3877
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166140584.01883
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfg7Bxi" -- bash runme_small.sh'
+- COST: 2101739.52
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 10
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 81920
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7239
+      Hits: 5918163
+      Invalidations: 0
+      Miss rate: 0.16
+      Misses: 9372
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975442
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 294912
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893605
+      Compulsory misses: 10685
+      Hits: 3707
+      Invalidations: 0
+      Miss rate: 75.20
+      Misses: 11239
+  L3:
+    cfg:
+      assoc: 12
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 6291456
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897312
+      Compulsory misses: 10685
+      Hits: 554
+      Invalidations: 0
+      Miss rate: 95.07
+      Misses: 10685
+  LAMBDA: 0.5
+  MAT: 332130663.72377
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166098975.082421
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfg1IHv" -- bash runme_small.sh'
+- COST: 5075107.84
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 16
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 262144
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5919960
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7563
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 4
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 262144
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895421
+      Compulsory misses: 10687
+      Hits: 1965
+      Invalidations: 0
+      Miss rate: 85.04
+      Misses: 11171
+  L3:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3670016
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897386
+      Compulsory misses: 10687
+      Hits: 484
+      Invalidations: 0
+      Miss rate: 95.67
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332090907.08607
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166126692.426675
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfgIYxd" -- bash runme_small.sh'
+- COST: 3497328.64
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 7
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 57344
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5917060
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10492
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975466
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 20
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 1310720
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892526
+      Compulsory misses: 10687
+      Hits: 5378
+      Invalidations: 0
+      Miss rate: 66.52
+      Misses: 10687
+  L3:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2359296
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897904
+      Compulsory misses: 10687
+      Hits: 0
+      Invalidations: 0
+      Miss rate: 100.00
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332124509.92245
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166118237.825706
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfga8i7" -- bash runme_small.sh'
+- COST: 1927741.44
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 5
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 40960
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5916339
+      Invalidations: 0
+      Miss rate: 0.19
+      Misses: 11192
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 17
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 557056
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81891800
+      Compulsory misses: 10687
+      Hits: 6052
+      Invalidations: 0
+      Miss rate: 63.90
+      Misses: 10713
+  L3:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3670016
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897852
+      Compulsory misses: 10687
+      Hits: 26
+      Invalidations: 0
+      Miss rate: 99.76
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332139813.26187
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166100764.608237
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410516 -config_file "/tmp/drcachesim/drcachesim_cfgt8un" -- bash runme_small.sh'
+- COST: 3359375.36
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 11
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 180224
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5919709
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7835
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975478
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 17
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 557056
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895187
+      Compulsory misses: 10686
+      Hits: 2685
+      Invalidations: 0
+      Miss rate: 79.97
+      Misses: 10723
+  L3:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2097152
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897872
+      Compulsory misses: 10686
+      Hits: 37
+      Invalidations: 0
+      Miss rate: 99.65
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332073035.19739
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166090292.20065
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfgeLuH" -- bash runme_small.sh'
+- COST: 3989176.32
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 9
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 294912
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5920084
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7438
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 15
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 491520
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895545
+      Compulsory misses: 10688
+      Hits: 2278
+      Invalidations: 0
+      Miss rate: 82.49
+      Misses: 10733
+  L3:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 4194304
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897823
+      Compulsory misses: 10688
+      Hits: 45
+      Invalidations: 0
+      Miss rate: 99.58
+      Misses: 10688
+  LAMBDA: 0.5
+  MAT: 332065534.38398
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166096623.220491
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfgjlxA" -- bash runme_small.sh'
+- COST: 1668055.04
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 11
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 45056
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5916568
+      Invalidations: 0
+      Miss rate: 0.18
+      Misses: 10958
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3449
+      Hits: 75975479
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5577
+  L2:
+    cfg:
+      assoc: 11
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 360448
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892047
+      Compulsory misses: 10689
+      Hits: 5599
+      Invalidations: 0
+      Miss rate: 66.14
+      Misses: 10936
+  L3:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3670016
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897646
+      Compulsory misses: 10689
+      Hits: 247
+      Invalidations: 0
+      Miss rate: 97.74
+      Misses: 10689
+  LAMBDA: 0.5
+  MAT: 332147031.49728
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166100216.842207
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfgwHpO" -- bash runme_small.sh'
+- COST: 2383216.64
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 9
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 73728
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5917793
+      Invalidations: 0
+      Miss rate: 0.16
+      Misses: 9737
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 12
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 786432
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893254
+      Compulsory misses: 10686
+      Hits: 4616
+      Invalidations: 0
+      Miss rate: 69.85
+      Misses: 10694
+  L3:
+    cfg:
+      assoc: 14
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3670016
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897870
+      Compulsory misses: 10686
+      Hits: 8
+      Invalidations: 0
+      Miss rate: 99.93
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332109564.44284
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166092931.136755
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfgzzpW" -- bash runme_small.sh'
+- COST: 1508638.72
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 6
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 98304
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5918475
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 9072
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975478
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 7
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 458752
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893953
+      Compulsory misses: 10686
+      Hits: 3877
+      Invalidations: 0
+      Miss rate: 73.53
+      Misses: 10768
+  L3:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 4194304
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897830
+      Compulsory misses: 10686
+      Hits: 82
+      Invalidations: 0
+      Miss rate: 99.24
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332100226.53358
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166074262.532045
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfgahTd" -- bash runme_small.sh'
+- COST: 3391488
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 3
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 98304
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5918574
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 8966
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975430
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 15
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 491520
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81894004
+      Compulsory misses: 10688
+      Hits: 3806
+      Invalidations: 0
+      Miss rate: 73.82
+      Misses: 10734
+  L3:
+    cfg:
+      assoc: 20
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 10485760
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897810
+      Compulsory misses: 10688
+      Hits: 46
+      Invalidations: 0
+      Miss rate: 99.57
+      Misses: 10688
+  LAMBDA: 0.5
+  MAT: 332096223.80364
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166102400.541132
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfgXdnt" -- bash runme_small.sh'
+- COST: 3546152.96
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 10
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 81920
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7240
+      Hits: 5918104
+      Invalidations: 0
+      Miss rate: 0.16
+      Misses: 9432
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975443
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 425984
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893547
+      Compulsory misses: 10686
+      Hits: 4205
+      Invalidations: 0
+      Miss rate: 71.98
+      Misses: 10800
+  L3:
+    cfg:
+      assoc: 27
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 7077888
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897752
+      Compulsory misses: 10686
+      Hits: 114
+      Invalidations: 0
+      Miss rate: 98.94
+      Misses: 10686
+  LAMBDA: 0.5
+  MAT: 332108939.49284
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166111234.157496
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfgY8nK" -- bash runme_small.sh'
+- COST: 3671326.72
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 12
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 196608
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5919768
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7761
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975461
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 5
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 327680
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895229
+      Compulsory misses: 10688
+      Hits: 2306
+      Invalidations: 0
+      Miss rate: 82.71
+      Misses: 11028
+  L3:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 6815744
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897535
+      Compulsory misses: 10688
+      Hits: 340
+      Invalidations: 0
+      Miss rate: 96.92
+      Misses: 10688
+  LAMBDA: 0.5
+  MAT: 332087475.55249
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166102505.88396
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfgclX6" -- bash runme_small.sh'
+- COST: 2125987.84
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 6
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 98304
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5918484
+      Invalidations: 0
+      Miss rate: 0.15
+      Misses: 9057
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975431
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 18
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 589824
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81893915
+      Compulsory misses: 10687
+      Hits: 3927
+      Invalidations: 0
+      Miss rate: 73.16
+      Misses: 10703
+  L3:
+    cfg:
+      assoc: 9
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 2359296
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897842
+      Compulsory misses: 10687
+      Hits: 16
+      Invalidations: 0
+      Miss rate: 99.85
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332096362.04067
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166082212.391529
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfgZCx3" -- bash runme_small.sh'
+- COST: 726138.88
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 4
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 65536
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5917475
+      Invalidations: 0
+      Miss rate: 0.17
+      Misses: 10067
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975430
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 6
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 196608
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81892905
+      Compulsory misses: 10687
+      Hits: 2957
+      Invalidations: 0
+      Miss rate: 81.09
+      Misses: 12684
+  L3:
+    cfg:
+      assoc: 8
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 1048576
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81895862
+      Compulsory misses: 10687
+      Hits: 1994
+      Invalidations: 0
+      Miss rate: 84.28
+      Misses: 10690
+  LAMBDA: 0.5
+  MAT: 332220427.80002
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166121837.43863
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfgAqCp" -- bash runme_small.sh'
+- COST: 3666739.2
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 7
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 229376
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5919843
+      Invalidations: 0
+      Miss rate: 0.13
+      Misses: 7692
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3447
+      Hits: 75975445
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 7
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 229376
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81895288
+      Compulsory misses: 10689
+      Hits: 2032
+      Invalidations: 0
+      Miss rate: 84.68
+      Misses: 11234
+  L3:
+    cfg:
+      assoc: 25
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 6553600
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897320
+      Compulsory misses: 10689
+      Hits: 545
+      Invalidations: 0
+      Miss rate: 95.15
+      Misses: 10689
+  LAMBDA: 0.5
+  MAT: 332096900.28408
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166107144.815847
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfg0R4k" -- bash runme_small.sh'
+- COST: 3444572.16
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 2
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7241
+      Hits: 5915389
+      Invalidations: 0
+      Miss rate: 0.20
+      Misses: 12144
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3446
+      Hits: 75975496
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5573
+  L2:
+    cfg:
+      assoc: 18
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 589824
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81890885
+      Compulsory misses: 10687
+      Hits: 6996
+      Invalidations: 0
+      Miss rate: 60.51
+      Misses: 10721
+  L3:
+    cfg:
+      assoc: 28
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 7340032
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897881
+      Compulsory misses: 10687
+      Hits: 34
+      Invalidations: 0
+      Miss rate: 99.68
+      Misses: 10687
+  LAMBDA: 0.5
+  MAT: 332159486.83146
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166134881.790266
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfguywM" -- bash runme_small.sh'
+- COST: 1574830.08
+  CSCALE: 0.0320146433142594
+  L1D:
+    cfg:
+      assoc: 2
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: data
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 7242
+      Hits: 5915455
+      Invalidations: 0
+      Miss rate: 0.20
+      Misses: 12064
+  L1I:
+    cfg:
+      assoc: 8
+      core: 0
+      inclusive: ~
+      parent: L2
+      prefetcher: none
+      replace_policy: LRU
+      size: 32768
+      type: instruction
+    lat: 4.03747
+    stats:
+      Child hits: 0
+      Compulsory misses: 3447
+      Hits: 75975469
+      Invalidations: 0
+      Miss rate: 0.01
+      Misses: 5574
+  L2:
+    cfg:
+      assoc: 13
+      core: ~
+      inclusive: false
+      parent: L3
+      prefetcher: none
+      replace_policy: LRU
+      size: 425984
+      type: unified
+    lat: 24.10651
+    stats:
+      Child hits: 81890924
+      Compulsory misses: 10689
+      Hits: 6840
+      Invalidations: 0
+      Miss rate: 61.22
+      Misses: 10798
+  L3:
+    cfg:
+      assoc: 23
+      core: ~
+      inclusive: false
+      parent: memory
+      prefetcher: none
+      replace_policy: LRU
+      size: 3014656
+      type: unified
+    lat: 76.41365
+    stats:
+      Child hits: 81897764
+      Compulsory misses: 10689
+      Hits: 109
+      Invalidations: 0
+      Miss rate: 98.99
+      Misses: 10689
+  LAMBDA: 0.5
+  MAT: 332161868.51368
+  MML: 126.90635
+  Total miss rate: 0.01
+  VAL: 166106143.068486
+  cmd: ' drrun -root "/home/elimtob/.local/opt/DynamoRIO" -t drcachesim -ipc_name /tmp/drcachesim/drcachesim_pipe1410519 -config_file "/tmp/drcachesim/drcachesim_cfgaomg" -- bash runme_small.sh'
