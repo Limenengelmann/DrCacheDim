@@ -20,4 +20,9 @@ int main(int argc, char** argv) {
 
     //matMulRef_kji(A, stypeA, B, stypeB, C, stypeC, m, m);
     matMulRef(A, stypeA, B, stypeB, C, stypeC, m, m);
+    //
+    //matMulRef_kij(A, stypeA, B, stypeB, C, stypeC, m, m);
+    //matMulRef_ikj(A, stypeA, B, stypeB, C, stypeC, m, m);
+    //matMulRef_jki(A, stypeA, B, stypeB, C, stypeC, m, m);
+    //matMulRef_jik(A, stypeA, B, stypeB, C, stypeC, m, m);
 }

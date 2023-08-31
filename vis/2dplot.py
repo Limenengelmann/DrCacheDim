@@ -8,6 +8,7 @@ import yaml
 from yaml import CLoader as Loader, CDumper as Dumper
 import plotly.graph_objects as go
 import plotly.io as pio
+# avoid cryptic error message
 pio.kaleido.scope.mathjax = None
 
 proot="/home/elimtob/Workspace/drcachedim"
@@ -70,16 +71,19 @@ numeric_keys = [m1,m2,m3,s0,a0,s1,a1,s2,a2,s3,a3,"MAT","COST","VAL"]
 df[numeric_keys] = df[numeric_keys].apply(pd.to_numeric)
 
 # drop penalized sims, value from $Aux::BIG_VAL
-pen_ind = df["VAL"].lt(1.0e31)
-df = df[pen_ind]
+#pen_ind = df["VAL"].lt(1.0e31)
+#df = df[pen_ind]
+pen_ind = df["VAL"].gt(1.0e30)
+df.loc[pen_ind, "PI"] = 0
+#df = df[pen_ind]
 
 #lam = 0.5
 #df["VAL"] = (1-lam)*df["MAT"] + lam*cscale*df["COST"]
 
-max_val = max(df["VAL"])
 i_opt = np.argmin(df["VAL"])
 Hopt = df.iloc[i_opt]
 
+#max_val = max(df["VAL"])
 #df["VAL"] = df["VAL"]/max_val
 #df["VAL"] = df["VAL"].apply(np.exp)
 #df["MAT"] = df["MAT"].apply(np.log10)
@@ -87,10 +91,11 @@ Hopt = df.iloc[i_opt]
 x = "COST"
 y = "MAT"
 color = "VAL"
+color = "PI"
 #color = s1
 #fig = px.scatter(df, x="COST", y="MAT", color="MPC")
 fig = px.scatter(df, x=x, y=y, color=color,
-        hover_data=[s0,a0,s1,a1,s2,a2,s3,a3,"MAT", "COST", "VAL"],
+        hover_data=[s0,a0,s1,a1,s2,a2,s3,a3,"MAT", "COST", "VAL", "PI"],
         color_continuous_scale="Portland",
         )
 
@@ -101,7 +106,8 @@ fig.add_trace(
         y=[Hopt[y]],
         mode="markers+text",
         marker=dict(
-            color="red",
+            #color="red",
+            color="blue",
             size=10,
             #symbol="star",
             #line=dict(width=2, color="black"),
@@ -127,7 +133,8 @@ fig.update_layout(
 
 #fig = px.scatter_matrix( df, dimensions=[s1,s2,s3], color="VAL",)
 #fig.update_traces(diagonal_visible=False)
-fig.update_layout(font_size=14) # global font size
+#fig.update_layout(font_size=14) # global font size
+fig.update_layout(font_size=25) # global font size
 fig.update_layout(title=dict(text=title, x=0.5, xanchor="center"))
 #fig.write_image("test.png", scale=2.5)
 fig.write_image(plot_name)

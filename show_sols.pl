@@ -30,9 +30,10 @@ sub show_variance {
     #my @Smin = grep {$_->{COST} == $unique[0]->{COST}} @$S;
     #my @Smax = grep {$_->{COST} == $unique[1]->{COST}} @$S;
     #my @Sopt = grep {$_->{COST} == $unique[-1]->{COST}} @$S;
-    Aux::analyse_stddev("Hmin", \@Smin);
-    Aux::analyse_stddev("Hmax", \@Smax);
-    Aux::analyse_stddev("Hopt", \@Sopt);
+    my $latex = 1;
+    Aux::analyse_stddev("Hmin", \@Smin, $latex);
+    Aux::analyse_stddev("Hmax", \@Smax, $latex);
+    Aux::analyse_stddev("Hopt", \@Sopt, $latex);
 }
 
 foreach my $resf (@resfiles) {
@@ -44,7 +45,7 @@ foreach my $resf (@resfiles) {
         my $Hmin = $S->[0];
         my $Hmax = $S->[1];
         my $H0 = $S->[2];
-        my $H_opt = $S->[-1];
+        my $H_opt = DrCacheDim::get_best($S);
         # count unique hierarchies
         my %seen;
         my @unique = grep { !$seen{join("-", DrCacheDim::get_sets_ways($_))}++ } @$S;
@@ -58,10 +59,10 @@ foreach my $resf (@resfiles) {
         my $dup_cost = @double_cost;
 
         print("$resf: ($uniq unique, $sims total Sims!) \n");
-        #Aux::hierarchy2latex($Hmin, "Hmin");
-        #Aux::hierarchy2latex($Hmax, "Hmax");
-        #Aux::hierarchy2latex($H0, "H0");
-        #Aux::hierarchy2latex($H_opt, "H\\_opt");
+        Aux::hierarchy2latex($Hmin, "Hmin");
+        Aux::hierarchy2latex($Hmax, "Hmax");
+        Aux::hierarchy2latex($H0, "H0");
+        Aux::hierarchy2latex($H_opt, "H\\_opt");
 
         DrCacheDim::print_hierarchy($Hmin, "Hmin");
         DrCacheDim::print_hierarchy($Hmax, "Hmax");

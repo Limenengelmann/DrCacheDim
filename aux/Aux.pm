@@ -93,15 +93,16 @@ sub hierarchy2latex {
     my $cost = $H->{COST} || 0;
     my $mat  = $H->{MAT} || 0;
     my $val  = $H->{VAL} || 0;
+    my $pi  = $H->{PI} || 0;
 
 
-    printf("\\multirow{2}{*}{%6s}\n    & %s & %s & %s & %s\n    & \\multirow{2}{*}{%d} & \\multirow{2}{*}{%d} & \\multirow{2}{*}{%d}\\\\ \\cline{2-5}\n    &  %d-way &  %d-way &  %d-way &  %d-way & & &\\\\\n    \\hline\n",
+    printf("\\multirow{2}{*}{%6s}\n    & %s & %s & %s & %s\n    & \\multirow{2}{*}{%d} & \\multirow{2}{*}{%d} & \\multirow{2}{*}{%.2f}\\\\ \\cline{2-5}\n    &  %d-way &  %d-way &  %d-way &  %d-way & & &\\\\\n    \\hline\n",
         $name,
         nice_size($size0),
         nice_size($size1),
         nice_size($size2),
         nice_size($size3),
-        $cost, $mat, $val,
+        $cost, $mat, $pi,
         $ways0,
         $ways1,
         $ways2,
@@ -112,6 +113,7 @@ sub hierarchy2latex {
 sub analyse_stddev {
     my $name = shift;
     my $S = shift;
+    my $latex = shift || 0;
     my $n = @$S;
 
     my @Lat = map {$_->{MAT}} @$S;
@@ -120,8 +122,11 @@ sub analyse_stddev {
     my $avg = sum(map {$_ / $n} @Lat);
     my $var = sum(map {($_/$max - $avg/$max)**2 / $n} @Lat);
 
-    printf "%s latency: min: %10d, max: %10d, avg: %10d, normalized var: %e\n", $name,
-        int($min), int($max), int($avg), sqrt($var);
+    my $fmts = "%s latency: min: %10d, max: %10d, avg: %10d, normalized std. dev: %e\n";
+    if ($latex) {
+        $fmts = "%s & %10d & %10d & %10d & %e \\\\\n";
+    }
+    printf $fmts, $name, int($min), int($max), int($avg), sqrt($var);
 }
 
 1;

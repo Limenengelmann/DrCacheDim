@@ -42,6 +42,10 @@ extern int g_checkerb_n;
 // C is mxm
 void matMulRef(mtype* A, store_t stypeA, mtype* B, store_t stypeB, mtype* C, store_t stypeC, int m, int n);
 void matMulRef_kji(mtype* A, store_t stypeA, mtype* B, store_t stypeB, mtype* C, store_t stypeC, int m, int n);
+void matMulRef_kij(mtype* A, store_t stypeA, mtype* B, store_t stypeB, mtype* C, store_t stypeC, int m, int n);
+void matMulRef_ikj(mtype* A, store_t stypeA, mtype* B, store_t stypeB, mtype* C, store_t stypeC, int m, int n);
+void matMulRef_jik(mtype* A, store_t stypeA, mtype* B, store_t stypeB, mtype* C, store_t stypeC, int m, int n);
+void matMulRef_jki(mtype* A, store_t stypeA, mtype* B, store_t stypeB, mtype* C, store_t stypeC, int m, int n);
 
 // generate an n-by-n rowMajor matrix with random elements in [0,1). Mayas input files also seem to just be random matrices
 void randomMat(mtype* A, store_t stypeA, int m, int n);

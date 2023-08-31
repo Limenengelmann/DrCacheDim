@@ -81,6 +81,62 @@ void matMulRef_kji(mtype* A, store_t stypeA, mtype* B, store_t stypeB, mtype* C,
     }
 }
 
+void matMulRef_kij(mtype* A, store_t stypeA, mtype* B, store_t stypeB, mtype* C, store_t stypeC, int m, int n){
+    // Would probably be more efficient to transform the matrices into one fixed format first, multiply, and switch them back, but should only be used for small matrix sizes anyway.
+
+    mtype tmp;
+    #pragma OMP parallel for
+    for (int k=0; k<n; k++) {
+        for (int i=0; i<m; i++) {
+            for (int j=0; j<m; j++) {
+                C[INDEX(i, j, m, m, stypeC)] += A[INDEX(i, k, m, n, stypeA)] * B[INDEX(k, j, n, m, stypeB)];
+            }
+        }
+    }
+}
+
+void matMulRef_ikj(mtype* A, store_t stypeA, mtype* B, store_t stypeB, mtype* C, store_t stypeC, int m, int n){
+    // Would probably be more efficient to transform the matrices into one fixed format first, multiply, and switch them back, but should only be used for small matrix sizes anyway.
+
+    mtype tmp;
+    #pragma OMP parallel for
+    for (int i=0; i<m; i++) {
+        for (int k=0; k<n; k++) {
+            for (int j=0; j<m; j++) {
+                C[INDEX(i, j, m, m, stypeC)] += A[INDEX(i, k, m, n, stypeA)] * B[INDEX(k, j, n, m, stypeB)];
+            }
+        }
+    }
+}
+
+void matMulRef_jki(mtype* A, store_t stypeA, mtype* B, store_t stypeB, mtype* C, store_t stypeC, int m, int n){
+    // Would probably be more efficient to transform the matrices into one fixed format first, multiply, and switch them back, but should only be used for small matrix sizes anyway.
+
+    mtype tmp;
+    #pragma OMP parallel for
+    for (int j=0; j<m; j++) {
+        for (int k=0; k<n; k++) {
+            for (int i=0; i<m; i++) {
+                C[INDEX(i, j, m, m, stypeC)] += A[INDEX(i, k, m, n, stypeA)] * B[INDEX(k, j, n, m, stypeB)];
+            }
+        }
+    }
+}
+
+void matMulRef_jik(mtype* A, store_t stypeA, mtype* B, store_t stypeB, mtype* C, store_t stypeC, int m, int n){
+    // Would probably be more efficient to transform the matrices into one fixed format first, multiply, and switch them back, but should only be used for small matrix sizes anyway.
+
+    mtype tmp;
+    #pragma OMP parallel for
+    for (int j=0; j<m; j++) {
+        for (int i=0; i<m; i++) {
+            for (int k=0; k<n; k++) {
+                C[INDEX(i, j, m, m, stypeC)] += A[INDEX(i, k, m, n, stypeA)] * B[INDEX(k, j, n, m, stypeB)];
+            }
+        }
+    }
+}
+
 // moved MIN(.,.) macro to matrix.h
 void matMulChunk(mtype* mat_a, mtype* mat_b, mtype* mat_c, int m, int n) {
     const int blockSize = MIN(MIN(m, n), 16);

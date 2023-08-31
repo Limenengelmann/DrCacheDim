@@ -90,7 +90,8 @@ Labels = {
         "COST": "COST",
         "MAT": "MAT",
         "VAL": "VAL",
-        "CSCALE": "COST SCALE"
+        "CSCALE": "COST SCALE",
+        "PI": "PI"
 }
 
 D = [
@@ -101,16 +102,17 @@ D = [
         s2, a2,
         #"MAT",
         s3, a3,
-        "MAT",
-        "COST",
-        "VAL",
+        #"MAT",
+        #"COST",
+        "PI",
+        #"VAL",
 ]
 
-color_key = "VAL"
+color_key = "PI"
 #color_key = "MAT"
 #color_key = "CSCALE"
 
-numeric_keys = [m1,m2,m3,s0,a0,s1,a1,s2,a2,s3,a3,"MAT","COST","VAL", "CSCALE", "LAMBDA"]
+numeric_keys = [m1,m2,m3,s0,a0,s1,a1,s2,a2,s3,a3,"MAT","COST","VAL", "CSCALE", "LAMBDA", "PI"]
 df[numeric_keys] = df[numeric_keys].apply(pd.to_numeric)
 #print(df[D])
 
@@ -119,12 +121,13 @@ ind = df["VAL"].lt(1.0e31)
 df = df[ind]
 
 df = df.sort_values(by="VAL")
+#df = df.sort_values(by="PI")
 df = df.drop_duplicates(subset=[s0,a0,s1,a1,s2,a2,s3,a3,"COST", "CSCALE", "LAMBDA"])
 
 #Some "enhancements"
 SIZES = [s0,s1,s2,s3]
 WAYS = [a0,a1,a2,a3]
-OBJEC = ["COST", "MAT", "VAL"]
+OBJEC = ["COST", "MAT", "VAL", "PI"]
 df_top = df
 #Limit plot to top 10 
 if top > 0:
@@ -172,6 +175,7 @@ new_dfs = [df_top]
 for i in range(L):
     #for w in range(int(np.round((L/2**i))+10)):
     for w in range(int(np.round(1.5*(L-i) + 5))):
+        pass
         new_dfs.append(thick(df_top.iloc[[i]], pd.Series(delta), w, SIZES + OBJEC + WAYS))
         #df_top.loc[-i*L-j] = np.copy(df_top.iloc[i])
         #df_top.reset_index(inplace=True)
@@ -265,7 +269,7 @@ fig = go.Figure(data=
                     #colorscale="Plasma"  ,
                     #colorscale="YlGnBu"   ,
                     #colorscale="YlOrRd"   ,
-                    showscale = True,
+                    showscale = False,
                     #reversescale=True,
                     #cmin = 1,
                     #cmax = 16,
@@ -275,11 +279,13 @@ fig = go.Figure(data=
     )
 )
 # magic underscores wowzie we perl'in now
-fig.update_layout(font_size=14) # global font size
+#fig.update_layout(font_size=14) # global font size
+fig.update_layout(font_size=30) # global font size
 #fig.update_traces(labelfont=dict(size=18), selector=dict(type='parcoords'))
 #fig.update_traces(rangefont_size=1, selector=dict(type='parcoords'))
 fig.update_traces(rangefont_size=1, selector=dict(type='parcoords'))    # try to hide unnecessary range labels
-fig.update_layout(margin=dict(r=10, l=40, b=10))
+#fig.update_layout(margin=dict(r=10, l=40, b=10))
+#fig.update_layout(margin=dict(l=40, b=10))
 fig.update_layout(title=dict(text=title, x=0.5, xanchor="center"))
 #fig.update_yaxes(type="log")
 #fig.update_layout(paper_bgcolor = "lightgray") #bg color

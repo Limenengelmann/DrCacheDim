@@ -2,7 +2,7 @@ package RefGen;
 
 use strict;
 use warnings;
-use POSIX qw( ceil );
+use POSIX qw( ceil floor );
 use File::Temp qw/ tempfile /;
 use File::Basename;
 
@@ -16,12 +16,16 @@ sub capway_code {
 
     my $size0 = $H->{L1I}->{cfg}->{size};
     my $ways0 = $H->{L1I}->{cfg}->{assoc};
+    my $lat0  = $H->{L1I}->{lat};
     my $size1 = $H->{L1D}->{cfg}->{size};
     my $ways1 = $H->{L1D}->{cfg}->{assoc};
+    my $lat1  = $H->{L1D}->{lat};
     my $size2 = $H->{L2}->{cfg}->{size};
     my $ways2 = $H->{L2}->{cfg}->{assoc};
+    my $lat2  = $H->{L2}->{lat};
     my $size3 = $H->{L3}->{cfg}->{size};
     my $ways3 = $H->{L3}->{cfg}->{assoc};
+    my $lat3  = $H->{L3}->{lat};
 
     my $sets0 = $size0 / $ways0 / 64;
     my $sets1 = $size1 / $ways1 / 64;
@@ -39,6 +43,13 @@ sub capway_code {
     my $gcd1 = Aux::gcd2p($ways1);
     my $gcd2 = Aux::gcd2p($ways2);
     my $gcd3 = Aux::gcd2p($ways3);
+
+    # calculate reruns so each level roughly contributes the same to the total MAT
+    # take compulsory misses on first run into account
+    my $runs3 = 2;
+    my $runs0 = floor(($runs3-1)*$sets3*$ways3*$lat3 / ($sets0*$ways0*$lat0)) + 1;
+    my $runs1 = floor(($runs3-1)*$sets3*$ways3*$lat3 / ($sets1*$ways1*$lat1)) + 1;
+    my $runs2 = floor(($runs3-1)*$sets3*$ways3*$lat3 / ($sets2*$ways2*$lat2)) + 1;
 
     my $fname = "$Aux::TMPDIR/capway-$size0-$ways0-$size1-$ways1-$size2-$ways2-$size3-$ways3.asm";
     print "Generating '$fname'...\n";
@@ -71,6 +82,11 @@ sub capway_code {
                 GCD1 equ $gcd1
                 GCD2 equ $gcd2
                 GCD3 equ $gcd3
+
+                RUNS0 equ $runs0
+                RUNS1 equ $runs1
+                RUNS2 equ $runs2
+                RUNS3 equ $runs3
 
                 OFFS0 equ LINESIZE + (WAYS0-1)*SETS0*LINESIZE
                 ; Regression: this 'improvement' allows trading ways for sets 
@@ -157,11 +173,11 @@ sub capway_code {
                     %endif
                 %endmacro
 
-                    ; TODO calculate number of reruns so overall contributions to latency are roughly equal
-                    capway 0, 2, A
-                    capway 1, 2, A
-                    capway 2, 2, B
-                    capway 3, 2, C
+                    ;capway 0, 2, A
+                    ;capway 1, 2, A
+                    capway 1, RUNS1, A
+                    capway 2, RUNS2, B
+                    capway 3, RUNS3, C
 
                     ; exit, new cacheline to avoid weird simulator results when instructions cross cachelines
                     jmp EXIT

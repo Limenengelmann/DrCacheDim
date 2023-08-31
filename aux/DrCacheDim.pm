@@ -16,22 +16,20 @@ use POSIX;
 our @LVLS=("L1I", "L1D", "L2", "L3");
 our $LINE_SIZE=64;
 #default cost
-#TODO changeme back to 1,0.1,0.01,...
+#XXX: 10x more cost per level
 our @DEFAULT_COST=(
     1, #998.69,  # L1Isets
     2, #1998.65, #L1Iassoc 
     1, #998.69 , # L1Dsets 
     2, #1998.65, #L1Dassoc 
-    0.01 , #99.07  , #  L2sets 
-    0.02 , #198.98 , # L2assoc 
-    0.0001  , #9.35   , #  L3sets 
-    0.0002  , #19.48  , # L3assoc 
+    0.1 , #99.07  , #  L2sets 
+    0.2 , #198.98 , # L2assoc 
+    0.01  , #9.35   , #  L3sets 
+    0.02  , #19.48  , # L3assoc 
 );
 
 #unused
 our @DEFAULT_COST_RATIO=(1, 1, 1, 1, 0.1, 0.1, 0.01, 0.01);
-
-#TODO store simulations in sqlite instead of yaml
 
 sub new_cache {
    my $class = "cache";
@@ -75,6 +73,7 @@ sub new_hierarchy {
         COST => undef,
         cmd  => undef,
         CSCALE => 1,
+        PI => 0,
         LAMBDA => 0.5,
         "Total miss rate" => undef,
    };
@@ -335,9 +334,16 @@ sub valid_config {
     my $L2 = $H->{L2}->{cfg};
     my $L3 = $H->{L3}->{cfg};
 
-    my $weird_size = $L1I->{size} > $L1D->{size} ||
-                     $L1D->{size} > $L2->{size}  ||
-                     $L2->{size}  > $L3->{size};
+    my $s0 = $L1I->{size}/$L1I->{assoc}/$LINE_SIZE;
+    my $s1 = $L1D->{size}/$L1D->{assoc}/$LINE_SIZE;
+    my $s2 = $L2->{size}/$L2->{assoc}/$LINE_SIZE;
+    my $s3 = $L3->{size}/$L3->{assoc}/$LINE_SIZE;
+    #my $weird_size = $L1I->{size} > $L1D->{size} ||
+    #                 $L1D->{size} > $L2->{size}  ||
+    #                 $L2->{size}  > $L3->{size};
+    #XXX: changed to reflect the linear constraint solution space
+    my $weird_size = $s0 > $s1 || $s1 > $s2 || $s2 > $s3;
+                     
     my $bad_size = $L1I->{assoc} * $LINE_SIZE > $L1I->{size} ||
                    $L1D->{assoc} * $LINE_SIZE > $L1D->{size} ||
                    $L2->{assoc}  * $LINE_SIZE > $L2->{size}  ||
@@ -348,21 +354,58 @@ sub valid_config {
     return not ($weird_size or $bad_size);
 }
 
+sub get_min_max {
+    my $S = shift; 
+    my $min = reduce { $a->{COST} < $b->{COST} ? $a : $b } @$S;
+    my $max = reduce { $a->{COST} > $b->{COST} ? $a : $b } @$S;
+    return $min, $max;
+}
+
 sub get_best {
     my $S = shift; 
     my $min = reduce { $a->{VAL} < $b->{VAL} ? $a : $b } @$S;
     return $min;
 }
 
+#FIXME: max_mat simulations cannot be updated currently since the objective functions cannot be recovered
+#TODO: add PI to simulation updates, add ideal hierarchy and normalization factor to yaml
 sub update_sims {
     # Update non-simulated parameters MAT, COST and VAL
     my $P = shift;
     my $S = shift;
+    my $Hmin = shift || $S->[0];
+    my $Hmax = shift || $S->[1];
+
+    $Hmin->{MAT}  = $P->{mat}->($Hmin);
+    $Hmin->{COST} = $P->{cost}->($Hmin);
+    $Hmin->{VAL}  = $P->{val}->($Hmin);
+    $Hmax->{MAT}  = $P->{mat}->($Hmax);
+    $Hmax->{COST} = $P->{cost}->($Hmax);
+    $Hmax->{VAL}  = $P->{val}->($Hmax);
+    my $cscale = get_cscale($Hmin, $Hmax);
 
     foreach my $H (@$S) {
-        $H->{MAT}  = $P->{mat}->($H);
-        $H->{COST} = $P->{cost}->($H);
-        $H->{VAL}  = $P->{val}->($H);
+        $H->{MAT}    = $P->{mat}->($H);
+        $H->{COST}   = $P->{cost}->($H);
+        $H->{CSCALE} = $cscale;
+        $H->{VAL}    = $P->{val}->($H);
+        $H->{PI}     = get_performance_index($Hmin, $Hmax, $H);
+    }
+}
+
+sub add_PI {
+    my $glob = shift || die "[add_PI] No filename";
+
+    my @files = <"$glob">;
+    foreach my $fname (@files) {
+        print "Loading $fname\n";
+        my $S = LoadFile($fname) or die "[add_PI] Can't load '$fname': $!";
+        my ($Hmin, $Hmax) = get_min_max($S);
+        foreach my $H (@$S) {
+            $H->{PI} = get_performance_index($Hmin, $Hmax, $H);
+        }
+        print "Writing back $fname\n";
+        DumpFile($fname, $S) or die "update_simulations: Can't dump '$fname': $!";
     }
 }
 
@@ -370,8 +413,8 @@ sub update_simulations_files {
     # for all simulations in the given folder
     my $folder = shift;
     my $P = shift;
+    my $fglob = shift || "*.yml";
 
-    my $fglob = "*.yml";
     my $all = `find $folder -name "$fglob" -type f`;
     my @list = split "\n", $all;
     foreach my $fname (@list) {
@@ -481,7 +524,8 @@ sub brutef_sweep {
             $ill++;
         }
     }}}}}}}}
-    print "Skipped $ill/$count bad Hierarchies!\n" if $ill;
+    my $tots = $count - $ill;
+    print "Skipped $ill/$count bad Hierarchies!\nGenerated $tots hierarchies.\n" if $ill;
     return $S;
 }
 
@@ -499,10 +543,14 @@ sub cube_sweep {
         $L2_smax, $L2_amax, 
         $L3_smax, $L3_amax) = get_sets_ways($Hmax);
 
-    my $count = (Aux::int_log2($L1I_smax)-Aux::int_log2($L1I_smin)+1)*(Aux::int_log2($L1D_smax)-Aux::int_log2($L1D_smin)+1)*
-                (Aux::int_log2($L2_smax )-Aux::int_log2($L2_smin )+1)  *(Aux::int_log2($L3_smax)-Aux::int_log2($L3_smin)+1)*
-                ($L1I_amax-$L1I_amin+1)*($L1D_amax-$L1D_amin+1)*
-                ($L2_amax -$L2_amin +1)  *($L3_amax-$L3_amin+1);
+    my $count = (Aux::int_log2($L1I_smax)-Aux::int_log2($L1I_smin)+1)
+        * (Aux::int_log2($L1D_smax)-Aux::int_log2($L1D_smin)+1)
+        * (Aux::int_log2($L2_smax )-Aux::int_log2($L2_smin )+1)
+        * (Aux::int_log2($L3_smax)-Aux::int_log2($L3_smin)+1)
+        * ($L1I_amax-$L1I_amin+1)
+        * ($L1D_amax-$L1D_amin+1)
+        * ($L2_amax -$L2_amin +1)  
+        * ($L3_amax-$L3_amin+1);
     print "Warning: Generating up to $count Hierarchies!\n";
 
     my $ill = 0;
@@ -524,7 +572,8 @@ sub cube_sweep {
             $ill++;
         }
     }}}}}}}}
-    print "Skipped $ill/$count bad Hierarchies!\n" if $ill;
+    my $tots = $count - $ill;
+    print "Skipped $ill/$count bad Hierarchies!\nGenerated $tots hierarchies.\n";
     return $S;
 }
 
@@ -701,6 +750,24 @@ sub parallel_run {
     }
 }
 
+sub get_performance_index {
+    # Return how close $H is to ideal performance, given $Hmin, $Hmax
+    # distance in 1-norm percentage
+    my $Hmin = shift || die "[get_performance_index] No Hmin given!";
+    my $Hmax = shift || die "[get_performance_index] No Hmax given!";
+    my $H = shift || die "[get_performance_index] No H given!";
+
+    my $lambda = $H->{LAMBDA};
+    my $cscale = $H->{CSCALE};
+    #my $R = sqrt(($cscale*($Hmax->{COST} - $Hmin->{COST}))**2 + ($Hmin->{MAT} - $Hmax->{MAT})**2);
+    #my $PI = sqrt(($cscale*($H->{COST} - $Hmin->{COST}))**2 + ($H->{MAT} - $Hmax->{MAT})**2);
+    my $R = (1-$lambda)*$cscale*($Hmax->{COST} - $Hmin->{COST}) + $lambda*abs($Hmin->{MAT} - $Hmax->{MAT});
+    my $PI = (1-$lambda)*$cscale*($H->{COST} - $Hmin->{COST}) + $lambda*abs($H->{MAT} - $Hmax->{MAT});
+
+    return (1-$PI/$R) * 100;
+}
+
+#TODO separate cost scale calculation from need to simulate 
 sub get_cost_scaling_factor {
     my $P = shift || die "[set_scaled_val] No problem given!";
     my $Hmin   = shift || die "[set_scaled_val] No Hmin!";
@@ -708,6 +775,15 @@ sub get_cost_scaling_factor {
 
     my ($Hmin_, $Hmax_) = parallel_run($P, [$Hmin, $Hmax]);
     my $cscale = ($Hmin_->{MAT} - $Hmax_->{MAT}) / ($Hmax_->{COST} - $Hmin_->{COST});
+    return $cscale;
+}
+
+sub get_cscale {
+    # get cost scale assuming simulations where already done
+    my $Hmin   = shift || die "[set_scaled_val] No Hmin!";
+    my $Hmax   = shift || die "[set_scaled_val] No Hmax!";
+
+    my $cscale = ($Hmin->{MAT} - $Hmax->{MAT}) / ($Hmax->{COST} - $Hmin->{COST});
     return $cscale;
 }
 
