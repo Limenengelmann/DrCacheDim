@@ -114,7 +114,7 @@ function run(i, j, k)
     local b = B[k][j]
     local c = C[i][j]
 
-    for _, y in pairs{a, b, c} do 
+    for _, y in pairs{a, b, c} do
         if y % sets == 0 then
             watchset[#watchset + 1] = y
             --print(x, a, stddev(watchset))
