@@ -387,7 +387,7 @@ sub update_sims {
     foreach my $H (@$S) {
         $H->{MAT}    = $P->{mat}->($H);
         $H->{COST}   = $P->{cost}->($H);
-        $H->{CSCALE} = $cscale;
+        $H->{CSCALE} = 1;#$cscale;
         $H->{VAL}    = $P->{val}->($H);
         $H->{PI}     = get_performance_index($Hmin, $Hmax, $H);
     }

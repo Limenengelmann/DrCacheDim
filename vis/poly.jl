@@ -17,10 +17,11 @@ function do_plot()
     M = Polyhedra.Mesh(p)
     display(M)
 
-    diff = Vec3f(0.7)
-    spec = Vec3f(0.7)
-    ambi = Vec3f(0.1)
-    lpos = Vec3f(4,0,-10)
+    diff = Vec3f(1.0)
+    spec = Vec3f(1.0)
+    ambi = Vec3f(1.0)
+    #lpos = Vec3f(4,0,-10)
+    lpos = Vec3f(0)
     colr = :red
 
     mesh_ = GeometryBasics.mesh(M)
@@ -36,10 +37,10 @@ function do_plot()
     fig,ax,p = mesh(M, color=colors1, interpolate=true, shading=true, diffuse = diff, specular = spec, ambient=ambi, lightposition=lpos)
     #p = mesh!(lscene, M, shading=true)#, diffuse = diff, specular = spec, ambient=ambi, lightposition=lpos)
     #fig = volume(M, shading=true)#, diffuse::Vec3f = Vec3f(0.6), specular::Vec3f = Vec3f(0.5))
-    #fig, ax = wireframe(M)
-    ax.show_axis=false
+    fig2 = wireframe!(ax, M)
+    ax.show_axis=true
     display(fig)
-    #hidedecorations!(ax, grid = false)
+    #hidedecorations!(ax, grid = true)
     #display(fig2)
     #readline(stdin)
 end

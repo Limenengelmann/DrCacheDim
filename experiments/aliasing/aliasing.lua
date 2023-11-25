@@ -87,8 +87,8 @@ end
 
 
 local bins = {}
-for i=1,20 do
-    bins[i] = math.floor(math.random()*500 + 1)
+for i=1,100 do
+    bins[i] = math.floor(math.random()*5000 + 1)
 end
 
 local n = 128

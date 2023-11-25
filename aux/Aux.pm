@@ -120,13 +120,17 @@ sub analyse_stddev {
     my $min = min @Lat;
     my $max = max @Lat;
     my $avg = sum(map {$_ / $n} @Lat);
-    my $var = sum(map {($_/$max - $avg/$max)**2 / $n} @Lat);
+    #my $var = sum(map {($_/$max - $avg/$max)**2 / $n} @Lat);
+    # don't normalise
+    my $var = sum(map {($_ - $avg)**2 / $n} @Lat);
 
-    my $fmts = "%s latency: min: %10d, max: %10d, avg: %10d, normalized std. dev: %e\n";
+    #my $fmts = "%s latency: min: %10d, max: %10d, avg: %10d, normalized std. dev: %e\n";
+    my $fmts = "%s latency: min: %10d, max: %10d, avg: %10d, normalized std. dev: %d\n";
     if ($latex) {
-        $fmts = "%s & %10d & %10d & %10d & %e \\\\\n";
+        #$fmts = "%s & %10d & %10d & %10d & %e \\\\\n";
+        $fmts = "%s & %10d & %10d & %10d & %d \\\\\n";
     }
-    printf $fmts, $name, int($min), int($max), int($avg), sqrt($var);
+    printf $fmts, $name, int($min), int($max), int($avg), int(sqrt($var));
 }
 
 1;

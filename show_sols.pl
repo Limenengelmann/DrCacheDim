@@ -31,9 +31,13 @@ sub show_variance {
     #my @Smax = grep {$_->{COST} == $unique[1]->{COST}} @$S;
     #my @Sopt = grep {$_->{COST} == $unique[-1]->{COST}} @$S;
     my $latex = 1;
-    Aux::analyse_stddev("Hmin", \@Smin, $latex);
-    Aux::analyse_stddev("Hmax", \@Smax, $latex);
-    Aux::analyse_stddev("Hopt", \@Sopt, $latex);
+    print("\\hline\n");
+    Aux::analyse_stddev('$\text{H}_{min}$', \@Smin, $latex);
+    print("\\hline\n");
+    Aux::analyse_stddev('$\text{H}_{max}$', \@Smax, $latex);
+    print("\\hline\n");
+    Aux::analyse_stddev('$\text{H}_{opt}$', \@Sopt, $latex);
+    print("\\hline\n");
 }
 
 foreach my $resf (@resfiles) {

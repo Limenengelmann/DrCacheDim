@@ -15,12 +15,6 @@ proot="/home/elimtob/Workspace/drcachedim"
 
 #fglob=f"{proot}/results/keep/imagick_r_1000.yml"
 #fglob=f"{proot}/results/keep/cachetest_1000.yml"
-fglob=f"{proot}/results/matmul_kji-brutef-7-14-8-54-15.yml"
-fglob=f"{proot}/results/matmul_ref-brutef-7-13-18-40-51.yml"
-fglob=f"{proot}/results/xz_r-res-7-7-16-5-28.yml"
-fglob=f"{proot}/results/xz_r-brutef-7-14-9-6-27.yml"
-fglob=f"{proot}/results/imagick_r-max_cost-4144497-7-12-13-36-20.yml"
-fglob=f"{proot}/results/imagick_r-res.yml"
 fglob=f"{proot}/results/imagick_r-char-7-24-2-35-32.yml"
 
 
@@ -82,18 +76,14 @@ df.loc[pen_ind, "PI"] = 0
 
 i_opt = np.argmin(df["VAL"])
 Hopt = df.iloc[i_opt]
-i_opt = np.argmin(df["COST"])
-Hmin = df.iloc[i_opt]
-i_opt = np.argmax(df["COST"])
-Hmax = df.iloc[i_opt]
 
 #max_val = max(df["VAL"])
 #df["VAL"] = df["VAL"]/max_val
 #df["VAL"] = df["VAL"].apply(np.exp)
 #df["MAT"] = df["MAT"].apply(np.log10)
 
-x = "COST"
-y = "MAT"
+x = "MAT"
+y = "VAL"
 color = "VAL"
 color = "PI"
 #color = s1
@@ -118,65 +108,11 @@ fig.add_trace(
         ),
         text="optimum",
         #textposition='bottom center',
+        #textposition='middle left',
         textposition='middle right',
         showlegend=False,
     )
 )
-
-if True:
-    fig.add_trace(
-        go.Scatter(
-            x=[Hmin[x]],
-            y=[Hmin[y]],
-            mode="markers+text",
-            marker=dict(
-                #color="red",
-                color="black",
-                size=10,
-                #symbol="star",
-                #line=dict(width=2, color="black"),
-            ),
-            text="Hmin",
-            #textposition='bottom center',
-            textposition='bottom center',
-            showlegend=False,
-        )
-    )
-    fig.add_trace(
-        go.Scatter(
-            x=[Hmax[x]],
-            y=[Hmax[y]],
-            mode="markers+text",
-            marker=dict(
-                #color="red",
-                color="black",
-                size=10,
-                #symbol="star",
-                #line=dict(width=2, color="black"),
-            ),
-            text="Hmax",
-            textposition='middle left',
-            #textposition='middle right',
-            showlegend=False,
-        )
-    )
-    fig.add_trace(
-        go.Scatter(
-            x=[Hmin[x]],
-            y=[Hmax[y]],
-            mode="markers+text",
-            marker=dict(
-                #color="red",
-                color="black",
-                size=10,
-                symbol="star",
-                #line=dict(width=2, color="black"),
-            ),
-            text="ideal",
-            textposition='top right',
-            showlegend=False,
-        )
-    )
 
 fig.update_layout(
     legend=dict(
@@ -199,4 +135,4 @@ fig.update_layout(title=dict(text=title, x=0.5, xanchor="center"))
 #fig.write_image("test.png", scale=2.5)
 fig.write_image(plot_name)
 print(f"Plot saved as {plot_name}")
-fig.show()
+#fig.show()

@@ -72,6 +72,11 @@ m3 = "L3.stats.Misses"
 mr3 = "L3.stats.Miss rate"
 
 Labels = {
+        s0 : "size0",
+        a0 : "assoc0",
+        m0 : "miss0",
+        mr0 : "mr0",
+
         s1 : "size1",
         a1 : "assoc1",
         m1 : "miss1",
@@ -97,6 +102,7 @@ Labels = {
 D = [
         #m1, m2, m3, "MAT",
         #"CSCALE",
+        #s0, a0,
         s1, a1,
         #"MAT",
         s2, a2,
@@ -146,43 +152,44 @@ def thick(df, delta, width, K):
     return pd.concat(new_dfs, ignore_index=True)
 
 # add optimum multiple times to hack line width
-df_opt = df_top.iloc[0]
-delta = {}
-perc = 0.001
-for d in list(df_top):
-    if d in SIZES:
-        v = np.sort(pd.unique(df[d]))   # jitter based on global range
-        delta[d] = (v[-1]-v[0])*perc
-        jitter = (v[-1]-v[0])*0.01
-        df_top[[d]] = df_top[[d]].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
-    if d in OBJEC:
-        v = np.sort(pd.unique(df_top[d])) # jitter based on local range
-        delta[d] = (v[-1]-v[0])*perc
-        jitter = (v[-1]-v[0])*0.01
-        df_top[[d]] = df_top[[d]].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
-    if d in WAYS:
-        v = np.sort(pd.unique(df[d]))   # jitter based on global range
-        delta[d] = (v[-1]-v[0])*perc
-        jitter = (v[-1]-v[0])*0.01
-        #delta[d] = 0.1    # absolute value of jitter to add
-        #delta[d] = (v[-1]-v[0])*0.01
-        df_top[[d]] = df_top[[d]].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
+if top > 0:
+    df_opt = df_top.iloc[0]
+    delta = {}
+    perc = 0.001
+    for d in list(df_top):
+        if d in SIZES:
+            v = np.sort(pd.unique(df[d]))   # jitter based on global range
+            delta[d] = (v[-1]-v[0])*perc
+            jitter = (v[-1]-v[0])*0.01
+            df_top[[d]] = df_top[[d]].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
+        if d in OBJEC:
+            v = np.sort(pd.unique(df_top[d])) # jitter based on local range
+            delta[d] = (v[-1]-v[0])*perc
+            jitter = (v[-1]-v[0])*0.01
+            df_top[[d]] = df_top[[d]].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
+        if d in WAYS:
+            v = np.sort(pd.unique(df[d]))   # jitter based on global range
+            delta[d] = (v[-1]-v[0])*perc
+            jitter = (v[-1]-v[0])*0.01
+            #delta[d] = 0.1    # absolute value of jitter to add
+            #delta[d] = (v[-1]-v[0])*0.01
+            df_top[[d]] = df_top[[d]].apply(lambda x: x+(random.random()-0.5)*jitter, axis=1)
 
-L = len(df_top)
-#df_top.reset_index(inplace=True)
-#print("Len : ", L)
-new_dfs = [df_top]
-for i in range(L):
-    #for w in range(int(np.round((L/2**i))+10)):
-    for w in range(int(np.round(1.5*(L-i) + 5))):
-        pass
-        new_dfs.append(thick(df_top.iloc[[i]], pd.Series(delta), w, SIZES + OBJEC + WAYS))
-        #df_top.loc[-i*L-j] = np.copy(df_top.iloc[i])
-        #df_top.reset_index(inplace=True)
-# add slight jitter to sizes, so the lines don't overlap too much
-
-#df_top = thick(df_top, pd.Series(delta), 5, SIZES + OBJEC + WAYS)
-df_top = pd.concat(new_dfs, ignore_index=True)
+    L = len(df_top)
+    #df_top.reset_index(inplace=True)
+    #print("Len : ", L)
+    new_dfs = [df_top]
+    for i in range(L):
+        #for w in range(int(np.round((L/2**i))+10)):
+        for w in range(int(np.round(1.5*(L-i) + 5))):
+            pass
+            new_dfs.append(thick(df_top.iloc[[i]], pd.Series(delta), w, SIZES + OBJEC + WAYS))
+            #df_top.loc[-i*L-j] = np.copy(df_top.iloc[i])
+            #df_top.reset_index(inplace=True)
+    # add slight jitter to sizes, so the lines don't overlap too much
+    
+    #df_top = thick(df_top, pd.Series(delta), 5, SIZES + OBJEC + WAYS)
+    df_top = pd.concat(new_dfs, ignore_index=True)
 
 #jitter = 2    # percentage of jitter to add
 #df_top[SIZES] = df_top[SIZES].apply(lambda x: x+(random.random()-0.5)*x*jitter/100, axis=1)
@@ -290,7 +297,7 @@ fig.update_layout(title=dict(text=title, x=0.5, xanchor="center"))
 #fig.update_yaxes(type="log")
 #fig.update_layout(paper_bgcolor = "lightgray") #bg color
 
-#fig.show()
+fig.show()
 #fig.write_image("test.png", width=400, height=400, scale=2)
 #fig.write_image(plot_name, scale=2.5)
 fig.write_image(plot_name)
